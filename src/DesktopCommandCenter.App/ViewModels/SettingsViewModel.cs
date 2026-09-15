@@ -44,6 +44,8 @@ public sealed class SettingsViewModel : ObservableObject
         AccentPurpleCommand = new RelayCommand(() => AccentName = "Purple");
         AccentGreenCommand = new RelayCommand(() => AccentName = "Green");
         AccentOrangeCommand = new RelayCommand(() => AccentName = "Orange");
+        ChangeToggleHotkeyCommand = new RelayCommand(CycleToggleHotkey);
+        ChangeSearchHotkeyCommand = new RelayCommand(CycleSearchHotkey);
         Categories = new ObservableCollection<SettingsCategory>
         {
             new("General", "Startup, sidebar, and application behavior."),
@@ -79,6 +81,8 @@ public sealed class SettingsViewModel : ObservableObject
     public RelayCommand AccentPurpleCommand { get; }
     public RelayCommand AccentGreenCommand { get; }
     public RelayCommand AccentOrangeCommand { get; }
+    public RelayCommand ChangeToggleHotkeyCommand { get; }
+    public RelayCommand ChangeSearchHotkeyCommand { get; }
 
     public SettingsCategory SelectedCategory
     {
@@ -177,6 +181,40 @@ public sealed class SettingsViewModel : ObservableObject
     {
         get => _settings.GlobalHotkeysEnabled;
         set => SetBoolean(value, () => _settings.GlobalHotkeysEnabled, v => _settings.GlobalHotkeysEnabled = v);
+    }
+
+    public string ToggleHotkeyPreset
+    {
+        get => NormalizeToggleHotkey(_settings.ToggleHotkeyPreset);
+        set
+        {
+            var normalized = NormalizeToggleHotkey(value);
+            if (string.Equals(_settings.ToggleHotkeyPreset, normalized, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _settings.ToggleHotkeyPreset = normalized;
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
+    }
+
+    public string SearchHotkeyPreset
+    {
+        get => NormalizeSearchHotkey(_settings.SearchHotkeyPreset);
+        set
+        {
+            var normalized = NormalizeSearchHotkey(value);
+            if (string.Equals(_settings.SearchHotkeyPreset, normalized, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _settings.SearchHotkeyPreset = normalized;
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
     }
 
     public bool ReflowWindowsOnSidebar
@@ -322,6 +360,42 @@ public sealed class SettingsViewModel : ObservableObject
         get => _settings.ShowMacrosModule;
         set => SetBoolean(value, () => _settings.ShowMacrosModule, v => _settings.ShowMacrosModule = v);
     }
+
+    private void CycleToggleHotkey()
+    {
+        ToggleHotkeyPreset = ToggleHotkeyPreset switch
+        {
+            "Ctrl+Space" => "Ctrl+Alt+Space",
+            "Ctrl+Alt+Space" => "Ctrl+Alt+D",
+            _ => "Ctrl+Space"
+        };
+    }
+
+    private void CycleSearchHotkey()
+    {
+        SearchHotkeyPreset = SearchHotkeyPreset switch
+        {
+            "Ctrl+Shift+Space" => "Ctrl+Shift+F",
+            "Ctrl+Shift+F" => "Ctrl+Alt+F",
+            _ => "Ctrl+Shift+Space"
+        };
+    }
+
+    private static string NormalizeToggleHotkey(string? value) =>
+        value switch
+        {
+            "Ctrl+Alt+Space" => "Ctrl+Alt+Space",
+            "Ctrl+Alt+D" => "Ctrl+Alt+D",
+            _ => "Ctrl+Space"
+        };
+
+    private static string NormalizeSearchHotkey(string? value) =>
+        value switch
+        {
+            "Ctrl+Shift+F" => "Ctrl+Shift+F",
+            "Ctrl+Alt+F" => "Ctrl+Alt+F",
+            _ => "Ctrl+Shift+Space"
+        };
 
     private void SetBoolean(
         bool value,

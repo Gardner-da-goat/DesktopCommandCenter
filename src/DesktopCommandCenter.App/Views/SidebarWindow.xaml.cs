@@ -67,7 +67,10 @@ public partial class SidebarWindow : Window
 
         if (_viewModel.GlobalHotkeysEnabled)
         {
-            _hotkeyService.RegisterDefaults(_windowHandle);
+            _hotkeyService.RegisterDefaults(
+                _windowHandle,
+                _viewModel.ToggleHotkeyPreset,
+                _viewModel.SearchHotkeyPreset);
         }
         else
         {
@@ -176,7 +179,9 @@ public partial class SidebarWindow : Window
             AnchorToWorkingArea();
             ReflowAllWindows();
         }
-        else if (e.PropertyName == nameof(SidebarViewModel.GlobalHotkeysEnabled))
+        else if (e.PropertyName == nameof(SidebarViewModel.GlobalHotkeysEnabled) ||
+                 e.PropertyName == nameof(SidebarViewModel.ToggleHotkeyPreset) ||
+                 e.PropertyName == nameof(SidebarViewModel.SearchHotkeyPreset))
         {
             ApplyHotkeyRegistration();
         }

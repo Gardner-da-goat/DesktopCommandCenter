@@ -11,7 +11,10 @@ public sealed class GlobalHotkeyService : IDisposable
     private bool _toggleRegistered;
     private bool _focusRegistered;
 
-    public void RegisterDefaults(nint windowHandle)
+    public void RegisterDefaults(
+        nint windowHandle,
+        string? togglePreset,
+        string? searchPreset)
     {
         if (windowHandle == 0)
         {
@@ -21,17 +24,20 @@ public sealed class GlobalHotkeyService : IDisposable
         Unregister();
         _windowHandle = windowHandle;
 
+        var toggle = ResolveToggle(togglePreset);
+        var search = ResolveSearch(searchPreset);
+
         _toggleRegistered = NativeMethods.RegisterHotKey(
             _windowHandle,
             ToggleSidebarId,
-            NativeMethods.ModControl | NativeMethods.ModNoRepeat,
-            NativeMethods.VkSpace);
+            toggle.Modifiers | NativeMethods.ModNoRepeat,
+            toggle.VirtualKey);
 
         _focusRegistered = NativeMethods.RegisterHotKey(
             _windowHandle,
             FocusSearchId,
-            NativeMethods.ModControl | NativeMethods.ModShift | NativeMethods.ModNoRepeat,
-            NativeMethods.VkSpace);
+            search.Modifiers | NativeMethods.ModNoRepeat,
+            search.VirtualKey);
     }
 
     public void Unregister()
@@ -61,4 +67,34 @@ public sealed class GlobalHotkeyService : IDisposable
         message == NativeMethods.WmHotkey && wParam == FocusSearchId;
 
     public void Dispose() => Unregister();
+
+    private static HotkeyDefinition ResolveToggle(string? preset) =>
+        preset switch
+        {
+            "Ctrl+Alt+Space" => new HotkeyDefinition(
+                NativeMethods.ModControl | NativeMethods.ModAlt,
+                NativeMethods.VkSpace),
+            "Ctrl+Alt+D" => new HotkeyDefinition(
+                NativeMethods.ModControl | NativeMethods.ModAlt,
+                NativeMethods.VkD),
+            _ => new HotkeyDefinition(
+                NativeMethods.ModControl,
+                NativeMethods.VkSpace)
+        };
+
+    private static HotkeyDefinition ResolveSearch(string? preset) =>
+        preset switch
+        {
+            "Ctrl+Shift+F" => new HotkeyDefinition(
+                NativeMethods.ModControl | NativeMethods.ModShift,
+                NativeMethods.VkF),
+            "Ctrl+Alt+F" => new HotkeyDefinition(
+                NativeMethods.ModControl | NativeMethods.ModAlt,
+                NativeMethods.VkF),
+            _ => new HotkeyDefinition(
+                NativeMethods.ModControl | NativeMethods.ModShift,
+                NativeMethods.VkSpace)
+        };
+
+    private readonly record struct HotkeyDefinition(uint Modifiers, uint VirtualKey);
 }

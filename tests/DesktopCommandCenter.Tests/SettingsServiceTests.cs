@@ -38,6 +38,8 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.ShowTrayIcon);
         Assert.IsTrue(settings.AutoCheckForUpdates);
         Assert.IsTrue(settings.GlobalHotkeysEnabled);
+        Assert.AreEqual("Ctrl+Space", settings.ToggleHotkeyPreset);
+        Assert.AreEqual("Ctrl+Shift+Space", settings.SearchHotkeyPreset);
         Assert.IsTrue(settings.ReflowWindowsOnSidebar);
         Assert.IsTrue(settings.SearchAppsEnabled);
         Assert.IsTrue(settings.SearchWindowsEnabled);
@@ -99,6 +101,8 @@ public sealed class SettingsServiceTests
             ShowTrayIcon = false,
             AutoCheckForUpdates = false,
             GlobalHotkeysEnabled = false,
+            ToggleHotkeyPreset = "Ctrl+Alt+D",
+            SearchHotkeyPreset = "Ctrl+Shift+F",
             ReflowWindowsOnSidebar = false,
             SearchAppsEnabled = false,
             ShowScreenshotAction = false,
@@ -130,6 +134,8 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.ShowTrayIcon);
         Assert.IsFalse(settings.AutoCheckForUpdates);
         Assert.IsFalse(settings.GlobalHotkeysEnabled);
+        Assert.AreEqual("Ctrl+Alt+D", settings.ToggleHotkeyPreset);
+        Assert.AreEqual("Ctrl+Shift+F", settings.SearchHotkeyPreset);
         Assert.IsFalse(settings.ReflowWindowsOnSidebar);
         Assert.IsFalse(settings.SearchAppsEnabled);
         Assert.IsFalse(settings.ShowScreenshotAction);

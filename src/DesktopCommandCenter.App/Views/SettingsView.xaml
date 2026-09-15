@@ -339,18 +339,48 @@
 
         <DataTemplate x:Key="HotkeysTemplate">
             <StackPanel>
-                <Grid Margin="0,0,0,7">
+                <Grid Margin="0,0,0,9">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <StackPanel>
                         <TextBlock Text="Global shortcuts" />
-                        <TextBlock Text="Ctrl+Space · Ctrl+Shift+Space"
+                        <TextBlock Text="Register shortcuts across Windows."
                                    Style="{StaticResource MutedText}" />
                     </StackPanel>
                     <CheckBox Grid.Column="1"
                               Style="{StaticResource ToggleSwitchStyle}"
+                              VerticalAlignment="Center"
                               IsChecked="{Binding DataContext.GlobalHotkeysEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
-                <TextBlock Text="Toggle sidebar or jump straight to Search."
+
+                <Grid Margin="0,0,0,7">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Toggle sidebar" />
+                        <TextBlock Text="{Binding DataContext.ToggleHotkeyPreset, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <Button Grid.Column="1"
+                            Content="Change"
+                            Command="{Binding DataContext.ChangeToggleHotkeyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="8,5"
+                            VerticalAlignment="Center" />
+                </Grid>
+
+                <Grid Margin="0,0,0,7">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Focus search" />
+                        <TextBlock Text="{Binding DataContext.SearchHotkeyPreset, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <Button Grid.Column="1"
+                            Content="Change"
+                            Command="{Binding DataContext.ChangeSearchHotkeyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="8,5"
+                            VerticalAlignment="Center" />
+                </Grid>
+
+                <TextBlock Text="Press Change to cycle through safe preset combinations. If Windows rejects a shortcut because another app owns it, the sidebar handle and tray menu still work."
                            Style="{StaticResource MutedText}"
                            TextWrapping="Wrap" />
             </StackPanel>

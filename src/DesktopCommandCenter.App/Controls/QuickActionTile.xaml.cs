@@ -1,10 +1,9 @@
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace DesktopCommandCenter.App.Controls;
 
-public partial class QuickActionTile : UserControl
+public partial class QuickActionTile : System.Windows.Controls.UserControl
 {
     public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
         nameof(Icon), typeof(string), typeof(QuickActionTile), new PropertyMetadata("•"));

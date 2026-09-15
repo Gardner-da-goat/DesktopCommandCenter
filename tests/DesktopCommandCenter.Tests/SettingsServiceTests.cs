@@ -39,6 +39,8 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.ShowTrayIcon);
         Assert.IsFalse(settings.StartWithWindows);
         Assert.IsTrue(settings.AutoCheckForUpdates);
+        Assert.IsTrue(settings.NotificationsEnabled);
+        Assert.AreEqual("Stable", settings.UpdateChannel);
         Assert.IsTrue(settings.GlobalHotkeysEnabled);
         Assert.IsFalse(settings.WindowControlHotkeysEnabled);
         Assert.AreEqual("Ctrl+Space", settings.ToggleHotkeyPreset);
@@ -95,6 +97,8 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.ShowTrayIcon);
         Assert.IsFalse(settings.StartWithWindows);
         Assert.IsFalse(settings.AutoCheckForUpdates);
+        Assert.IsFalse(settings.NotificationsEnabled);
+        Assert.AreEqual("Beta", settings.UpdateChannel);
         Assert.IsFalse(settings.ShowSearchModule);
         Assert.IsFalse(settings.ShowQuickActionsModule);
     }
@@ -114,6 +118,8 @@ public sealed class SettingsServiceTests
             ShowTrayIcon = false,
             StartWithWindows = true,
             AutoCheckForUpdates = false,
+            NotificationsEnabled = false,
+            UpdateChannel = "Beta",
             GlobalHotkeysEnabled = false,
             WindowControlHotkeysEnabled = true,
             ToggleHotkeyPreset = "Ctrl+Alt+D",

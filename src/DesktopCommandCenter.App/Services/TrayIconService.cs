@@ -27,6 +27,21 @@ public sealed class TrayIconService : IDisposable
 
     public void SetVisible(bool visible) => _notifyIcon.Visible = visible;
 
+    public void ShowNotification(string title, string message)
+    {
+        if (!_notifyIcon.Visible ||
+            string.IsNullOrWhiteSpace(title) ||
+            string.IsNullOrWhiteSpace(message))
+        {
+            return;
+        }
+
+        _notifyIcon.BalloonTipTitle = title;
+        _notifyIcon.BalloonTipText = message;
+        _notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+        _notifyIcon.ShowBalloonTip(4000);
+    }
+
     public void Dispose()
     {
         _notifyIcon.Visible = false;

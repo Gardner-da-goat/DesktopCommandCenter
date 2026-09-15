@@ -195,6 +195,19 @@
                               IsChecked="{Binding DataContext.ShowTrayIcon, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
 
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Notifications" />
+                        <TextBlock Text="Show update and background task notifications."
+                                   Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <CheckBox Grid.Column="1"
+                              Style="{StaticResource ToggleSwitchStyle}"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding DataContext.NotificationsEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+
                 <Grid>
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <StackPanel>
@@ -515,6 +528,23 @@
                     <TextBlock Grid.Column="1"
                                Text="{Binding DataContext.Updates.CurrentVersion, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                 </Grid>
+                <TextBlock Text="Release channel"
+                           Style="{StaticResource SecondaryText}"
+                           Margin="0,0,0,5" />
+                <UniformGrid Columns="2" Margin="0,0,0,7">
+                    <Button Content="Stable"
+                            Command="{Binding DataContext.UpdateStableCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="6,5"
+                            Margin="0,0,3,0" />
+                    <Button Content="Beta"
+                            Command="{Binding DataContext.UpdateBetaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="6,5"
+                            Margin="3,0,0,0" />
+                </UniformGrid>
+                <TextBlock Text="{Binding DataContext.UpdateChannel, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat=Channel: {0}}"
+                           Style="{StaticResource MutedText}"
+                           Margin="0,0,0,7" />
+
                 <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Auto-check" />

@@ -30,7 +30,7 @@ public partial class App : System.Windows.Application
         var shellActions = new ShellActionService();
         _shellActions = shellActions;
         var appLauncher = new AppLauncherService();
-        var updatesViewModel = new UpdatesViewModel(new UpdateService());
+        var updatesViewModel = new UpdatesViewModel(new UpdateService(), settings);
         var recentViewModel = new RecentActivityViewModel();
         var windowService = new WindowService();
         var fileSearchService = new FileSearchService();
@@ -127,7 +127,25 @@ public partial class App : System.Windows.Application
 
         if (settings.AutoCheckForUpdates)
         {
-            _ = _settingsViewModel.Updates.CheckForUpdatesAsync();
+            _ = CheckForUpdatesAndNotifyAsync();
+        }
+    }
+
+    private async Task CheckForUpdatesAndNotifyAsync()
+    {
+        if (_settingsViewModel is null)
+        {
+            return;
+        }
+
+        await _settingsViewModel.Updates.CheckForUpdatesAsync();
+
+        if (_settingsViewModel.NotificationsEnabled &&
+            _settingsViewModel.Updates.IsUpdateAvailable)
+        {
+            _trayIcon?.ShowNotification(
+                "Desktop Command Center update",
+                $"Version {_settingsViewModel.Updates.LatestVersion} is ready to install.");
         }
     }
 

@@ -47,6 +47,8 @@ public sealed class SettingsViewModel : ObservableObject
         AccentPurpleCommand = new RelayCommand(() => AccentName = "Purple");
         AccentGreenCommand = new RelayCommand(() => AccentName = "Green");
         AccentOrangeCommand = new RelayCommand(() => AccentName = "Orange");
+        UpdateStableCommand = new RelayCommand(() => UpdateChannel = "Stable");
+        UpdateBetaCommand = new RelayCommand(() => UpdateChannel = "Beta");
         ChangeToggleHotkeyCommand = new RelayCommand(CycleToggleHotkey);
         ChangeSearchHotkeyCommand = new RelayCommand(CycleSearchHotkey);
         Categories = new ObservableCollection<SettingsCategory>
@@ -87,6 +89,8 @@ public sealed class SettingsViewModel : ObservableObject
     public RelayCommand AccentPurpleCommand { get; }
     public RelayCommand AccentGreenCommand { get; }
     public RelayCommand AccentOrangeCommand { get; }
+    public RelayCommand UpdateStableCommand { get; }
+    public RelayCommand UpdateBetaCommand { get; }
     public RelayCommand ChangeToggleHotkeyCommand { get; }
     public RelayCommand ChangeSearchHotkeyCommand { get; }
 
@@ -220,6 +224,34 @@ public sealed class SettingsViewModel : ObservableObject
     {
         get => _settings.AutoCheckForUpdates;
         set => SetBoolean(value, () => _settings.AutoCheckForUpdates, v => _settings.AutoCheckForUpdates = v);
+    }
+
+    public bool NotificationsEnabled
+    {
+        get => _settings.NotificationsEnabled;
+        set => SetBoolean(value, () => _settings.NotificationsEnabled, v => _settings.NotificationsEnabled = v);
+    }
+
+    public string UpdateChannel
+    {
+        get => string.Equals(_settings.UpdateChannel, "Beta", StringComparison.OrdinalIgnoreCase)
+            ? "Beta"
+            : "Stable";
+        set
+        {
+            var normalized = string.Equals(value, "Beta", StringComparison.OrdinalIgnoreCase)
+                ? "Beta"
+                : "Stable";
+
+            if (string.Equals(_settings.UpdateChannel, normalized, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            _settings.UpdateChannel = normalized;
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
     }
 
     public bool GlobalHotkeysEnabled

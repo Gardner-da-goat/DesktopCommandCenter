@@ -28,18 +28,62 @@ public sealed class UpdateService
         }
     }
 
-    public async Task<UpdateInfo?> CheckForUpdateAsync(CancellationToken cancellationToken = default)
+    public async Task<UpdateInfo?> CheckForUpdateAsync(
+        string? channel,
+        CancellationToken cancellationToken = default)
     {
-        using var response = await HttpClient.GetAsync(LatestReleaseApi, cancellationToken);
+        var includePrerelease = string.Equals(
+            channel,
+            "Beta",
+            StringComparison.OrdinalIgnoreCase);
+
+        var endpoint = includePrerelease
+            ? "https://api.github.com/repos/Gardner-da-goat/DesktopCommandCenter/releases?per_page=20"
+            : LatestReleaseApi;
+
+        using var response = await HttpClient.GetAsync(endpoint, cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             return null;
         }
 
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-        using var document = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
-        var root = document.RootElement;
+        using var document = await JsonDocument.ParseAsync(
+            stream,
+            cancellationToken: cancellationToken);
 
+        if (!includePrerelease)
+        {
+            return ParseRelease(document.RootElement);
+        }
+
+        UpdateInfo? best = null;
+
+        foreach (var release in document.RootElement.EnumerateArray())
+        {
+            if (release.TryGetProperty("draft", out var draftElement) &&
+                draftElement.GetBoolean())
+            {
+                continue;
+            }
+
+            var candidate = ParseRelease(release);
+            if (candidate is null)
+            {
+                continue;
+            }
+
+            if (best is null || candidate.Version > best.Version)
+            {
+                best = candidate;
+            }
+        }
+
+        return best;
+    }
+
+    private static UpdateInfo? ParseRelease(JsonElement root)
+    {
         var tagName = root.TryGetProperty("tag_name", out var tagElement)
             ? tagElement.GetString()
             : null;
@@ -64,12 +108,17 @@ public sealed class UpdateService
                     ? nameElement.GetString()
                     : null;
 
-                if (!string.Equals(name, ReleaseAssetName, StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(
+                        name,
+                        ReleaseAssetName,
+                        StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
 
-                downloadUrl = asset.TryGetProperty("browser_download_url", out var urlElement)
+                downloadUrl = asset.TryGetProperty(
+                    "browser_download_url",
+                    out var urlElement)
                     ? urlElement.GetString() ?? string.Empty
                     : string.Empty;
                 break;

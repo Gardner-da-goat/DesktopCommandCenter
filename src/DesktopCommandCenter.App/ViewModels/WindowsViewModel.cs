@@ -138,6 +138,8 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
         }
     }
 
+    public void CaptureForegroundNow() => CaptureForeground();
+
     public nint GetReflowTargetHandle()
     {
         CaptureForeground();

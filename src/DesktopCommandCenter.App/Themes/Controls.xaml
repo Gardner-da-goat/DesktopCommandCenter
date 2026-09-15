@@ -1,0 +1,275 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="CardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="13" />
+        <Setter Property="Padding" Value="14" />
+    </Style>
+
+    <Style TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+        <Setter Property="Background" Value="{DynamicResource CardHoverBackground}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="12,7" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Chrome"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentSoft}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Chrome" Property="Opacity" Value="0.72" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Chrome" Property="Opacity" Value="0.38" />
+                            <Setter Property="Cursor" Value="Arrow" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="AccentButton" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource Accent}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Chrome" Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}" CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentHover}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Chrome" Property="Opacity" Value="0.8" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Chrome" Property="Opacity" Value="0.35" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="IconButton" TargetType="Button">
+        <Setter Property="Width" Value="34" />
+        <Setter Property="Height" Value="34" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style x:Key="NavigationButton" TargetType="RadioButton">
+        <Setter Property="Width" Value="40" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="Margin" Value="8,4" />
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="Chrome" Background="Transparent" CornerRadius="10">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource CardHoverBackground}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentSoft}" />
+                            <Setter Property="Foreground" Value="{DynamicResource AccentHover}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ToggleSwitchStyle" TargetType="CheckBox">
+        <Setter Property="Width" Value="40" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Grid>
+                        <Border x:Name="Track" Background="{DynamicResource BorderSubtle}" CornerRadius="11" />
+                        <Ellipse x:Name="Knob" Width="16" Height="16" Margin="3"
+                                 HorizontalAlignment="Left" Fill="{DynamicResource TextSecondary}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Track" Property="Background" Value="{DynamicResource Accent}" />
+                            <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="Knob" Property="Fill" Value="White" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Knob" Property="Opacity" Value="0.86" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                            <Setter Property="Cursor" Value="Arrow" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ModernTextBox" TargetType="TextBox">
+        <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource Accent}" />
+        <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="38,0,12,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="Chrome" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="11">
+                        <Grid>
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" />
+                            <TextBlock x:Name="Watermark" Margin="38,0,12,0" Visibility="Collapsed"
+                                       VerticalAlignment="Center" Foreground="{DynamicResource TextMuted}"
+                                       FontSize="13" IsHitTestVisible="False" Text="{TemplateBinding Tag}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="Watermark" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="Text" Value="{x:Null}">
+                            <Setter TargetName="Watermark" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Accent}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource CardHoverBackground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SliderRepeat" TargetType="RepeatButton">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="2" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ModernSlider" TargetType="Slider">
+        <Setter Property="Height" Value="24" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Grid VerticalAlignment="Center">
+                        <Track x:Name="PART_Track" Height="4"
+                               Minimum="{TemplateBinding Minimum}"
+                               Maximum="{TemplateBinding Maximum}"
+                               Value="{TemplateBinding Value}">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource SliderRepeat}"
+                                              Background="{DynamicResource Accent}"
+                                              Command="{x:Static Slider.DecreaseLarge}" />
+                            </Track.DecreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Width="14" Height="14">
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Ellipse x:Name="ThumbCircle" Fill="White" Stroke="{DynamicResource Accent}" StrokeThickness="2" />
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsDragging" Value="True">
+                                                    <Setter TargetName="ThumbCircle" Property="Fill" Value="{DynamicResource AccentHover}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource SliderRepeat}"
+                                              Background="{DynamicResource BorderSubtle}"
+                                              Command="{x:Static Slider.IncreaseLarge}" />
+                            </Track.IncreaseRepeatButton>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SettingsCategoryItem" TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+        <Setter Property="Padding" Value="10,7" />
+        <Setter Property="Margin" Value="0,0,0,3" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Chrome" Padding="{TemplateBinding Padding}" CornerRadius="8" Background="Transparent">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource CardHoverBackground}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentSoft}" />
+                            <Setter Property="Foreground" Value="{DynamicResource AccentHover}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ToolTip">
+        <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="8,5" />
+    </Style>
+
+    <Style TargetType="ScrollBar">
+        <Setter Property="Width" Value="8" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+</ResourceDictionary>

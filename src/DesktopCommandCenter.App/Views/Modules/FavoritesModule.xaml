@@ -1,0 +1,33 @@
+<UserControl x:Class="DesktopCommandCenter.App.Views.Modules.FavoritesModule"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Style="{StaticResource CardStyle}">
+        <StackPanel>
+            <TextBlock Text="Favorites" Style="{StaticResource SectionTitleText}" Margin="0,0,0,10" />
+            <Grid Margin="0,0,0,7">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="28" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource Success}">
+                    <TextBlock Text="S" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
+                </Border>
+                <TextBlock Grid.Column="1" Text="Spotify" VerticalAlignment="Center" />
+            </Grid>
+            <Grid Margin="0,0,0,7">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="28" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource Accent}">
+                    <TextBlock Text="C" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
+                </Border>
+                <TextBlock Grid.Column="1" Text="Chrome" VerticalAlignment="Center" />
+            </Grid>
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="28" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource AccentHover}">
+                    <TextBlock Text="V" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
+                </Border>
+                <TextBlock Grid.Column="1" Text="VS Code" VerticalAlignment="Center" />
+            </Grid>
+            <Button Content="Customize in Settings" HorizontalAlignment="Left"
+                    Background="Transparent" Foreground="{DynamicResource AccentHover}"
+                    Padding="0,5" IsEnabled="False" />
+        </StackPanel>
+    </Border>
+</UserControl>

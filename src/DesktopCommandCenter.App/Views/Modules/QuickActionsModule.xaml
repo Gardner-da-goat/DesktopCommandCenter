@@ -1,0 +1,14 @@
+<UserControl x:Class="DesktopCommandCenter.App.Views.Modules.QuickActionsModule"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:DesktopCommandCenter.App.Controls">
+    <StackPanel>
+        <TextBlock Text="Quick Actions" Style="{StaticResource SectionTitleText}" Margin="2,0,0,9" />
+        <UniformGrid Columns="2" Rows="2">
+            <controls:QuickActionTile Icon="▣" Label="Screenshot" Margin="0,0,4,4" />
+            <controls:QuickActionTile Icon="♪" Label="Mute" Margin="4,0,0,4" />
+            <controls:QuickActionTile Icon="⇩" Label="Downloads" Margin="0,4,4,0" />
+            <controls:QuickActionTile Icon="▤" Label="Task Manager" Margin="4,4,0,0" />
+        </UniformGrid>
+    </StackPanel>
+</UserControl>

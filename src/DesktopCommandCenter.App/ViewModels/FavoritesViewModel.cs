@@ -9,15 +9,18 @@ public sealed class FavoritesViewModel : ObservableObject
     private readonly AppSettings _settings;
     private readonly ISettingsService _settingsService;
     private readonly AppLauncherService _appLauncher;
+    private readonly RecentActivityViewModel _recent;
 
     public FavoritesViewModel(
         AppSettings settings,
         ISettingsService settingsService,
-        AppLauncherService appLauncher)
+        AppLauncherService appLauncher,
+        RecentActivityViewModel recent)
     {
         _settings = settings;
         _settingsService = settingsService;
         _appLauncher = appLauncher;
+        _recent = recent;
         Items = new ObservableCollection<FavoriteItemViewModel>();
 
         foreach (var favorite in _settings.FavoriteApps)
@@ -59,7 +62,10 @@ public sealed class FavoritesViewModel : ObservableObject
             favorite.LaunchPath,
             new RelayCommand(() =>
             {
-                _ = _appLauncher.Launch(new InstalledAppInfo(favorite.Name, favorite.LaunchPath));
+                Action launch = () =>
+                    _ = _appLauncher.Launch(new InstalledAppInfo(favorite.Name, favorite.LaunchPath));
+                launch();
+                _recent.Add(favorite.Name, "Favorite app", launch);
             }),
             new RelayCommand(() =>
             {

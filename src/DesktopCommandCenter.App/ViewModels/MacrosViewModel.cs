@@ -12,6 +12,7 @@ public sealed class MacrosViewModel : ObservableObject
     private readonly WindowsViewModel _windows;
     private readonly ShellActionService _shellActions;
     private readonly CommandsViewModel _commands;
+    private readonly RecentActivityViewModel _recent;
 
     private string _newMacroName = string.Empty;
     private string _newMacroScript = string.Empty;
@@ -24,7 +25,8 @@ public sealed class MacrosViewModel : ObservableObject
         FavoritesViewModel favorites,
         WindowsViewModel windows,
         ShellActionService shellActions,
-        CommandsViewModel commands)
+        CommandsViewModel commands,
+        RecentActivityViewModel recent)
     {
         _settings = settings;
         _settingsService = settingsService;
@@ -32,6 +34,7 @@ public sealed class MacrosViewModel : ObservableObject
         _windows = windows;
         _shellActions = shellActions;
         _commands = commands;
+        _recent = recent;
 
         Items = new ObservableCollection<MacroItemViewModel>();
         foreach (var macro in _settings.Macros)
@@ -154,6 +157,10 @@ public sealed class MacrosViewModel : ObservableObject
             }
 
             StatusMessage = $"Finished {macro.Name}.";
+            _recent.Add(
+                macro.Name,
+                "Macro",
+                () => _ = RunAsync(macro));
         }
         catch (Exception ex)
         {

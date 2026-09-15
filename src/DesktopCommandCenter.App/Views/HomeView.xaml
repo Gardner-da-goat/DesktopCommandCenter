@@ -87,6 +87,8 @@
 
             <modules:FavoritesModule Margin="0,0,0,10"
                                      Visibility="{Binding ShowFavoritesModule, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <modules:RecentModule Margin="0,0,0,10"
+                                  Visibility="{Binding ShowRecentModule, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <modules:CurrentWindowModule Margin="0,0,0,10"
                                          Visibility="{Binding ShowCurrentWindowModule, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <modules:QuickActionsModule Margin="0,0,0,10"

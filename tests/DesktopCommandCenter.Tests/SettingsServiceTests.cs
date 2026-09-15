@@ -64,6 +64,7 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.ShowQuickActionsModule);
         Assert.IsTrue(settings.ShowMacrosModule);
         Assert.IsFalse(settings.ShowMediaModule);
+        Assert.IsFalse(settings.ShowRecentModule);
         Assert.AreEqual(0, settings.FavoriteApps.Count);
         Assert.AreEqual(0, settings.Macros.Count);
         Assert.AreEqual(0, settings.CustomCommands.Count);
@@ -124,6 +125,7 @@ public sealed class SettingsServiceTests
             ShowFavoritesModule = false,
             ShowMacrosModule = false,
             ShowMediaModule = true,
+            ShowRecentModule = true,
             FavoriteApps =
             [
                 new FavoriteAppSetting { Name = "Example", LaunchPath = @"C:\Example.lnk" }
@@ -163,6 +165,7 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.ShowFavoritesModule);
         Assert.IsFalse(settings.ShowMacrosModule);
         Assert.IsTrue(settings.ShowMediaModule);
+        Assert.IsTrue(settings.ShowRecentModule);
         Assert.AreEqual(1, settings.FavoriteApps.Count);
         Assert.AreEqual("Example", settings.FavoriteApps[0].Name);
         Assert.AreEqual(1, settings.Macros.Count);

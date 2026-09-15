@@ -2,7 +2,7 @@ namespace DesktopCommandCenter.Core.Settings;
 
 public sealed class AppSettings
 {
-    public const int CurrentVersion = 17;
+    public const int CurrentVersion = 18;
     public const double MinimumSidebarWidth = 300;
     public const double MaximumSidebarWidth = 520;
     public const double DefaultSidebarWidth = 360;
@@ -58,6 +58,7 @@ public sealed class AppSettings
     public bool ShowQuickActionsModule { get; set; } = true;
     public bool ShowMacrosModule { get; set; } = true;
     public bool ShowMediaModule { get; set; } = false;
+    public bool ShowRecentModule { get; set; } = false;
 
     public List<FavoriteAppSetting> FavoriteApps { get; set; } = [];
     public List<MacroSetting> Macros { get; set; } = [];

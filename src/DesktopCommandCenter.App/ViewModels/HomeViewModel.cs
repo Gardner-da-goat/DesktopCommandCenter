@@ -13,25 +13,69 @@ public sealed class HomeViewModel : ObservableObject
         WindowsViewModel windowsViewModel,
         SearchViewModel search,
         ShellActionService shellActions,
-        SettingsViewModel settingsViewModel)
+        SettingsViewModel settingsViewModel,
+        RecentActivityViewModel recent)
     {
         _windowsViewModel = windowsViewModel;
         _settingsViewModel = settingsViewModel;
         Search = search;
-        OpenDownloadsCommand = new RelayCommand(() => _ = shellActions.OpenDownloads());
-        OpenTaskManagerCommand = new RelayCommand(() => _ = shellActions.OpenTaskManager());
-        OpenSettingsCommand = new RelayCommand(() => _ = shellActions.OpenWindowsSettings());
-        OpenTerminalCommand = new RelayCommand(() => _ = shellActions.OpenTerminal());
-        OpenScreenshotCommand = new RelayCommand(() => _ = shellActions.OpenScreenshot());
-        ToggleMuteCommand = new RelayCommand(() => _ = shellActions.ToggleMute());
-        VolumeUpCommand = new RelayCommand(() => _ = shellActions.VolumeUp());
-        VolumeDownCommand = new RelayCommand(() => _ = shellActions.VolumeDown());
-        OpenClipboardCommand = new RelayCommand(() => _ = shellActions.OpenClipboardHistory());
-        PlayPauseCommand = new RelayCommand(() => _ = shellActions.PlayPause());
-        NextTrackCommand = new RelayCommand(() => _ = shellActions.NextTrack());
-        PreviousTrackCommand = new RelayCommand(() => _ = shellActions.PreviousTrack());
-        ShowDesktopCommand = new RelayCommand(() => _ = shellActions.ShowDesktop());
-        LockComputerCommand = new RelayCommand(() => _ = shellActions.LockComputer());
+        Recent = recent;
+        OpenDownloadsCommand = CreateTrackedCommand(
+            "Downloads",
+            "Quick action",
+            () => _ = shellActions.OpenDownloads());
+        OpenTaskManagerCommand = CreateTrackedCommand(
+            "Task Manager",
+            "Quick action",
+            () => _ = shellActions.OpenTaskManager());
+        OpenSettingsCommand = CreateTrackedCommand(
+            "Windows Settings",
+            "Quick action",
+            () => _ = shellActions.OpenWindowsSettings());
+        OpenTerminalCommand = CreateTrackedCommand(
+            "Terminal",
+            "Quick action",
+            () => _ = shellActions.OpenTerminal());
+        OpenScreenshotCommand = CreateTrackedCommand(
+            "Screenshot",
+            "Quick action",
+            () => _ = shellActions.OpenScreenshot());
+        ToggleMuteCommand = CreateTrackedCommand(
+            "Mute",
+            "Quick action",
+            () => _ = shellActions.ToggleMute());
+        VolumeUpCommand = CreateTrackedCommand(
+            "Volume Up",
+            "Quick action",
+            () => _ = shellActions.VolumeUp());
+        VolumeDownCommand = CreateTrackedCommand(
+            "Volume Down",
+            "Quick action",
+            () => _ = shellActions.VolumeDown());
+        OpenClipboardCommand = CreateTrackedCommand(
+            "Clipboard History",
+            "Quick action",
+            () => _ = shellActions.OpenClipboardHistory());
+        PlayPauseCommand = CreateTrackedCommand(
+            "Play / Pause",
+            "Media",
+            () => _ = shellActions.PlayPause());
+        NextTrackCommand = CreateTrackedCommand(
+            "Next Track",
+            "Media",
+            () => _ = shellActions.NextTrack());
+        PreviousTrackCommand = CreateTrackedCommand(
+            "Previous Track",
+            "Media",
+            () => _ = shellActions.PreviousTrack());
+        ShowDesktopCommand = CreateTrackedCommand(
+            "Show Desktop",
+            "Quick action",
+            () => _ = shellActions.ShowDesktop());
+        LockComputerCommand = CreateTrackedCommand(
+            "Lock Computer",
+            "Quick action",
+            () => _ = shellActions.LockComputer());
         _windowsViewModel.PropertyChanged += OnWindowsPropertyChanged;
         _settingsViewModel.SettingsChanged += OnSettingsChanged;
     }
@@ -47,6 +91,7 @@ public sealed class HomeViewModel : ObservableObject
     ];
 
     public SearchViewModel Search { get; }
+    public RecentActivityViewModel Recent { get; }
     public FavoritesViewModel Favorites => _settingsViewModel.Favorites;
     public MacrosViewModel Macros => _settingsViewModel.Macros;
     public RelayCommand OpenDownloadsCommand { get; }
@@ -73,6 +118,7 @@ public sealed class HomeViewModel : ObservableObject
     public bool ShowQuickActionsModule => _settingsViewModel.ShowQuickActionsModule;
     public bool ShowMacrosModule => _settingsViewModel.ShowMacrosModule;
     public bool ShowMediaModule => _settingsViewModel.ShowMediaModule;
+    public bool ShowRecentModule => _settingsViewModel.ShowRecentModule;
 
     public bool ShowDownloadsAction => _settingsViewModel.ShowDownloadsAction;
     public bool ShowTaskManagerAction => _settingsViewModel.ShowTaskManagerAction;
@@ -86,6 +132,16 @@ public sealed class HomeViewModel : ObservableObject
     public bool ShowPlayPauseAction => _settingsViewModel.ShowPlayPauseAction;
     public bool ShowDesktopAction => _settingsViewModel.ShowDesktopAction;
     public bool ShowLockAction => _settingsViewModel.ShowLockAction;
+
+    private RelayCommand CreateTrackedCommand(
+        string title,
+        string subtitle,
+        Action action) =>
+        new(() =>
+        {
+            action();
+            Recent.Add(title, subtitle, action);
+        });
 
     private void OnWindowsPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -117,6 +173,9 @@ public sealed class HomeViewModel : ObservableObject
                 break;
             case nameof(SettingsViewModel.ShowMediaModule):
                 OnPropertyChanged(nameof(ShowMediaModule));
+                break;
+            case nameof(SettingsViewModel.ShowRecentModule):
+                OnPropertyChanged(nameof(ShowRecentModule));
                 break;
             case nameof(SettingsViewModel.ShowDownloadsAction):
                 OnPropertyChanged(nameof(ShowDownloadsAction));

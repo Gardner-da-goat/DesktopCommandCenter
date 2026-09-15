@@ -9,6 +9,7 @@ public sealed class CommandsViewModel : ObservableObject
     private readonly AppSettings _settings;
     private readonly ISettingsService _settingsService;
     private readonly ShellActionService _shellActions;
+    private readonly RecentActivityViewModel _recent;
     private string _newCommandName = string.Empty;
     private string _newCommandTarget = string.Empty;
     private string _statusMessage = "Ready";
@@ -16,11 +17,13 @@ public sealed class CommandsViewModel : ObservableObject
     public CommandsViewModel(
         AppSettings settings,
         ISettingsService settingsService,
-        ShellActionService shellActions)
+        ShellActionService shellActions,
+        RecentActivityViewModel recent)
     {
         _settings = settings;
         _settingsService = settingsService;
         _shellActions = shellActions;
+        _recent = recent;
         Items = new ObservableCollection<CommandItemViewModel>();
 
         foreach (var command in _settings.CustomCommands)
@@ -95,9 +98,16 @@ public sealed class CommandsViewModel : ObservableObject
             setting,
             new RelayCommand(() =>
             {
-                StatusMessage = _shellActions.OpenPath(setting.Target)
+                Action run = () => _ = _shellActions.OpenPath(setting.Target);
+                var opened = _shellActions.OpenPath(setting.Target);
+                StatusMessage = opened
                     ? $"Opened {setting.Name}."
                     : $"Could not open {setting.Name}.";
+
+                if (opened)
+                {
+                    _recent.Add(setting.Name, "Custom command", run);
+                }
             }),
             new RelayCommand(() =>
             {

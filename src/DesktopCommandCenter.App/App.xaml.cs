@@ -31,6 +31,7 @@ public partial class App : System.Windows.Application
         _shellActions = shellActions;
         var appLauncher = new AppLauncherService();
         var updatesViewModel = new UpdatesViewModel(new UpdateService());
+        var recentViewModel = new RecentActivityViewModel();
         var windowService = new WindowService();
         var fileSearchService = new FileSearchService();
         fileSearchService.StartIndexing();
@@ -46,14 +47,16 @@ public partial class App : System.Windows.Application
         var favoritesViewModel = new FavoritesViewModel(
             settings,
             settingsService,
-            appLauncher);
+            appLauncher,
+            recentViewModel);
 
         _windowsViewModel = new WindowsViewModel(windowService);
 
         var commandsViewModel = new CommandsViewModel(
             settings,
             settingsService,
-            shellActions);
+            shellActions,
+            recentViewModel);
 
         var macrosViewModel = new MacrosViewModel(
             settings,
@@ -61,7 +64,8 @@ public partial class App : System.Windows.Application
             favoritesViewModel,
             _windowsViewModel,
             shellActions,
-            commandsViewModel);
+            commandsViewModel,
+            recentViewModel);
 
         _settingsViewModel = new SettingsViewModel(
             settings,
@@ -86,7 +90,8 @@ public partial class App : System.Windows.Application
             _windowsViewModel,
             searchViewModel,
             shellActions,
-            _settingsViewModel);
+            _settingsViewModel,
+            recentViewModel);
 
         var sidebarViewModel = new SidebarViewModel(
             settings,

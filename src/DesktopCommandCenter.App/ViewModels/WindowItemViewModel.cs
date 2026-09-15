@@ -25,6 +25,8 @@ public sealed class WindowItemViewModel : ObservableObject
         CloseCommand = new RelayCommand(() => _windowService.Close(Handle));
         SnapLeftCommand = new RelayCommand(() => _windowService.Snap(Handle, WindowSnapPosition.Left));
         SnapRightCommand = new RelayCommand(() => _windowService.Snap(Handle, WindowSnapPosition.Right));
+        CenterCommand = new RelayCommand(() => _windowService.Center(Handle));
+        MoveToNextMonitorCommand = new RelayCommand(() => _windowService.MoveToNextMonitor(Handle));
     }
 
     public nint Handle => _window.Handle;
@@ -80,6 +82,8 @@ public sealed class WindowItemViewModel : ObservableObject
     public ICommand CloseCommand { get; }
     public ICommand SnapLeftCommand { get; }
     public ICommand SnapRightCommand { get; }
+    public ICommand CenterCommand { get; }
+    public ICommand MoveToNextMonitorCommand { get; }
 
     public void Refresh(WindowInfo window, nint activeHandle)
     {

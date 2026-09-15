@@ -27,7 +27,7 @@
             <Border Style="{StaticResource CardStyle}" Margin="0,0,0,14">
                 <StackPanel>
                     <TextBlock Text="Window controls" Style="{StaticResource SectionTitleText}" />
-                    <TextBlock Text="Focus, resize, pin, and adjust opacity without leaving the command center."
+                    <TextBlock Text="Focus, resize, pin, move, and adjust opacity without leaving the command center."
                                Style="{StaticResource MutedText}" Margin="0,4,0,0" />
                 </StackPanel>
             </Border>
@@ -124,6 +124,19 @@
                                     </Grid.ColumnDefinitions>
                                     <Button Content="Snap Left" Command="{Binding SnapLeftCommand}" />
                                     <Button Grid.Column="2" Content="Snap Right" Command="{Binding SnapRightCommand}" />
+                                </Grid>
+
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="6" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Content="Center" Command="{Binding CenterCommand}" />
+                                    <Button Grid.Column="2"
+                                            Content="Next Monitor"
+                                            Command="{Binding MoveToNextMonitorCommand}"
+                                            ToolTip="Move this window to the next monitor and center it." />
                                 </Grid>
 
                                 <Button Content="Close Window"

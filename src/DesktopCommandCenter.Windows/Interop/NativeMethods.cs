@@ -31,10 +31,19 @@ internal static class NativeMethods
     internal static readonly nint HwndNoTopmost = new(-2);
 
     internal delegate bool EnumWindowsProc(nint hWnd, nint lParam);
+    internal delegate bool MonitorEnumProc(nint hMonitor, nint hdcMonitor, nint rect, nint data);
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, nint lParam);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool EnumDisplayMonitors(
+        nint hdc,
+        nint clipRect,
+        MonitorEnumProc callback,
+        nint data);
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -70,6 +79,10 @@ internal static class NativeMethods
 
     [DllImport("user32.dll")]
     internal static extern nint GetWindow(nint hWnd, uint uCmd);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool GetWindowRect(nint hWnd, out Rect rect);
 
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]

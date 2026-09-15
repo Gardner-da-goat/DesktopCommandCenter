@@ -178,23 +178,7 @@ public sealed class WindowService
 
     public bool Snap(nint handle, WindowSnapPosition position)
     {
-        if (!NativeMethods.IsWindow(handle))
-        {
-            return false;
-        }
-
-        var monitor = NativeMethods.MonitorFromWindow(handle, NativeMethods.MonitorDefaultToNearest);
-        if (monitor == 0)
-        {
-            return false;
-        }
-
-        var info = new NativeMethods.MonitorInfo
-        {
-            Size = (uint)Marshal.SizeOf<NativeMethods.MonitorInfo>()
-        };
-
-        if (!NativeMethods.GetMonitorInfo(monitor, ref info))
+        if (!TryGetMonitorInfoForWindow(handle, out var info))
         {
             return false;
         }
@@ -214,6 +198,74 @@ public sealed class WindowService
             x,
             info.Work.Top,
             halfWidth,
+            height,
+            NativeMethods.SwpNoActivate | NativeMethods.SwpShowWindow);
+    }
+
+    public bool Center(nint handle)
+    {
+        if (!TryGetMonitorInfoForWindow(handle, out var info) ||
+            !NativeMethods.GetWindowRect(handle, out var rect))
+        {
+            return false;
+        }
+
+        _ = NativeMethods.ShowWindow(handle, NativeMethods.SwRestore);
+
+        var workWidth = info.Work.Right - info.Work.Left;
+        var workHeight = info.Work.Bottom - info.Work.Top;
+        var currentWidth = Math.Max(200, rect.Right - rect.Left);
+        var currentHeight = Math.Max(120, rect.Bottom - rect.Top);
+        var width = Math.Min(currentWidth, workWidth);
+        var height = Math.Min(currentHeight, workHeight);
+        var x = info.Work.Left + (workWidth - width) / 2;
+        var y = info.Work.Top + (workHeight - height) / 2;
+
+        return NativeMethods.SetWindowPos(
+            handle,
+            0,
+            x,
+            y,
+            width,
+            height,
+            NativeMethods.SwpNoActivate | NativeMethods.SwpShowWindow);
+    }
+
+    public bool MoveToNextMonitor(nint handle)
+    {
+        if (!NativeMethods.IsWindow(handle) ||
+            !NativeMethods.GetWindowRect(handle, out var rect))
+        {
+            return false;
+        }
+
+        var monitors = GetMonitors();
+        if (monitors.Count < 2)
+        {
+            return false;
+        }
+
+        var currentMonitor = NativeMethods.MonitorFromWindow(handle, NativeMethods.MonitorDefaultToNearest);
+        var currentIndex = monitors.FindIndex(monitor => monitor.Handle == currentMonitor);
+        if (currentIndex < 0)
+        {
+            currentIndex = 0;
+        }
+
+        var target = monitors[(currentIndex + 1) % monitors.Count];
+        _ = NativeMethods.ShowWindow(handle, NativeMethods.SwRestore);
+
+        var width = Math.Min(Math.Max(200, rect.Right - rect.Left), target.Work.Right - target.Work.Left);
+        var height = Math.Min(Math.Max(120, rect.Bottom - rect.Top), target.Work.Bottom - target.Work.Top);
+        var x = target.Work.Left + ((target.Work.Right - target.Work.Left) - width) / 2;
+        var y = target.Work.Top + ((target.Work.Bottom - target.Work.Top) - height) / 2;
+
+        return NativeMethods.SetWindowPos(
+            handle,
+            0,
+            x,
+            y,
+            width,
             height,
             NativeMethods.SwpNoActivate | NativeMethods.SwpShowWindow);
     }
@@ -254,10 +306,48 @@ public sealed class WindowService
         }
         catch (DllNotFoundException)
         {
-            // DWM is available on supported Windows versions; if not, visibility filtering is enough.
+            // DWM is available on supported Windows versions; visibility filtering is enough otherwise.
         }
 
         return NativeMethods.GetWindowTextLength(handle) > 0;
+    }
+
+    private static bool TryGetMonitorInfoForWindow(nint handle, out NativeMethods.MonitorInfo info)
+    {
+        info = new NativeMethods.MonitorInfo
+        {
+            Size = (uint)Marshal.SizeOf<NativeMethods.MonitorInfo>()
+        };
+
+        if (!NativeMethods.IsWindow(handle))
+        {
+            return false;
+        }
+
+        var monitor = NativeMethods.MonitorFromWindow(handle, NativeMethods.MonitorDefaultToNearest);
+        return monitor != 0 && NativeMethods.GetMonitorInfo(monitor, ref info);
+    }
+
+    private static List<MonitorSnapshot> GetMonitors()
+    {
+        var monitors = new List<MonitorSnapshot>();
+
+        NativeMethods.EnumDisplayMonitors(0, 0, (handle, _, _, _) =>
+        {
+            var info = new NativeMethods.MonitorInfo
+            {
+                Size = (uint)Marshal.SizeOf<NativeMethods.MonitorInfo>()
+            };
+
+            if (NativeMethods.GetMonitorInfo(handle, ref info))
+            {
+                monitors.Add(new MonitorSnapshot(handle, info.Work));
+            }
+
+            return true;
+        }, 0);
+
+        return monitors;
     }
 
     private static string GetProcessName(uint processId)
@@ -272,4 +362,6 @@ public sealed class WindowService
             return "App";
         }
     }
+
+    private sealed record MonitorSnapshot(nint Handle, NativeMethods.Rect Work);
 }

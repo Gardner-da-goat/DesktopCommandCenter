@@ -88,13 +88,49 @@
         <DataTemplate x:Key="CustomizeHomeTemplate">
             <StackPanel>
                 <TextBlock Text="Home Modules" Style="{StaticResource SecondaryText}" Margin="0,0,0,10" />
-                <Grid Margin="0,0,0,9"><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/><TextBlock Grid.Column="1" Text="Search Bar"/><CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True" IsEnabled="False"/></Grid>
-                <Grid Margin="0,0,0,9"><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/><TextBlock Grid.Column="1" Text="Favorites"/><CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True" IsEnabled="False"/></Grid>
-                <Grid Margin="0,0,0,9"><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/><TextBlock Grid.Column="1" Text="Current Window"/><CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True" IsEnabled="False"/></Grid>
-                <Grid Margin="0,0,0,9"><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/><TextBlock Grid.Column="1" Text="Quick Actions"/><CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True" IsEnabled="False"/></Grid>
-                <Grid Margin="0,0,0,9"><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/><TextBlock Grid.Column="1" Text="Macros"/><CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True" IsEnabled="False"/></Grid>
-                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/><TextBlock Grid.Column="1" Text="Recent"/><CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False" IsEnabled="False"/></Grid>
-                <TextBlock Text="Reordering and module visibility arrive in a later phase." Style="{StaticResource MutedText}" Margin="0,13,0,0" />
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/>
+                    <TextBlock Grid.Column="1" Text="Search Bar"/>
+                    <CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}"
+                              IsChecked="{Binding DataContext.ShowSearchModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/>
+                    <TextBlock Grid.Column="1" Text="Favorites"/>
+                    <CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}"
+                              IsChecked="{Binding DataContext.ShowFavoritesModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/>
+                    <TextBlock Grid.Column="1" Text="Current Window"/>
+                    <CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}"
+                              IsChecked="{Binding DataContext.ShowCurrentWindowModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/>
+                    <TextBlock Grid.Column="1" Text="Quick Actions"/>
+                    <CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}"
+                              IsChecked="{Binding DataContext.ShowQuickActionsModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="≡" Foreground="{DynamicResource TextMuted}"/>
+                    <TextBlock Grid.Column="1" Text="Macros"/>
+                    <CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitchStyle}"
+                              IsChecked="{Binding DataContext.ShowMacrosModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                </Grid>
+
+                <TextBlock Text="Visibility changes save immediately. Drag reordering is planned for a later update."
+                           Style="{StaticResource MutedText}" Margin="0,13,0,0" />
             </StackPanel>
         </DataTemplate>
 

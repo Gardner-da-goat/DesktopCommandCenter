@@ -9,6 +9,11 @@ namespace DesktopCommandCenter.App.Services;
 
 public sealed class UpdateService
 {
+    private static string BackupDirectory => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "DesktopCommandCenter",
+        "Backup");
+
     private const string LatestReleaseApi =
         "https://api.github.com/repos/Gardner-da-goat/DesktopCommandCenter/releases/latest";
 
@@ -233,7 +238,8 @@ public sealed class UpdateService
                 [int]$ProcessIdToWait,
                 [string]$ZipPath,
                 [string]$TargetDirectory,
-                [string]$ExecutablePath
+                [string]$ExecutablePath,
+                [string]$BackupDirectory
             )
 
             $ErrorActionPreference = 'Stop'
@@ -248,6 +254,11 @@ public sealed class UpdateService
             try {
                 New-Item -ItemType Directory -Path $staging -Force | Out-Null
                 Expand-Archive -LiteralPath $ZipPath -DestinationPath $staging -Force
+
+                Remove-Item -LiteralPath $BackupDirectory -Recurse -Force -ErrorAction SilentlyContinue
+                New-Item -ItemType Directory -Path $BackupDirectory -Force | Out-Null
+                Copy-Item -Path (Join-Path $TargetDirectory '*') -Destination $BackupDirectory -Recurse -Force
+
                 Copy-Item -Path (Join-Path $staging '*') -Destination $TargetDirectory -Recurse -Force
                 Start-Process -FilePath $ExecutablePath
             }
@@ -274,6 +285,99 @@ public sealed class UpdateService
             startInfo.ArgumentList.Add(Environment.ProcessId.ToString());
             startInfo.ArgumentList.Add("-ZipPath");
             startInfo.ArgumentList.Add(zipPath);
+            startInfo.ArgumentList.Add("-TargetDirectory");
+            startInfo.ArgumentList.Add(targetDirectory);
+            startInfo.ArgumentList.Add("-ExecutablePath");
+            startInfo.ArgumentList.Add(executablePath);
+            startInfo.ArgumentList.Add("-BackupDirectory");
+            startInfo.ArgumentList.Add(BackupDirectory);
+
+            Process.Start(startInfo);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public bool HasRollbackBackup()
+    {
+        try
+        {
+            return Directory.Exists(BackupDirectory) &&
+                   File.Exists(Path.Combine(BackupDirectory, "DesktopCommandCenter.exe"));
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public bool LaunchRollback()
+    {
+        if (!HasRollbackBackup())
+        {
+            return false;
+        }
+
+        var targetDirectory = AppContext.BaseDirectory.TrimEnd(
+            Path.DirectorySeparatorChar,
+            Path.AltDirectorySeparatorChar);
+
+        if (!CanWriteDirectory(targetDirectory))
+        {
+            return false;
+        }
+
+        var executablePath = Path.Combine(
+            targetDirectory,
+            "DesktopCommandCenter.exe");
+
+        var updateDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "DesktopCommandCenter",
+            "Updates");
+
+        Directory.CreateDirectory(updateDirectory);
+        var scriptPath = Path.Combine(updateDirectory, "rollback-update.ps1");
+
+        File.WriteAllText(scriptPath, """
+            param(
+                [int]$ProcessIdToWait,
+                [string]$BackupDirectory,
+                [string]$TargetDirectory,
+                [string]$ExecutablePath
+            )
+
+            $ErrorActionPreference = 'Stop'
+
+            try {
+                Wait-Process -Id $ProcessIdToWait -ErrorAction SilentlyContinue
+            } catch {
+            }
+
+            Copy-Item -Path (Join-Path $BackupDirectory '*') -Destination $TargetDirectory -Recurse -Force
+            Start-Process -FilePath $ExecutablePath
+            """);
+
+        try
+        {
+            var startInfo = new ProcessStartInfo("powershell.exe")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            startInfo.ArgumentList.Add("-NoProfile");
+            startInfo.ArgumentList.Add("-ExecutionPolicy");
+            startInfo.ArgumentList.Add("Bypass");
+            startInfo.ArgumentList.Add("-File");
+            startInfo.ArgumentList.Add(scriptPath);
+            startInfo.ArgumentList.Add("-ProcessIdToWait");
+            startInfo.ArgumentList.Add(Environment.ProcessId.ToString());
+            startInfo.ArgumentList.Add("-BackupDirectory");
+            startInfo.ArgumentList.Add(BackupDirectory);
             startInfo.ArgumentList.Add("-TargetDirectory");
             startInfo.ArgumentList.Add(targetDirectory);
             startInfo.ArgumentList.Add("-ExecutablePath");

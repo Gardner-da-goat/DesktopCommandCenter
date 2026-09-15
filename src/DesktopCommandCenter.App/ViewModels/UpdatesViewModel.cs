@@ -23,6 +23,7 @@ public sealed class UpdatesViewModel : ObservableObject
         CurrentVersion = _updateService.CurrentVersion.ToString(3);
         CheckCommand = new RelayCommand(() => _ = CheckForUpdatesAsync());
         UpdateAndRestartCommand = new RelayCommand(() => _ = UpdateAndRestartAsync());
+        RollbackCommand = new RelayCommand(Rollback);
     }
 
     public event EventHandler? RestartRequested;
@@ -30,6 +31,8 @@ public sealed class UpdatesViewModel : ObservableObject
     public string CurrentVersion { get; }
     public RelayCommand CheckCommand { get; }
     public RelayCommand UpdateAndRestartCommand { get; }
+    public RelayCommand RollbackCommand { get; }
+    public bool CanRollback => _updateService.HasRollbackBackup();
 
     public string LatestVersion
     {
@@ -106,6 +109,25 @@ public sealed class UpdatesViewModel : ObservableObject
         {
             IsChecking = false;
         }
+    }
+
+    private void Rollback()
+    {
+        if (!_updateService.HasRollbackBackup())
+        {
+            StatusMessage = "No previous version backup is available yet.";
+            OnPropertyChanged(nameof(CanRollback));
+            return;
+        }
+
+        StatusMessage = "Restoring previous version…";
+        if (!_updateService.LaunchRollback())
+        {
+            StatusMessage = "Could not start rollback. Make sure the app folder is writable.";
+            return;
+        }
+
+        RestartRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private async Task UpdateAndRestartAsync()

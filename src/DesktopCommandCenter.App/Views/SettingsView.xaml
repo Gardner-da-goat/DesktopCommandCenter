@@ -560,6 +560,10 @@
                         Command="{Binding DataContext.Updates.UpdateAndRestartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         IsEnabled="{Binding DataContext.Updates.IsUpdateAvailable, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         Margin="0,0,0,5" />
+                <Button Content="Roll Back Previous Version"
+                        Command="{Binding DataContext.Updates.RollbackCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        IsEnabled="{Binding DataContext.Updates.CanRollback, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Margin="0,0,0,5" />
                 <TextBlock Text="{Binding DataContext.Updates.StatusMessage, RelativeSource={RelativeSource AncestorType=UserControl}}"
                            Style="{StaticResource MutedText}"
                            TextWrapping="Wrap" />

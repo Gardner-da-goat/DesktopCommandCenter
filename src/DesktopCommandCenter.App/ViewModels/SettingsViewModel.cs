@@ -177,6 +177,12 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.ShowTrayIcon, v => _settings.ShowTrayIcon = v);
     }
 
+    public bool StartWithWindows
+    {
+        get => _settings.StartWithWindows;
+        set => SetBoolean(value, () => _settings.StartWithWindows, v => _settings.StartWithWindows = v);
+    }
+
     public bool AutoCheckForUpdates
     {
         get => _settings.AutoCheckForUpdates;

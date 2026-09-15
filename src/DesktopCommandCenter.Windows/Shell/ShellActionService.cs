@@ -90,6 +90,57 @@ public sealed class ShellActionService
 
     public bool EnsureDesktopShortcut(string executablePath)
     {
+        var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+        if (string.IsNullOrWhiteSpace(desktop))
+        {
+            return false;
+        }
+
+        return CreateShortcut(
+            Path.Combine(desktop, "Desktop Command Center.lnk"),
+            executablePath,
+            "Desktop Command Center");
+    }
+
+    public bool SetStartWithWindows(string executablePath, bool enabled)
+    {
+        try
+        {
+            var startup = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+            if (string.IsNullOrWhiteSpace(startup))
+            {
+                return false;
+            }
+
+            Directory.CreateDirectory(startup);
+            var shortcutPath = Path.Combine(startup, "Desktop Command Center.lnk");
+
+            if (!enabled)
+            {
+                if (File.Exists(shortcutPath))
+                {
+                    File.Delete(shortcutPath);
+                }
+
+                return true;
+            }
+
+            return CreateShortcut(
+                shortcutPath,
+                executablePath,
+                "Launch Desktop Command Center when Windows starts");
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static bool CreateShortcut(
+        string shortcutPath,
+        string executablePath,
+        string description)
+    {
         if (string.IsNullOrWhiteSpace(executablePath) || !File.Exists(executablePath))
         {
             return false;
@@ -100,15 +151,13 @@ public sealed class ShellActionService
 
         try
         {
-            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            if (string.IsNullOrWhiteSpace(desktop))
+            var directory = Path.GetDirectoryName(shortcutPath);
+            if (string.IsNullOrWhiteSpace(directory))
             {
                 return false;
             }
 
-            Directory.CreateDirectory(desktop);
-            var shortcutPath = Path.Combine(desktop, "Desktop Command Center.lnk");
-
+            Directory.CreateDirectory(directory);
             var shellType = Type.GetTypeFromProgID("WScript.Shell");
             if (shellType is null)
             {
@@ -155,7 +204,7 @@ public sealed class ShellActionService
                 BindingFlags.SetProperty,
                 null,
                 shortcut,
-                ["Desktop Command Center"]);
+                [description]);
 
             shortcutType.InvokeMember(
                 "IconLocation",

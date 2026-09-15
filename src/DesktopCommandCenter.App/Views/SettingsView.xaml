@@ -165,12 +165,25 @@
                               IsChecked="{Binding DataContext.AnimationsEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
 
-                <Grid>
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Tray icon" VerticalAlignment="Center" />
                     <CheckBox Grid.Column="1"
                               Style="{StaticResource ToggleSwitchStyle}"
                               IsChecked="{Binding DataContext.ShowTrayIcon, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Start with Windows" />
+                        <TextBlock Text="Launch at sign-in without administrator access."
+                                   Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <CheckBox Grid.Column="1"
+                              Style="{StaticResource ToggleSwitchStyle}"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding DataContext.StartWithWindows, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
             </StackPanel>
         </DataTemplate>

@@ -17,7 +17,7 @@
                                FontWeight="SemiBold"
                                FontSize="11.5"
                                TextTrimming="CharacterEllipsis" />
-                    <TextBlock Text="{Binding CurrentWindow.ProcessName, TargetNullValue=Use another app, then open the sidebar.}"
+                    <TextBlock Text="{Binding CurrentWindow.ProcessName, TargetNullValue=Use another app first.}"
                                Style="{StaticResource MutedText}"
                                FontSize="9.5"
                                TextTrimming="CharacterEllipsis" />

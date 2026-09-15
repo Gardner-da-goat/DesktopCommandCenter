@@ -66,6 +66,7 @@ public sealed class SidebarViewModel : ObservableObject
     public string SearchHotkeyPreset => Settings.SearchHotkeyPreset;
     public bool ReflowWindowsOnSidebar => Settings.ReflowWindowsOnSidebar;
     public SidebarEdge SidebarEdge => Settings.SidebarEdge;
+    public SidebarHandlePosition HandlePosition => Settings.HandlePosition;
     public bool IsSidebarOnLeft => SidebarEdge == SidebarEdge.Left;
     public string HandleArrowGlyph => IsSidebarOnLeft ? "❯" : "❮";
     public string CollapseArrowGlyph => IsSidebarOnLeft ? "❮" : "❯";
@@ -152,6 +153,10 @@ public sealed class SidebarViewModel : ObservableObject
             OnPropertyChanged(nameof(IsSidebarOnLeft));
             OnPropertyChanged(nameof(HandleArrowGlyph));
             OnPropertyChanged(nameof(CollapseArrowGlyph));
+        }
+        else if (e.PropertyName == nameof(SettingsViewModel.HandlePosition))
+        {
+            OnPropertyChanged(nameof(HandlePosition));
         }
     }
 }

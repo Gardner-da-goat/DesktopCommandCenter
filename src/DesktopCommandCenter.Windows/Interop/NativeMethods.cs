@@ -162,6 +162,9 @@ internal static class NativeMethods
     [DllImport("user32.dll")]
     internal static extern uint GetDpiForSystem();
 
+    [DllImport("user32.dll")]
+    internal static extern uint GetDpiForWindow(nint hWnd);
+
     [DllImport("dwmapi.dll")]
     internal static extern int DwmGetWindowAttribute(
         nint hWnd,

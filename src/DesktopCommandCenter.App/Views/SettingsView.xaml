@@ -96,6 +96,27 @@
                                  IsChecked="{Binding DataContext.IsSidebarOnRight, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
 
+                <TextBlock Text="Handle position"
+                           Style="{StaticResource SecondaryText}"
+                           Margin="0,0,0,4" />
+                <UniformGrid Columns="3" Margin="0,0,0,8">
+                    <RadioButton Content="Top"
+                                 GroupName="HandlePosition"
+                                 Style="{StaticResource CompactStartOption}"
+                                 IsChecked="{Binding DataContext.IsHandleAtTop, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                                 Margin="0,0,3,0" />
+                    <RadioButton Content="Center"
+                                 GroupName="HandlePosition"
+                                 Style="{StaticResource CompactStartOption}"
+                                 IsChecked="{Binding DataContext.IsHandleAtCenter, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                                 Margin="3,0" />
+                    <RadioButton Content="Bottom"
+                                 GroupName="HandlePosition"
+                                 Style="{StaticResource CompactStartOption}"
+                                 IsChecked="{Binding DataContext.IsHandleAtBottom, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                                 Margin="3,0,0,0" />
+                </UniformGrid>
+
                 <Grid Margin="0,0,0,2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -125,6 +146,7 @@
                 <Slider Minimum="300"
                         Maximum="520"
                         TickFrequency="10"
+                        IsSnapToTickEnabled="True"
                         SmallChange="10"
                         LargeChange="20"
                         Style="{StaticResource ModernSlider}"

@@ -159,6 +159,39 @@ public sealed class SettingsViewModel : ObservableObject
         }
     }
 
+    public SidebarHandlePosition HandlePosition
+    {
+        get => _settings.HandlePosition;
+        set
+        {
+            if (_settings.HandlePosition == value) return;
+            _settings.HandlePosition = value;
+            SaveAndNotify();
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsHandleAtTop));
+            OnPropertyChanged(nameof(IsHandleAtCenter));
+            OnPropertyChanged(nameof(IsHandleAtBottom));
+        }
+    }
+
+    public bool IsHandleAtTop
+    {
+        get => HandlePosition == SidebarHandlePosition.Top;
+        set { if (value) HandlePosition = SidebarHandlePosition.Top; }
+    }
+
+    public bool IsHandleAtCenter
+    {
+        get => HandlePosition == SidebarHandlePosition.Center;
+        set { if (value) HandlePosition = SidebarHandlePosition.Center; }
+    }
+
+    public bool IsHandleAtBottom
+    {
+        get => HandlePosition == SidebarHandlePosition.Bottom;
+        set { if (value) HandlePosition = SidebarHandlePosition.Bottom; }
+    }
+
     public bool AlwaysOnTop
     {
         get => _settings.AlwaysOnTop;

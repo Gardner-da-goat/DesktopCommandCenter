@@ -6,6 +6,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using DesktopCommandCenter.App.ViewModels;
 using DesktopCommandCenter.Core.State;
+using DesktopCommandCenter.Core.Settings;
 using DesktopCommandCenter.Windows.Hotkeys;
 using DesktopCommandCenter.Windows.Monitors;
 using DesktopCommandCenter.Windows.Windows;
@@ -56,6 +57,7 @@ public partial class SidebarWindow : Window
         _source = HwndSource.FromHwnd(_windowHandle);
         _source?.AddHook(WindowProc);
         ApplyHotkeyRegistration();
+        ApplyHandlePosition();
     }
 
     private void ApplyHotkeyRegistration()
@@ -204,6 +206,10 @@ public partial class SidebarWindow : Window
                 ReflowAllWindows();
             }
         }
+        else if (e.PropertyName == nameof(SidebarViewModel.HandlePosition))
+        {
+            ApplyHandlePosition();
+        }
     }
 
     private void ReflowAllWindows()
@@ -227,6 +233,23 @@ public partial class SidebarWindow : Window
 
         _windowService.RestoreReflows(_reflowSnapshots);
         _reflowSnapshots = [];
+    }
+
+    private void ApplyHandlePosition()
+    {
+        CollapsedHandle.VerticalAlignment = _viewModel.HandlePosition switch
+        {
+            SidebarHandlePosition.Top => VerticalAlignment.Top,
+            SidebarHandlePosition.Bottom => VerticalAlignment.Bottom,
+            _ => VerticalAlignment.Center
+        };
+
+        CollapsedHandle.Margin = _viewModel.HandlePosition switch
+        {
+            SidebarHandlePosition.Top => new Thickness(0, 18, 0, 0),
+            SidebarHandlePosition.Bottom => new Thickness(0, 0, 0, 18),
+            _ => new Thickness(0)
+        };
     }
 
     private void AnimateWidth(double targetWidth)

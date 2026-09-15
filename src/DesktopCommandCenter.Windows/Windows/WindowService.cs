@@ -395,7 +395,15 @@ public sealed class WindowService
                 wasMaximized,
                 wasMinimized);
 
-            var dpi = Math.Max(96u, NativeMethods.GetDpiForSystem());
+            uint dpi;
+            try
+            {
+                dpi = Math.Max(96u, NativeMethods.GetDpiForWindow(handle));
+            }
+            catch
+            {
+                dpi = Math.Max(96u, NativeMethods.GetDpiForSystem());
+            }
             var sidebarWidthPixels = (int)Math.Ceiling(sidebarWidthDip * dpi / 96d);
 
             var availableLeft = monitorInfo.Work.Left + (sidebarOnLeft ? sidebarWidthPixels : 0);
@@ -410,11 +418,16 @@ public sealed class WindowService
                 return null;
             }
 
+            _ = NativeMethods.ShowWindow(handle, NativeMethods.SwRestore);
+
+            var restoredRect = rect;
+            _ = NativeMethods.GetWindowRect(handle, out restoredRect);
+
             var leftFrameInset = 0;
             var topFrameInset = 0;
             var rightFrameInset = 0;
             var bottomFrameInset = 0;
-            NativeMethods.Rect visibleFrame = rect;
+            NativeMethods.Rect visibleFrame = restoredRect;
 
             try
             {
@@ -425,18 +438,16 @@ public sealed class WindowService
                         Marshal.SizeOf<NativeMethods.Rect>()) == 0)
                 {
                     visibleFrame = frameRect;
-                    leftFrameInset = Math.Clamp(frameRect.Left - rect.Left, 0, 32);
-                    topFrameInset = Math.Clamp(frameRect.Top - rect.Top, 0, 32);
-                    rightFrameInset = Math.Clamp(rect.Right - frameRect.Right, 0, 32);
-                    bottomFrameInset = Math.Clamp(rect.Bottom - frameRect.Bottom, 0, 32);
+                    leftFrameInset = Math.Clamp(frameRect.Left - restoredRect.Left, 0, 48);
+                    topFrameInset = Math.Clamp(frameRect.Top - restoredRect.Top, 0, 48);
+                    rightFrameInset = Math.Clamp(restoredRect.Right - frameRect.Right, 0, 48);
+                    bottomFrameInset = Math.Clamp(restoredRect.Bottom - frameRect.Bottom, 0, 48);
                 }
             }
             catch
             {
-                visibleFrame = rect;
+                visibleFrame = restoredRect;
             }
-
-            _ = NativeMethods.ShowWindow(handle, NativeMethods.SwRestore);
 
             int targetX;
             int targetY;

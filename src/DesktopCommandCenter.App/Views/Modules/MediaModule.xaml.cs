@@ -1,8 +1,6 @@
-using System.Windows.Controls;
-
 namespace DesktopCommandCenter.App.Views.Modules;
 
-public partial class MediaModule : UserControl
+public partial class MediaModule : System.Windows.Controls.UserControl
 {
     public MediaModule()
     {

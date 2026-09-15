@@ -5,10 +5,22 @@
     <StackPanel>
         <TextBlock Text="Quick Actions" Style="{StaticResource SectionTitleText}" Margin="2,0,0,9" />
         <UniformGrid Columns="2" Rows="2">
-            <controls:QuickActionTile Icon="▣" Label="Screenshot" Margin="0,0,4,4" />
-            <controls:QuickActionTile Icon="♪" Label="Mute" Margin="4,0,0,4" />
-            <controls:QuickActionTile Icon="⇩" Label="Downloads" Margin="0,4,4,0" />
-            <controls:QuickActionTile Icon="▤" Label="Task Manager" Margin="4,4,0,0" />
+            <controls:QuickActionTile Icon="⇩"
+                                      Label="Downloads"
+                                      Command="{Binding OpenDownloadsCommand}"
+                                      Margin="0,0,4,4" />
+            <controls:QuickActionTile Icon="▤"
+                                      Label="Task Manager"
+                                      Command="{Binding OpenTaskManagerCommand}"
+                                      Margin="4,0,0,4" />
+            <controls:QuickActionTile Icon="⚙"
+                                      Label="Settings"
+                                      Command="{Binding OpenSettingsCommand}"
+                                      Margin="0,4,4,0" />
+            <controls:QuickActionTile Icon="⌨"
+                                      Label="Terminal"
+                                      Command="{Binding OpenTerminalCommand}"
+                                      Margin="4,4,0,0" />
         </UniformGrid>
     </StackPanel>
 </UserControl>

@@ -1,16 +1,22 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DesktopCommandCenter.App.Controls;
 
-public partial class QuickActionTile : System.Windows.Controls.UserControl
+public partial class QuickActionTile : UserControl
 {
     public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
         nameof(Icon), typeof(string), typeof(QuickActionTile), new PropertyMetadata("•"));
+
     public static readonly DependencyProperty LabelProperty = DependencyProperty.Register(
         nameof(Label), typeof(string), typeof(QuickActionTile), new PropertyMetadata(string.Empty));
+
     public static readonly DependencyProperty IsActionEnabledProperty = DependencyProperty.Register(
-        nameof(IsActionEnabled), typeof(bool), typeof(QuickActionTile), new PropertyMetadata(false));
+        nameof(IsActionEnabled), typeof(bool), typeof(QuickActionTile), new PropertyMetadata(true));
+
+    public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+        nameof(Command), typeof(ICommand), typeof(QuickActionTile), new PropertyMetadata(null));
 
     public QuickActionTile() => InitializeComponent();
 
@@ -30,5 +36,11 @@ public partial class QuickActionTile : System.Windows.Controls.UserControl
     {
         get => (bool)GetValue(IsActionEnabledProperty);
         set => SetValue(IsActionEnabledProperty, value);
+    }
+
+    public ICommand? Command
+    {
+        get => (ICommand?)GetValue(CommandProperty);
+        set => SetValue(CommandProperty, value);
     }
 }

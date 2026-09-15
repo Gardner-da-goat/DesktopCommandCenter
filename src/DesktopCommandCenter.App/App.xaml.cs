@@ -3,7 +3,9 @@ using DesktopCommandCenter.App.Services;
 using DesktopCommandCenter.App.ViewModels;
 using DesktopCommandCenter.App.Views;
 using DesktopCommandCenter.Core.Settings;
+using DesktopCommandCenter.Windows.Apps;
 using DesktopCommandCenter.Windows.Monitors;
+using DesktopCommandCenter.Windows.Shell;
 using DesktopCommandCenter.Windows.Windows;
 
 namespace DesktopCommandCenter.App;
@@ -22,9 +24,22 @@ public partial class App : System.Windows.Application
 
         var settingsService = new SettingsService();
         var settings = settingsService.Load();
+        var shellActions = new ShellActionService();
+        var appLauncher = new AppLauncherService();
+
         _settingsViewModel = new SettingsViewModel(settings, settingsService);
         _windowsViewModel = new WindowsViewModel(new WindowService());
-        var homeViewModel = new HomeViewModel(_windowsViewModel);
+
+        var searchViewModel = new SearchViewModel(
+            _windowsViewModel,
+            appLauncher,
+            shellActions);
+
+        var homeViewModel = new HomeViewModel(
+            _windowsViewModel,
+            searchViewModel,
+            shellActions);
+
         var sidebarViewModel = new SidebarViewModel(
             settings,
             homeViewModel,

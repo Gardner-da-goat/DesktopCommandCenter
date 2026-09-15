@@ -30,7 +30,7 @@ public partial class App : System.Windows.Application
         var updatesViewModel = new UpdatesViewModel(new UpdateService());
         var windowService = new WindowService();
         _appearanceService = new AppearanceService();
-        _appearanceService.ApplyAccent(settings.AccentName);
+        _appearanceService.Apply(settings.ThemeMode, settings.AccentName);
 
         var executablePath = Environment.ProcessPath;
         if (!string.IsNullOrWhiteSpace(executablePath))
@@ -126,10 +126,13 @@ public partial class App : System.Windows.Application
         {
             _trayIcon?.SetVisible(_settingsViewModel?.ShowTrayIcon == true);
         }
-        else if (e.PropertyName == nameof(SettingsViewModel.AccentName) &&
+        else if (e.PropertyName is nameof(SettingsViewModel.AccentName)
+                                  or nameof(SettingsViewModel.ThemeMode) &&
                  _settingsViewModel is not null)
         {
-            _appearanceService?.ApplyAccent(_settingsViewModel.AccentName);
+            _appearanceService?.Apply(
+                _settingsViewModel.ThemeMode,
+                _settingsViewModel.AccentName);
         }
     }
 

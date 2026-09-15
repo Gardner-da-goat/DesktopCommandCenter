@@ -468,6 +468,27 @@
 
         <DataTemplate x:Key="AppearanceTemplate">
             <StackPanel>
+                <TextBlock Text="Theme"
+                           Style="{StaticResource SecondaryText}"
+                           Margin="0,0,0,5" />
+                <UniformGrid Columns="3" Margin="0,0,0,9">
+                    <Button Content="Dark"
+                            Command="{Binding DataContext.ThemeDarkCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,5"
+                            Margin="0,0,3,0" />
+                    <Button Content="Light"
+                            Command="{Binding DataContext.ThemeLightCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,5"
+                            Margin="3,0" />
+                    <Button Content="System"
+                            Command="{Binding DataContext.ThemeSystemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,5"
+                            Margin="3,0,0,0" />
+                </UniformGrid>
+                <TextBlock Text="{Binding DataContext.ThemeMode, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat=Current theme: {0}}"
+                           Style="{StaticResource MutedText}"
+                           Margin="0,0,0,8" />
+
                 <TextBlock Text="Accent color"
                            Style="{StaticResource SecondaryText}"
                            Margin="0,0,0,6" />
@@ -492,10 +513,6 @@
                 <TextBlock Text="{Binding DataContext.AccentName, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat=Current accent: {0}}"
                            Style="{StaticResource MutedText}"
                            Margin="0,7,0,0" />
-                <TextBlock Text="The interface stays dark and opaque for readability; the accent can be changed without restarting."
-                           Style="{StaticResource MutedText}"
-                           TextWrapping="Wrap"
-                           Margin="0,5,0,0" />
             </StackPanel>
         </DataTemplate>
 

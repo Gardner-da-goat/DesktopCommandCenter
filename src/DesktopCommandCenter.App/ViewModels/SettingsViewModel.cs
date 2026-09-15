@@ -40,6 +40,9 @@ public sealed class SettingsViewModel : ObservableObject
         Width360Command = new RelayCommand(() => SidebarWidth = 360);
         Width420Command = new RelayCommand(() => SidebarWidth = 420);
         Width480Command = new RelayCommand(() => SidebarWidth = 480);
+        ThemeDarkCommand = new RelayCommand(() => ThemeMode = "Dark");
+        ThemeLightCommand = new RelayCommand(() => ThemeMode = "Light");
+        ThemeSystemCommand = new RelayCommand(() => ThemeMode = "System");
         AccentBlueCommand = new RelayCommand(() => AccentName = "Blue");
         AccentPurpleCommand = new RelayCommand(() => AccentName = "Purple");
         AccentGreenCommand = new RelayCommand(() => AccentName = "Green");
@@ -77,6 +80,9 @@ public sealed class SettingsViewModel : ObservableObject
     public RelayCommand Width360Command { get; }
     public RelayCommand Width420Command { get; }
     public RelayCommand Width480Command { get; }
+    public RelayCommand ThemeDarkCommand { get; }
+    public RelayCommand ThemeLightCommand { get; }
+    public RelayCommand ThemeSystemCommand { get; }
     public RelayCommand AccentBlueCommand { get; }
     public RelayCommand AccentPurpleCommand { get; }
     public RelayCommand AccentGreenCommand { get; }
@@ -307,6 +313,23 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.ShowPlayPauseAction, v => _settings.ShowPlayPauseAction = v);
     }
 
+    public string ThemeMode
+    {
+        get => NormalizeThemeMode(_settings.ThemeMode);
+        set
+        {
+            var normalized = NormalizeThemeMode(value);
+            if (string.Equals(_settings.ThemeMode, normalized, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            _settings.ThemeMode = normalized;
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
+    }
+
     public string AccentName
     {
         get => string.IsNullOrWhiteSpace(_settings.AccentName) ? "Blue" : _settings.AccentName;
@@ -360,6 +383,14 @@ public sealed class SettingsViewModel : ObservableObject
         get => _settings.ShowMacrosModule;
         set => SetBoolean(value, () => _settings.ShowMacrosModule, v => _settings.ShowMacrosModule = v);
     }
+
+    private static string NormalizeThemeMode(string? value) =>
+        value switch
+        {
+            "Light" => "Light",
+            "System" => "System",
+            _ => "Dark"
+        };
 
     private void CycleToggleHotkey()
     {

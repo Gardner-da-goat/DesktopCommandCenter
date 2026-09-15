@@ -9,17 +9,20 @@ public sealed class SearchViewModel : ObservableObject
     private readonly WindowsViewModel _windowsViewModel;
     private readonly AppLauncherService _appLauncher;
     private readonly ShellActionService _shellActions;
+    private readonly FavoritesViewModel _favorites;
     private IReadOnlyList<InstalledAppInfo>? _installedApps;
     private string _query = string.Empty;
 
     public SearchViewModel(
         WindowsViewModel windowsViewModel,
         AppLauncherService appLauncher,
-        ShellActionService shellActions)
+        ShellActionService shellActions,
+        FavoritesViewModel favorites)
     {
         _windowsViewModel = windowsViewModel;
         _appLauncher = appLauncher;
         _shellActions = shellActions;
+        _favorites = favorites;
         Results = new ObservableCollection<SearchResultViewModel>();
     }
 
@@ -100,7 +103,9 @@ public sealed class SearchViewModel : ObservableObject
                     {
                         _ = _appLauncher.Launch(app);
                         Query = string.Empty;
-                    }))));
+                    }),
+                    "Pin",
+                    new RelayCommand(() => _ = _favorites.AddFavorite(app)))));
         }
 
         AddActionCandidate(candidates, query, "Downloads", "Open your Downloads folder", "⇩", _shellActions.OpenDownloads);

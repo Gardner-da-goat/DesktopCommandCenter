@@ -16,13 +16,17 @@ public sealed class SearchResultViewModel
         string title,
         string subtitle,
         string glyph,
-        ICommand executeCommand)
+        ICommand executeCommand,
+        string? secondaryLabel = null,
+        ICommand? secondaryCommand = null)
     {
         Kind = kind;
         Title = title;
         Subtitle = subtitle;
         Glyph = glyph;
         ExecuteCommand = executeCommand;
+        SecondaryLabel = secondaryLabel;
+        SecondaryCommand = secondaryCommand;
     }
 
     public SearchResultKind Kind { get; }
@@ -30,4 +34,7 @@ public sealed class SearchResultViewModel
     public string Subtitle { get; }
     public string Glyph { get; }
     public ICommand ExecuteCommand { get; }
+    public string? SecondaryLabel { get; }
+    public ICommand? SecondaryCommand { get; }
+    public bool HasSecondaryAction => SecondaryCommand is not null;
 }

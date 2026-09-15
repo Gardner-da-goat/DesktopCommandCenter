@@ -4,30 +4,61 @@
     <Border Style="{StaticResource CardStyle}">
         <StackPanel>
             <TextBlock Text="Favorites" Style="{StaticResource SectionTitleText}" Margin="0,0,0,10" />
-            <Grid Margin="0,0,0,7">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="28" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource Success}">
-                    <TextBlock Text="S" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
-                </Border>
-                <TextBlock Grid.Column="1" Text="Spotify" VerticalAlignment="Center" />
-            </Grid>
-            <Grid Margin="0,0,0,7">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="28" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource Accent}">
-                    <TextBlock Text="C" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
-                </Border>
-                <TextBlock Grid.Column="1" Text="Chrome" VerticalAlignment="Center" />
-            </Grid>
-            <Grid Margin="0,0,0,8">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="28" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource AccentHover}">
-                    <TextBlock Text="V" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
-                </Border>
-                <TextBlock Grid.Column="1" Text="VS Code" VerticalAlignment="Center" />
-            </Grid>
-            <Button Content="Customize in Settings" HorizontalAlignment="Left"
-                    Background="Transparent" Foreground="{DynamicResource AccentHover}"
-                    Padding="0,5" IsEnabled="False" />
+
+            <ItemsControl ItemsSource="{Binding Favorites.Items}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Command="{Binding LaunchCommand}"
+                                HorizontalContentAlignment="Stretch"
+                                Background="Transparent"
+                                Padding="5,7"
+                                Margin="0,0,0,2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="22" Height="22" CornerRadius="6"
+                                        Background="{DynamicResource AccentSoft}">
+                                    <TextBlock Text="◈"
+                                               Foreground="{DynamicResource AccentHover}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Border>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Name}"
+                                           Margin="6,0,0,0"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
+                                <TextBlock Grid.Column="2"
+                                           Text="Launch"
+                                           Style="{StaticResource MutedText}"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="Search for an app above and choose Pin to add it here."
+                       Margin="0,4,0,0">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource MutedText}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Favorites.HasFavorites}" Value="False">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <TextBlock Text="Remove favorites from Settings."
+                       Style="{StaticResource MutedText}"
+                       Margin="0,7,0,0"
+                       Visibility="{Binding Favorites.HasFavorites, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </StackPanel>
     </Border>
 </UserControl>

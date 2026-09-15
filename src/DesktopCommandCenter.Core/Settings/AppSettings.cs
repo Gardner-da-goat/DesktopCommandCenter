@@ -2,7 +2,7 @@ namespace DesktopCommandCenter.Core.Settings;
 
 public sealed class AppSettings
 {
-    public const int CurrentVersion = 2;
+    public const int CurrentVersion = 3;
     public const double MinimumSidebarWidth = 300;
     public const double MaximumSidebarWidth = 520;
     public const double DefaultSidebarWidth = 360;
@@ -28,6 +28,8 @@ public sealed class AppSettings
     public bool ShowQuickActionsModule { get; set; } = true;
     public bool ShowMacrosModule { get; set; } = true;
 
+    public List<FavoriteAppSetting> FavoriteApps { get; set; } = [];
+
     public static double ClampSidebarWidth(double width)
     {
         if (double.IsNaN(width) || double.IsInfinity(width))
@@ -42,6 +44,14 @@ public sealed class AppSettings
     {
         SettingsVersion = CurrentVersion;
         SidebarWidth = SidebarWidth;
+        FavoriteApps ??= [];
+        FavoriteApps = FavoriteApps
+            .Where(item =>
+                !string.IsNullOrWhiteSpace(item.Name) &&
+                !string.IsNullOrWhiteSpace(item.LaunchPath))
+            .GroupBy(item => item.LaunchPath, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.First())
+            .ToList();
         return this;
     }
 }

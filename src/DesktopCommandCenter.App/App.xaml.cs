@@ -26,14 +26,20 @@ public partial class App : System.Windows.Application
         var settings = settingsService.Load();
         var shellActions = new ShellActionService();
         var appLauncher = new AppLauncherService();
+        var favoritesViewModel = new FavoritesViewModel(settings, settingsService, appLauncher);
 
-        _settingsViewModel = new SettingsViewModel(settings, settingsService);
+        _settingsViewModel = new SettingsViewModel(
+            settings,
+            settingsService,
+            favoritesViewModel);
+
         _windowsViewModel = new WindowsViewModel(new WindowService());
 
         var searchViewModel = new SearchViewModel(
             _windowsViewModel,
             appLauncher,
-            shellActions);
+            shellActions,
+            favoritesViewModel);
 
         var homeViewModel = new HomeViewModel(
             _windowsViewModel,

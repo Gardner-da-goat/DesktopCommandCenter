@@ -97,8 +97,8 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.ShowTrayIcon);
         Assert.IsFalse(settings.StartWithWindows);
         Assert.IsFalse(settings.AutoCheckForUpdates);
-        Assert.IsFalse(settings.NotificationsEnabled);
-        Assert.AreEqual("Beta", settings.UpdateChannel);
+        Assert.IsTrue(settings.NotificationsEnabled);
+        Assert.AreEqual("Stable", settings.UpdateChannel);
         Assert.IsFalse(settings.ShowSearchModule);
         Assert.IsFalse(settings.ShowQuickActionsModule);
     }

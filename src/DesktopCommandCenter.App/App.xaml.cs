@@ -5,6 +5,7 @@ using DesktopCommandCenter.App.Views;
 using DesktopCommandCenter.Core.Settings;
 using DesktopCommandCenter.Windows.Apps;
 using DesktopCommandCenter.Windows.Monitors;
+using DesktopCommandCenter.Windows.Files;
 using DesktopCommandCenter.Windows.Shell;
 using DesktopCommandCenter.Windows.Windows;
 
@@ -31,6 +32,8 @@ public partial class App : System.Windows.Application
         var appLauncher = new AppLauncherService();
         var updatesViewModel = new UpdatesViewModel(new UpdateService());
         var windowService = new WindowService();
+        var fileSearchService = new FileSearchService();
+        fileSearchService.StartIndexing();
         _appearanceService = new AppearanceService();
         _appearanceService.Apply(settings.ThemeMode, settings.AccentName);
 
@@ -76,7 +79,8 @@ public partial class App : System.Windows.Application
             favoritesViewModel,
             macrosViewModel,
             commandsViewModel,
-            _settingsViewModel);
+            _settingsViewModel,
+            fileSearchService);
 
         var homeViewModel = new HomeViewModel(
             _windowsViewModel,

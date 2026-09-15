@@ -47,6 +47,7 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.SearchActionsEnabled);
         Assert.IsTrue(settings.SearchMacrosEnabled);
         Assert.IsTrue(settings.SearchSettingsEnabled);
+        Assert.IsTrue(settings.SearchFilesEnabled);
         Assert.IsTrue(settings.ShowScreenshotAction);
         Assert.IsTrue(settings.ShowMuteAction);
         Assert.IsFalse(settings.ShowVolumeUpAction);
@@ -114,6 +115,7 @@ public sealed class SettingsServiceTests
             ReflowWindowsOnSidebar = false,
             SearchAppsEnabled = false,
             SearchSettingsEnabled = false,
+            SearchFilesEnabled = false,
             ShowScreenshotAction = false,
             ShowVolumeUpAction = true,
             ShowDesktopAction = true,
@@ -151,6 +153,7 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.ReflowWindowsOnSidebar);
         Assert.IsFalse(settings.SearchAppsEnabled);
         Assert.IsFalse(settings.SearchSettingsEnabled);
+        Assert.IsFalse(settings.SearchFilesEnabled);
         Assert.IsFalse(settings.ShowScreenshotAction);
         Assert.IsTrue(settings.ShowVolumeUpAction);
         Assert.IsTrue(settings.ShowDesktopAction);

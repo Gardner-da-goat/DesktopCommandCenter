@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using DesktopCommandCenter.Windows.Apps;
+using DesktopCommandCenter.Windows.Files;
 using DesktopCommandCenter.Windows.Shell;
 
 namespace DesktopCommandCenter.App.ViewModels;
@@ -13,6 +14,7 @@ public sealed class SearchViewModel : ObservableObject
     private readonly MacrosViewModel _macros;
     private readonly CommandsViewModel _commands;
     private readonly SettingsViewModel _settings;
+    private readonly FileSearchService _fileSearch;
     private IReadOnlyList<InstalledAppInfo>? _installedApps;
     private string _query = string.Empty;
 
@@ -23,7 +25,8 @@ public sealed class SearchViewModel : ObservableObject
         FavoritesViewModel favorites,
         MacrosViewModel macros,
         CommandsViewModel commands,
-        SettingsViewModel settings)
+        SettingsViewModel settings,
+        FileSearchService fileSearch)
     {
         _windowsViewModel = windowsViewModel;
         _appLauncher = appLauncher;
@@ -32,6 +35,7 @@ public sealed class SearchViewModel : ObservableObject
         _macros = macros;
         _commands = commands;
         _settings = settings;
+        _fileSearch = fileSearch;
         _settings.SettingsChanged += OnSettingsChanged;
         Results = new ObservableCollection<SearchResultViewModel>();
     }
@@ -154,6 +158,28 @@ public sealed class SearchViewModel : ObservableObject
                         macro.RunCommand.Execute(null);
                         Query = string.Empty;
                     }))));
+        }
+
+        if (_settings.SearchFilesEnabled)
+        {
+            foreach (var file in _fileSearch.Search(query, 6))
+            {
+                var localFile = file;
+                candidates.Add((
+                    42 + localFile.Score,
+                    new SearchResultViewModel(
+                        SearchResultKind.Action,
+                        localFile.Name,
+                        localFile.IsDirectory
+                            ? $"Folder · {localFile.Path}"
+                            : $"File · {localFile.Path}",
+                        localFile.IsDirectory ? "□" : "▧",
+                        new RelayCommand(() =>
+                        {
+                            _ = _shellActions.OpenPath(localFile.Path);
+                            Query = string.Empty;
+                        }))));
+            }
         }
 
         if (_settings.SearchSettingsEnabled)
@@ -525,7 +551,8 @@ public sealed class SearchViewModel : ObservableObject
                 or nameof(SettingsViewModel.SearchWindowsEnabled)
                 or nameof(SettingsViewModel.SearchActionsEnabled)
                 or nameof(SettingsViewModel.SearchMacrosEnabled)
-                or nameof(SettingsViewModel.SearchSettingsEnabled))
+                or nameof(SettingsViewModel.SearchSettingsEnabled)
+                or nameof(SettingsViewModel.SearchFilesEnabled))
         {
             RefreshResults();
             NotifySearchState();

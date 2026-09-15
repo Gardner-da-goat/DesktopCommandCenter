@@ -2,7 +2,7 @@ namespace DesktopCommandCenter.Core.Settings;
 
 public sealed class AppSettings
 {
-    public const int CurrentVersion = 16;
+    public const int CurrentVersion = 17;
     public const double MinimumSidebarWidth = 300;
     public const double MaximumSidebarWidth = 520;
     public const double DefaultSidebarWidth = 360;
@@ -34,6 +34,7 @@ public sealed class AppSettings
     public bool SearchActionsEnabled { get; set; } = true;
     public bool SearchMacrosEnabled { get; set; } = true;
     public bool SearchSettingsEnabled { get; set; } = true;
+    public bool SearchFilesEnabled { get; set; } = true;
 
     public bool ShowDownloadsAction { get; set; } = true;
     public bool ShowTaskManagerAction { get; set; } = true;

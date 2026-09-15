@@ -265,6 +265,12 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.SearchSettingsEnabled, v => _settings.SearchSettingsEnabled = v);
     }
 
+    public bool SearchFilesEnabled
+    {
+        get => _settings.SearchFilesEnabled;
+        set => SetBoolean(value, () => _settings.SearchFilesEnabled, v => _settings.SearchFilesEnabled = v);
+    }
+
     public bool ShowDownloadsAction
     {
         get => _settings.ShowDownloadsAction;

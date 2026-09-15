@@ -92,7 +92,7 @@ public sealed class AppearanceService
     }
 
     private static SolidColorBrush Brush(string color) =>
-        new((MediaColor)ColorConverter.ConvertFromString(color));
+        new((MediaColor)System.Windows.Media.ColorConverter.ConvertFromString(color));
 
     private static bool IsWindowsLightTheme()
     {

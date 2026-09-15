@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections.ObjectModel;
 using DesktopCommandCenter.Core.Settings;
 using DesktopCommandCenter.Windows.Shell;

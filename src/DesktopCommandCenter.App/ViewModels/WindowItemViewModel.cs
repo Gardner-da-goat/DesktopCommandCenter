@@ -25,6 +25,15 @@ public sealed class WindowItemViewModel : ObservableObject
         CloseCommand = new RelayCommand(() => _windowService.Close(Handle));
         SnapLeftCommand = new RelayCommand(() => _windowService.Snap(Handle, WindowSnapPosition.Left));
         SnapRightCommand = new RelayCommand(() => _windowService.Snap(Handle, WindowSnapPosition.Right));
+        LeftThirdCommand = new RelayCommand(() => _windowService.ApplyLayout(Handle, WindowLayoutPosition.LeftThird));
+        CenterThirdCommand = new RelayCommand(() => _windowService.ApplyLayout(Handle, WindowLayoutPosition.CenterThird));
+        RightThirdCommand = new RelayCommand(() => _windowService.ApplyLayout(Handle, WindowLayoutPosition.RightThird));
+        LeftTwoThirdsCommand = new RelayCommand(() => _windowService.ApplyLayout(Handle, WindowLayoutPosition.LeftTwoThirds));
+        RightTwoThirdsCommand = new RelayCommand(() => _windowService.ApplyLayout(Handle, WindowLayoutPosition.RightTwoThirds));
+        TopLeftQuarterCommand = new RelayCommand(() => _windowService.ApplyLayout(Handle, WindowLayoutPosition.TopLeftQuarter));
+        TopRightQuarterCommand = new RelayCommand(() => _windowService.ApplyLayout(Handle, WindowLayoutPosition.TopRightQuarter));
+        BottomLeftQuarterCommand = new RelayCommand(() => _windowService.ApplyLayout(Handle, WindowLayoutPosition.BottomLeftQuarter));
+        BottomRightQuarterCommand = new RelayCommand(() => _windowService.ApplyLayout(Handle, WindowLayoutPosition.BottomRightQuarter));
         CenterCommand = new RelayCommand(() => _windowService.Center(Handle));
         MoveToNextMonitorCommand = new RelayCommand(() => _windowService.MoveToNextMonitor(Handle));
     }
@@ -82,6 +91,15 @@ public sealed class WindowItemViewModel : ObservableObject
     public ICommand CloseCommand { get; }
     public ICommand SnapLeftCommand { get; }
     public ICommand SnapRightCommand { get; }
+    public ICommand LeftThirdCommand { get; }
+    public ICommand CenterThirdCommand { get; }
+    public ICommand RightThirdCommand { get; }
+    public ICommand LeftTwoThirdsCommand { get; }
+    public ICommand RightTwoThirdsCommand { get; }
+    public ICommand TopLeftQuarterCommand { get; }
+    public ICommand TopRightQuarterCommand { get; }
+    public ICommand BottomLeftQuarterCommand { get; }
+    public ICommand BottomRightQuarterCommand { get; }
     public ICommand CenterCommand { get; }
     public ICommand MoveToNextMonitorCommand { get; }
 

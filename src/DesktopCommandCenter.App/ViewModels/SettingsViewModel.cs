@@ -228,6 +228,15 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.GlobalHotkeysEnabled, v => _settings.GlobalHotkeysEnabled = v);
     }
 
+    public bool WindowControlHotkeysEnabled
+    {
+        get => _settings.WindowControlHotkeysEnabled;
+        set => SetBoolean(
+            value,
+            () => _settings.WindowControlHotkeysEnabled,
+            v => _settings.WindowControlHotkeysEnabled = v);
+    }
+
     public string ToggleHotkeyPreset
     {
         get => NormalizeToggleHotkey(_settings.ToggleHotkeyPreset);

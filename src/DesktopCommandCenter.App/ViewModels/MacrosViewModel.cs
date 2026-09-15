@@ -304,6 +304,60 @@ public sealed class MacrosViewModel : ObservableObject
             return true;
         }
 
+        if (line.Equals("third-left", StringComparison.OrdinalIgnoreCase))
+        {
+            current.LeftThirdCommand.Execute(null);
+            return true;
+        }
+
+        if (line.Equals("third-center", StringComparison.OrdinalIgnoreCase))
+        {
+            current.CenterThirdCommand.Execute(null);
+            return true;
+        }
+
+        if (line.Equals("third-right", StringComparison.OrdinalIgnoreCase))
+        {
+            current.RightThirdCommand.Execute(null);
+            return true;
+        }
+
+        if (line.Equals("two-thirds-left", StringComparison.OrdinalIgnoreCase))
+        {
+            current.LeftTwoThirdsCommand.Execute(null);
+            return true;
+        }
+
+        if (line.Equals("two-thirds-right", StringComparison.OrdinalIgnoreCase))
+        {
+            current.RightTwoThirdsCommand.Execute(null);
+            return true;
+        }
+
+        if (line.Equals("top-left", StringComparison.OrdinalIgnoreCase))
+        {
+            current.TopLeftQuarterCommand.Execute(null);
+            return true;
+        }
+
+        if (line.Equals("top-right", StringComparison.OrdinalIgnoreCase))
+        {
+            current.TopRightQuarterCommand.Execute(null);
+            return true;
+        }
+
+        if (line.Equals("bottom-left", StringComparison.OrdinalIgnoreCase))
+        {
+            current.BottomLeftQuarterCommand.Execute(null);
+            return true;
+        }
+
+        if (line.Equals("bottom-right", StringComparison.OrdinalIgnoreCase))
+        {
+            current.BottomRightQuarterCommand.Execute(null);
+            return true;
+        }
+
         if (line.Equals("center", StringComparison.OrdinalIgnoreCase))
         {
             current.CenterCommand.Execute(null);

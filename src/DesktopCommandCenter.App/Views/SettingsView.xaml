@@ -431,6 +431,19 @@
                             VerticalAlignment="Center" />
                 </Grid>
 
+                <Grid Margin="0,2,0,7">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Window control shortcuts" />
+                        <TextBlock Text="Ctrl+Alt+←/→ snap · T pin · ↑/↓ opacity"
+                                   Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <CheckBox Grid.Column="1"
+                              Style="{StaticResource ToggleSwitchStyle}"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding DataContext.WindowControlHotkeysEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+
                 <TextBlock Text="Press Change to cycle through safe preset combinations. If Windows rejects a shortcut because another app owns it, the sidebar handle and tray menu still work."
                            Style="{StaticResource MutedText}"
                            TextWrapping="Wrap" />

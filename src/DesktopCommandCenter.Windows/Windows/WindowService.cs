@@ -11,6 +11,19 @@ public enum WindowSnapPosition
     Right
 }
 
+public enum WindowLayoutPosition
+{
+    LeftThird,
+    CenterThird,
+    RightThird,
+    LeftTwoThirds,
+    RightTwoThirds,
+    TopLeftQuarter,
+    TopRightQuarter,
+    BottomLeftQuarter,
+    BottomRightQuarter
+}
+
 public sealed record WindowReflowSnapshot(
     nint Handle,
     int Left,
@@ -219,8 +232,6 @@ public sealed class WindowService
                 return false;
             }
 
-            _ = NativeMethods.ShowWindow(handle, NativeMethods.SwRestore);
-
             var width = info.Work.Right - info.Work.Left;
             var height = info.Work.Bottom - info.Work.Top;
             var halfWidth = width / 2;
@@ -228,14 +239,65 @@ public sealed class WindowService
                 ? info.Work.Left
                 : info.Work.Right - halfWidth;
 
-            return NativeMethods.SetWindowPos(
+            return SetVisibleBounds(
                 handle,
-                0,
                 x,
                 info.Work.Top,
                 halfWidth,
-                height,
-                NativeMethods.SwpNoActivate | NativeMethods.SwpShowWindow);
+                height);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public bool ApplyLayout(nint handle, WindowLayoutPosition layout)
+    {
+        try
+        {
+            if (!TryGetMonitorInfoForWindow(handle, out var info))
+            {
+                return false;
+            }
+
+            var left = info.Work.Left;
+            var top = info.Work.Top;
+            var width = info.Work.Right - info.Work.Left;
+            var height = info.Work.Bottom - info.Work.Top;
+            var third = width / 3;
+            var quarterWidth = width / 2;
+            var quarterHeight = height / 2;
+
+            var bounds = layout switch
+            {
+                WindowLayoutPosition.LeftThird =>
+                    (left, top, third, height),
+                WindowLayoutPosition.CenterThird =>
+                    (left + third, top, width - (third * 2), height),
+                WindowLayoutPosition.RightThird =>
+                    (info.Work.Right - third, top, third, height),
+                WindowLayoutPosition.LeftTwoThirds =>
+                    (left, top, width - third, height),
+                WindowLayoutPosition.RightTwoThirds =>
+                    (left + third, top, width - third, height),
+                WindowLayoutPosition.TopLeftQuarter =>
+                    (left, top, quarterWidth, quarterHeight),
+                WindowLayoutPosition.TopRightQuarter =>
+                    (left + quarterWidth, top, width - quarterWidth, quarterHeight),
+                WindowLayoutPosition.BottomLeftQuarter =>
+                    (left, top + quarterHeight, quarterWidth, height - quarterHeight),
+                WindowLayoutPosition.BottomRightQuarter =>
+                    (left + quarterWidth, top + quarterHeight, width - quarterWidth, height - quarterHeight),
+                _ => (left, top, width, height)
+            };
+
+            return SetVisibleBounds(
+                handle,
+                bounds.Item1,
+                bounds.Item2,
+                bounds.Item3,
+                bounds.Item4);
         }
         catch
         {
@@ -627,6 +689,55 @@ public sealed class WindowService
         }, 0);
 
         return monitors;
+    }
+
+    private static bool SetVisibleBounds(
+        nint handle,
+        int visibleLeft,
+        int visibleTop,
+        int visibleWidth,
+        int visibleHeight)
+    {
+        if (!NativeMethods.IsWindow(handle))
+        {
+            return false;
+        }
+
+        _ = NativeMethods.ShowWindow(handle, NativeMethods.SwRestore);
+
+        var leftInset = 0;
+        var topInset = 0;
+        var rightInset = 0;
+        var bottomInset = 0;
+
+        try
+        {
+            if (NativeMethods.GetWindowRect(handle, out var rect) &&
+                NativeMethods.DwmGetWindowAttribute(
+                    handle,
+                    NativeMethods.DwmwaExtendedFrameBounds,
+                    out NativeMethods.Rect frame,
+                    Marshal.SizeOf<NativeMethods.Rect>()) == 0)
+            {
+                leftInset = Math.Clamp(frame.Left - rect.Left, 0, 48);
+                topInset = Math.Clamp(frame.Top - rect.Top, 0, 48);
+                rightInset = Math.Clamp(rect.Right - frame.Right, 0, 48);
+                bottomInset = Math.Clamp(rect.Bottom - frame.Bottom, 0, 48);
+            }
+        }
+        catch
+        {
+            // Frame compensation is best-effort.
+        }
+
+        return NativeMethods.SetWindowPos(
+            handle,
+            0,
+            visibleLeft - leftInset,
+            visibleTop - topInset,
+            visibleWidth + leftInset + rightInset,
+            visibleHeight + topInset + bottomInset,
+            NativeMethods.SwpNoActivate | NativeMethods.SwpShowWindow);
     }
 
     private static bool SafeWindowAction(nint handle, Func<bool> action)

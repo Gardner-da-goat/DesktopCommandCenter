@@ -72,7 +72,8 @@ public partial class SidebarWindow : Window
             _hotkeyService.RegisterDefaults(
                 _windowHandle,
                 _viewModel.ToggleHotkeyPreset,
-                _viewModel.SearchHotkeyPreset);
+                _viewModel.SearchHotkeyPreset,
+                _viewModel.WindowControlHotkeysEnabled);
         }
         else
         {
@@ -102,8 +103,43 @@ public partial class SidebarWindow : Window
                 new Action(FocusSearchBox));
             handled = true;
         }
+        else if (_hotkeyService.IsSnapLeftMessage(message, wParam))
+        {
+            ExecuteWindowHotkey(window => window.SnapLeftCommand.Execute(null));
+            handled = true;
+        }
+        else if (_hotkeyService.IsSnapRightMessage(message, wParam))
+        {
+            ExecuteWindowHotkey(window => window.SnapRightCommand.Execute(null));
+            handled = true;
+        }
+        else if (_hotkeyService.IsToggleTopmostMessage(message, wParam))
+        {
+            ExecuteWindowHotkey(window => window.IsAlwaysOnTop = !window.IsAlwaysOnTop);
+            handled = true;
+        }
+        else if (_hotkeyService.IsOpacityUpMessage(message, wParam))
+        {
+            ExecuteWindowHotkey(window => window.Opacity = Math.Min(100, window.Opacity + 10));
+            handled = true;
+        }
+        else if (_hotkeyService.IsOpacityDownMessage(message, wParam))
+        {
+            ExecuteWindowHotkey(window => window.Opacity = Math.Max(20, window.Opacity - 10));
+            handled = true;
+        }
 
         return 0;
+    }
+
+    private void ExecuteWindowHotkey(Action<WindowItemViewModel> action)
+    {
+        _viewModel.Windows.Refresh();
+        var window = _viewModel.Windows.CurrentWindow ?? _viewModel.Windows.SelectedWindow;
+        if (window is not null)
+        {
+            action(window);
+        }
     }
 
     private void FocusSearchBox()
@@ -182,6 +218,7 @@ public partial class SidebarWindow : Window
             ReflowAllWindows();
         }
         else if (e.PropertyName == nameof(SidebarViewModel.GlobalHotkeysEnabled) ||
+                 e.PropertyName == nameof(SidebarViewModel.WindowControlHotkeysEnabled) ||
                  e.PropertyName == nameof(SidebarViewModel.ToggleHotkeyPreset) ||
                  e.PropertyName == nameof(SidebarViewModel.SearchHotkeyPreset))
         {

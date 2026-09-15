@@ -423,6 +423,51 @@ public sealed class SearchViewModel : ObservableObject
                 () => current.SnapRightCommand.Execute(null));
         }
 
+        if (query.Equals("third left", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(candidates, "Left third", current.Title, "⅓", () => current.LeftThirdCommand.Execute(null));
+        }
+
+        if (query.Equals("third center", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(candidates, "Center third", current.Title, "⅓", () => current.CenterThirdCommand.Execute(null));
+        }
+
+        if (query.Equals("third right", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(candidates, "Right third", current.Title, "⅓", () => current.RightThirdCommand.Execute(null));
+        }
+
+        if (query.Equals("two thirds left", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(candidates, "Left two thirds", current.Title, "⅔", () => current.LeftTwoThirdsCommand.Execute(null));
+        }
+
+        if (query.Equals("two thirds right", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(candidates, "Right two thirds", current.Title, "⅔", () => current.RightTwoThirdsCommand.Execute(null));
+        }
+
+        if (query.Equals("top left", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(candidates, "Top left quarter", current.Title, "◰", () => current.TopLeftQuarterCommand.Execute(null));
+        }
+
+        if (query.Equals("top right", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(candidates, "Top right quarter", current.Title, "◳", () => current.TopRightQuarterCommand.Execute(null));
+        }
+
+        if (query.Equals("bottom left", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(candidates, "Bottom left quarter", current.Title, "◱", () => current.BottomLeftQuarterCommand.Execute(null));
+        }
+
+        if (query.Equals("bottom right", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(candidates, "Bottom right quarter", current.Title, "◲", () => current.BottomRightQuarterCommand.Execute(null));
+        }
+
         if (query.Equals("center", StringComparison.OrdinalIgnoreCase))
         {
             AddCurrentWindowCommand(

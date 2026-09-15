@@ -22,6 +22,11 @@ internal static class NativeMethods
     internal const uint VkSpace = 0x20;
     internal const uint VkD = 0x44;
     internal const uint VkF = 0x46;
+    internal const uint VkT = 0x54;
+    internal const uint VkLeft = 0x25;
+    internal const uint VkUp = 0x26;
+    internal const uint VkRight = 0x27;
+    internal const uint VkDown = 0x28;
     internal const byte VkVolumeMute = 0xAD;
     internal const byte VkVolumeDown = 0xAE;
     internal const byte VkVolumeUp = 0xAF;

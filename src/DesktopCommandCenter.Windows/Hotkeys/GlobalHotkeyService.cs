@@ -6,15 +6,20 @@ public sealed class GlobalHotkeyService : IDisposable
 {
     private const int ToggleSidebarId = 0x4443;
     private const int FocusSearchId = 0x4444;
+    private const int SnapLeftId = 0x4445;
+    private const int SnapRightId = 0x4446;
+    private const int ToggleTopmostId = 0x4447;
+    private const int OpacityUpId = 0x4448;
+    private const int OpacityDownId = 0x4449;
 
+    private readonly HashSet<int> _registeredIds = [];
     private nint _windowHandle;
-    private bool _toggleRegistered;
-    private bool _focusRegistered;
 
     public void RegisterDefaults(
         nint windowHandle,
         string? togglePreset,
-        string? searchPreset)
+        string? searchPreset,
+        bool windowControlHotkeysEnabled)
     {
         if (windowHandle == 0)
         {
@@ -27,46 +32,83 @@ public sealed class GlobalHotkeyService : IDisposable
         var toggle = ResolveToggle(togglePreset);
         var search = ResolveSearch(searchPreset);
 
-        _toggleRegistered = NativeMethods.RegisterHotKey(
-            _windowHandle,
+        Register(
             ToggleSidebarId,
-            toggle.Modifiers | NativeMethods.ModNoRepeat,
+            toggle.Modifiers,
             toggle.VirtualKey);
 
-        _focusRegistered = NativeMethods.RegisterHotKey(
-            _windowHandle,
+        Register(
             FocusSearchId,
-            search.Modifiers | NativeMethods.ModNoRepeat,
+            search.Modifiers,
             search.VirtualKey);
+
+        if (!windowControlHotkeysEnabled)
+        {
+            return;
+        }
+
+        var windowModifiers =
+            NativeMethods.ModControl |
+            NativeMethods.ModAlt;
+
+        Register(SnapLeftId, windowModifiers, NativeMethods.VkLeft);
+        Register(SnapRightId, windowModifiers, NativeMethods.VkRight);
+        Register(ToggleTopmostId, windowModifiers, NativeMethods.VkT);
+        Register(OpacityUpId, windowModifiers, NativeMethods.VkUp);
+        Register(OpacityDownId, windowModifiers, NativeMethods.VkDown);
     }
 
     public void Unregister()
     {
         if (_windowHandle != 0)
         {
-            if (_toggleRegistered)
+            foreach (var id in _registeredIds)
             {
-                _ = NativeMethods.UnregisterHotKey(_windowHandle, ToggleSidebarId);
-            }
-
-            if (_focusRegistered)
-            {
-                _ = NativeMethods.UnregisterHotKey(_windowHandle, FocusSearchId);
+                _ = NativeMethods.UnregisterHotKey(_windowHandle, id);
             }
         }
 
-        _toggleRegistered = false;
-        _focusRegistered = false;
+        _registeredIds.Clear();
         _windowHandle = 0;
     }
 
     public bool IsToggleSidebarMessage(int message, nint wParam) =>
-        message == NativeMethods.WmHotkey && wParam == ToggleSidebarId;
+        IsMessage(message, wParam, ToggleSidebarId);
 
     public bool IsFocusSearchMessage(int message, nint wParam) =>
-        message == NativeMethods.WmHotkey && wParam == FocusSearchId;
+        IsMessage(message, wParam, FocusSearchId);
+
+    public bool IsSnapLeftMessage(int message, nint wParam) =>
+        IsMessage(message, wParam, SnapLeftId);
+
+    public bool IsSnapRightMessage(int message, nint wParam) =>
+        IsMessage(message, wParam, SnapRightId);
+
+    public bool IsToggleTopmostMessage(int message, nint wParam) =>
+        IsMessage(message, wParam, ToggleTopmostId);
+
+    public bool IsOpacityUpMessage(int message, nint wParam) =>
+        IsMessage(message, wParam, OpacityUpId);
+
+    public bool IsOpacityDownMessage(int message, nint wParam) =>
+        IsMessage(message, wParam, OpacityDownId);
 
     public void Dispose() => Unregister();
+
+    private void Register(int id, uint modifiers, uint virtualKey)
+    {
+        if (NativeMethods.RegisterHotKey(
+                _windowHandle,
+                id,
+                modifiers | NativeMethods.ModNoRepeat,
+                virtualKey))
+        {
+            _registeredIds.Add(id);
+        }
+    }
+
+    private static bool IsMessage(int message, nint wParam, int id) =>
+        message == NativeMethods.WmHotkey && wParam == id;
 
     private static HotkeyDefinition ResolveToggle(string? preset) =>
         preset switch
@@ -96,5 +138,7 @@ public sealed class GlobalHotkeyService : IDisposable
                 NativeMethods.VkSpace)
         };
 
-    private readonly record struct HotkeyDefinition(uint Modifiers, uint VirtualKey);
+    private readonly record struct HotkeyDefinition(
+        uint Modifiers,
+        uint VirtualKey);
 }

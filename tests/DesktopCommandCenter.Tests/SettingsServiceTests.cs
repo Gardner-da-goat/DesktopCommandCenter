@@ -89,7 +89,7 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.AlwaysOnTop);
         Assert.IsFalse(settings.AnimationsEnabled);
         Assert.IsFalse(settings.ShowTrayIcon);
-        Assert.IsTrue(settings.StartWithWindows);
+        Assert.IsFalse(settings.StartWithWindows);
         Assert.IsFalse(settings.AutoCheckForUpdates);
         Assert.IsFalse(settings.ShowSearchModule);
         Assert.IsFalse(settings.ShowQuickActionsModule);
@@ -146,6 +146,7 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.AlwaysOnTop);
         Assert.IsFalse(settings.AnimationsEnabled);
         Assert.IsFalse(settings.ShowTrayIcon);
+        Assert.IsTrue(settings.StartWithWindows);
         Assert.IsFalse(settings.AutoCheckForUpdates);
         Assert.IsFalse(settings.GlobalHotkeysEnabled);
         Assert.AreEqual("Ctrl+Alt+D", settings.ToggleHotkeyPreset);

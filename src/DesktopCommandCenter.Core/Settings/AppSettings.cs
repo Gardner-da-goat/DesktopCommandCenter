@@ -2,7 +2,7 @@ namespace DesktopCommandCenter.Core.Settings;
 
 public sealed class AppSettings
 {
-    public const int CurrentVersion = 7;
+    public const int CurrentVersion = 8;
     public const double MinimumSidebarWidth = 300;
     public const double MaximumSidebarWidth = 520;
     public const double DefaultSidebarWidth = 360;
@@ -11,6 +11,7 @@ public sealed class AppSettings
 
     public int SettingsVersion { get; set; } = CurrentVersion;
     public bool StartCollapsed { get; set; } = true;
+    public SidebarEdge SidebarEdge { get; set; } = SidebarEdge.Right;
 
     public double SidebarWidth
     {

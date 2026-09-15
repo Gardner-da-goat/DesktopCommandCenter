@@ -21,6 +21,12 @@ public sealed class SettingsViewModel : ObservableObject
         Favorites = favorites;
         Macros = macros;
         Updates = updates;
+        DecreaseSidebarWidthCommand = new RelayCommand(() => SidebarWidth -= 20);
+        IncreaseSidebarWidthCommand = new RelayCommand(() => SidebarWidth += 20);
+        Width320Command = new RelayCommand(() => SidebarWidth = 320);
+        Width360Command = new RelayCommand(() => SidebarWidth = 360);
+        Width420Command = new RelayCommand(() => SidebarWidth = 420);
+        Width480Command = new RelayCommand(() => SidebarWidth = 480);
         Categories = new ObservableCollection<SettingsCategory>
         {
             new("General", "Startup, sidebar, and application behavior."),
@@ -44,6 +50,12 @@ public sealed class SettingsViewModel : ObservableObject
     public FavoritesViewModel Favorites { get; }
     public MacrosViewModel Macros { get; }
     public UpdatesViewModel Updates { get; }
+    public RelayCommand DecreaseSidebarWidthCommand { get; }
+    public RelayCommand IncreaseSidebarWidthCommand { get; }
+    public RelayCommand Width320Command { get; }
+    public RelayCommand Width360Command { get; }
+    public RelayCommand Width420Command { get; }
+    public RelayCommand Width480Command { get; }
 
     public SettingsCategory SelectedCategory
     {
@@ -73,6 +85,44 @@ public sealed class SettingsViewModel : ObservableObject
             _settings.SidebarWidth = clamped;
             SaveAndNotify();
             OnPropertyChanged();
+        }
+    }
+
+    public SidebarEdge SidebarEdge
+    {
+        get => _settings.SidebarEdge;
+        set
+        {
+            if (_settings.SidebarEdge == value) return;
+            _settings.SidebarEdge = value;
+            SaveAndNotify();
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsSidebarOnLeft));
+            OnPropertyChanged(nameof(IsSidebarOnRight));
+        }
+    }
+
+    public bool IsSidebarOnLeft
+    {
+        get => SidebarEdge == SidebarEdge.Left;
+        set
+        {
+            if (value)
+            {
+                SidebarEdge = SidebarEdge.Left;
+            }
+        }
+    }
+
+    public bool IsSidebarOnRight
+    {
+        get => SidebarEdge == SidebarEdge.Right;
+        set
+        {
+            if (value)
+            {
+                SidebarEdge = SidebarEdge.Right;
+            }
         }
     }
 

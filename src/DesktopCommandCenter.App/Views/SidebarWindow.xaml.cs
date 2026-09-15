@@ -180,6 +180,16 @@ public partial class SidebarWindow : Window
         {
             ApplyHotkeyRegistration();
         }
+        else if (e.PropertyName == nameof(SidebarViewModel.SidebarEdge))
+        {
+            RestoreAllWindows();
+            AnchorToWorkingArea();
+
+            if (_viewModel.IsExpanded)
+            {
+                ReflowAllWindows();
+            }
+        }
     }
 
     private void ReflowAllWindows()
@@ -190,7 +200,8 @@ public partial class SidebarWindow : Window
         }
 
         _reflowSnapshots = _windowService.ReflowAllForSidebar(
-            _viewModel.SidebarWidth);
+            _viewModel.SidebarWidth,
+            _viewModel.IsSidebarOnLeft);
     }
 
     private void RestoreAllWindows()
@@ -257,7 +268,9 @@ public partial class SidebarWindow : Window
         var area = _monitorService.GetPrimaryWorkingArea();
         Height = area.Height;
         Top = area.Top;
-        Left = area.Left + area.Width - ActualWidth;
+        Left = _viewModel.IsSidebarOnLeft
+            ? area.Left
+            : area.Left + area.Width - ActualWidth;
     }
 
     private void OnDisplaySettingsChanged(object? sender, EventArgs e)

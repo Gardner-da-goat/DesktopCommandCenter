@@ -10,15 +10,22 @@
     <Grid Background="Transparent">
         <Border x:Name="ExpandedPanel"
                 Background="{DynamicResource PanelBackground}"
-                BorderBrush="{DynamicResource BorderSubtle}"
-                BorderThickness="1,1,0,1"
-                CornerRadius="14,0,0,14">
+                BorderBrush="{DynamicResource BorderSubtle}">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Visibility" Value="Collapsed" />
+                    <Setter Property="BorderThickness" Value="1,1,0,1" />
+                    <Setter Property="CornerRadius" Value="14,0,0,14" />
                     <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSidebarOnLeft}" Value="True">
+                            <Setter Property="HorizontalAlignment" Value="Left" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding IsExpanded}" Value="True">
                             <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsSidebarOnLeft}" Value="True">
+                            <Setter Property="BorderThickness" Value="0,1,1,1" />
+                            <Setter Property="CornerRadius" Value="0,14,14,0" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -62,7 +69,7 @@
                             Style="{StaticResource IconButton}"
                             Command="{Binding CollapseCommand}"
                             ToolTip="Collapse">
-                        <TextBlock Text="❯" FontSize="13" />
+                        <TextBlock Text="{Binding CollapseArrowGlyph}" FontSize="13" />
                     </Button>
                 </Grid>
 
@@ -115,7 +122,6 @@
         <Button x:Name="CollapsedHandle"
                 Width="34"
                 Height="98"
-                HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Padding="0"
                 Background="{DynamicResource PanelBackground}"
@@ -125,6 +131,7 @@
             <Button.Style>
                 <Style TargetType="Button">
                     <Setter Property="Visibility" Value="Visible" />
+                    <Setter Property="HorizontalAlignment" Value="Right" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="Button">
@@ -145,12 +152,16 @@
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center" />
                                         </Border>
-                                        <TextBlock Text="❮"
+                                        <TextBlock Text="{Binding HandleArrowGlyph}"
                                                    FontSize="12"
                                                    HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
                                 <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsSidebarOnLeft}" Value="True">
+                                        <Setter TargetName="HandleChrome" Property="BorderThickness" Value="0,1,1,1" />
+                                        <Setter TargetName="HandleChrome" Property="CornerRadius" Value="0,11,11,0" />
+                                    </DataTrigger>
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter TargetName="HandleChrome"
                                                 Property="Background"

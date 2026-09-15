@@ -76,18 +76,78 @@
                                  IsChecked="{Binding DataContext.StartCollapsed, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}" />
                 </Grid>
 
-                <DockPanel Margin="0,0,0,2">
-                    <TextBlock Text="Sidebar width" Style="{StaticResource SecondaryText}" />
-                    <TextBlock DockPanel.Dock="Right"
-                               Text="{Binding DataContext.SidebarWidth, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat={}{0:0} DIP}"
-                               Style="{StaticResource MutedText}" />
-                </DockPanel>
+                <TextBlock Text="Screen side"
+                           Style="{StaticResource SecondaryText}"
+                           Margin="0,0,0,4" />
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="6" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <RadioButton Content="Left"
+                                 GroupName="SidebarSide"
+                                 Style="{StaticResource CompactStartOption}"
+                                 IsChecked="{Binding DataContext.IsSidebarOnLeft, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                    <RadioButton Grid.Column="2"
+                                 Content="Right"
+                                 GroupName="SidebarSide"
+                                 Style="{StaticResource CompactStartOption}"
+                                 IsChecked="{Binding DataContext.IsSidebarOnRight, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+
+                <Grid Margin="0,0,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Sidebar width"
+                               Style="{StaticResource SecondaryText}"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            Content="−20"
+                            Command="{Binding DataContext.DecreaseSidebarWidthCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="7,3"
+                            Margin="4,0,4,0" />
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding DataContext.SidebarWidth, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat={}{0:0}}"
+                               VerticalAlignment="Center"
+                               MinWidth="30"
+                               TextAlignment="Center" />
+                    <Button Grid.Column="3"
+                            Content="+20"
+                            Command="{Binding DataContext.IncreaseSidebarWidthCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="7,3"
+                            Margin="4,0,0,0" />
+                </Grid>
                 <Slider Minimum="300"
                         Maximum="520"
-                        TickFrequency="1"
+                        TickFrequency="10"
+                        SmallChange="10"
+                        LargeChange="20"
                         Style="{StaticResource ModernSlider}"
                         Value="{Binding DataContext.SidebarWidth, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Margin="0,0,0,8" />
+                        Margin="0,0,0,5" />
+                <UniformGrid Columns="4" Margin="0,0,0,8">
+                    <Button Content="320"
+                            Command="{Binding DataContext.Width320Command, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,4"
+                            Margin="0,0,3,0" />
+                    <Button Content="360"
+                            Command="{Binding DataContext.Width360Command, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,4"
+                            Margin="3,0" />
+                    <Button Content="420"
+                            Command="{Binding DataContext.Width420Command, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,4"
+                            Margin="3,0" />
+                    <Button Content="480"
+                            Command="{Binding DataContext.Width480Command, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,4"
+                            Margin="3,0,0,0" />
+                </UniformGrid>
 
                 <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>

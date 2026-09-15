@@ -32,6 +32,7 @@ public sealed class SettingsServiceTests
 
         Assert.IsTrue(settings.StartCollapsed);
         Assert.AreEqual(360d, settings.SidebarWidth);
+        Assert.AreEqual(SidebarEdge.Right, settings.SidebarEdge);
         Assert.IsTrue(settings.AlwaysOnTop);
         Assert.IsTrue(settings.AnimationsEnabled);
         Assert.IsTrue(settings.ShowTrayIcon);
@@ -79,6 +80,7 @@ public sealed class SettingsServiceTests
         {
             StartCollapsed = false,
             SidebarWidth = 488,
+            SidebarEdge = SidebarEdge.Left,
             AlwaysOnTop = false,
             AnimationsEnabled = false,
             ShowTrayIcon = false,
@@ -100,6 +102,7 @@ public sealed class SettingsServiceTests
 
         Assert.IsFalse(settings.StartCollapsed);
         Assert.AreEqual(488d, settings.SidebarWidth);
+        Assert.AreEqual(SidebarEdge.Left, settings.SidebarEdge);
         Assert.IsFalse(settings.AlwaysOnTop);
         Assert.IsFalse(settings.AnimationsEnabled);
         Assert.IsFalse(settings.ShowTrayIcon);

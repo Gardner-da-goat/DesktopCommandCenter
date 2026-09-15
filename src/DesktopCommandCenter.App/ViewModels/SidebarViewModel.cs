@@ -61,6 +61,10 @@ public sealed class SidebarViewModel : ObservableObject
     public bool AnimationsEnabled => _state.AnimationsEnabled;
     public bool AlwaysOnTop => Settings.AlwaysOnTop;
     public bool GlobalHotkeysEnabled => Settings.GlobalHotkeysEnabled;
+    public SidebarEdge SidebarEdge => Settings.SidebarEdge;
+    public bool IsSidebarOnLeft => SidebarEdge == SidebarEdge.Left;
+    public string HandleArrowGlyph => IsSidebarOnLeft ? "❯" : "❮";
+    public string CollapseArrowGlyph => IsSidebarOnLeft ? "❮" : "❯";
 
     public void Expand()
     {
@@ -111,6 +115,13 @@ public sealed class SidebarViewModel : ObservableObject
         else if (e.PropertyName == nameof(SettingsViewModel.GlobalHotkeysEnabled))
         {
             OnPropertyChanged(nameof(GlobalHotkeysEnabled));
+        }
+        else if (e.PropertyName == nameof(SettingsViewModel.SidebarEdge))
+        {
+            OnPropertyChanged(nameof(SidebarEdge));
+            OnPropertyChanged(nameof(IsSidebarOnLeft));
+            OnPropertyChanged(nameof(HandleArrowGlyph));
+            OnPropertyChanged(nameof(CollapseArrowGlyph));
         }
     }
 }

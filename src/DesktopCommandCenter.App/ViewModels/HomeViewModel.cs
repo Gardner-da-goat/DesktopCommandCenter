@@ -20,6 +20,7 @@ public sealed class HomeViewModel : ObservableObject
         _settingsViewModel = settingsViewModel;
         Search = search;
         Recent = recent;
+        Clipboard = new ClipboardViewModel(shellActions);
         OpenDownloadsCommand = CreateTrackedCommand(
             "Downloads",
             "Quick action",
@@ -92,6 +93,7 @@ public sealed class HomeViewModel : ObservableObject
 
     public SearchViewModel Search { get; }
     public RecentActivityViewModel Recent { get; }
+    public ClipboardViewModel Clipboard { get; }
     public FavoritesViewModel Favorites => _settingsViewModel.Favorites;
     public MacrosViewModel Macros => _settingsViewModel.Macros;
     public RelayCommand OpenDownloadsCommand { get; }
@@ -119,6 +121,7 @@ public sealed class HomeViewModel : ObservableObject
     public bool ShowMacrosModule => _settingsViewModel.ShowMacrosModule;
     public bool ShowMediaModule => _settingsViewModel.ShowMediaModule;
     public bool ShowRecentModule => _settingsViewModel.ShowRecentModule;
+    public bool ShowClipboardModule => _settingsViewModel.ShowClipboardModule;
 
     public bool ShowDownloadsAction => _settingsViewModel.ShowDownloadsAction;
     public bool ShowTaskManagerAction => _settingsViewModel.ShowTaskManagerAction;
@@ -176,6 +179,9 @@ public sealed class HomeViewModel : ObservableObject
                 break;
             case nameof(SettingsViewModel.ShowRecentModule):
                 OnPropertyChanged(nameof(ShowRecentModule));
+                break;
+            case nameof(SettingsViewModel.ShowClipboardModule):
+                OnPropertyChanged(nameof(ShowClipboardModule));
                 break;
             case nameof(SettingsViewModel.ShowDownloadsAction):
                 OnPropertyChanged(nameof(ShowDownloadsAction));

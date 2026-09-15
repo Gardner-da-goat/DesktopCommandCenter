@@ -95,6 +95,8 @@
                                         Visibility="{Binding ShowQuickActionsModule, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <modules:MacrosModule Margin="0,0,0,10"
                                   Visibility="{Binding ShowMacrosModule, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <modules:ClipboardModule Margin="0,0,0,10"
+                                      Visibility="{Binding ShowClipboardModule, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <modules:MediaModule Visibility="{Binding ShowMediaModule, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </StackPanel>
     </ScrollViewer>

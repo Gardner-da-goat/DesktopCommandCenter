@@ -248,11 +248,17 @@
                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}"
                               IsChecked="{Binding DataContext.ShowMediaModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
-                <Grid>
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Recent Activity" />
                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}"
                               IsChecked="{Binding DataContext.ShowRecentModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Clipboard" />
+                    <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}"
+                              IsChecked="{Binding DataContext.ShowClipboardModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
             </StackPanel>
         </DataTemplate>

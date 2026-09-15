@@ -462,6 +462,12 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.ShowRecentModule, v => _settings.ShowRecentModule = v);
     }
 
+    public bool ShowClipboardModule
+    {
+        get => _settings.ShowClipboardModule;
+        set => SetBoolean(value, () => _settings.ShowClipboardModule, v => _settings.ShowClipboardModule = v);
+    }
+
     public bool ShowMacrosModule
     {
         get => _settings.ShowMacrosModule;

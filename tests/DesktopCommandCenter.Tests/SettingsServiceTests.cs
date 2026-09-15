@@ -46,6 +46,7 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.SearchWindowsEnabled);
         Assert.IsTrue(settings.SearchActionsEnabled);
         Assert.IsTrue(settings.SearchMacrosEnabled);
+        Assert.IsTrue(settings.SearchSettingsEnabled);
         Assert.IsTrue(settings.ShowScreenshotAction);
         Assert.IsTrue(settings.ShowMuteAction);
         Assert.IsFalse(settings.ShowVolumeUpAction);
@@ -110,6 +111,7 @@ public sealed class SettingsServiceTests
             SearchHotkeyPreset = "Ctrl+Shift+F",
             ReflowWindowsOnSidebar = false,
             SearchAppsEnabled = false,
+            SearchSettingsEnabled = false,
             ShowScreenshotAction = false,
             ShowVolumeUpAction = true,
             ThemeMode = "Light",
@@ -145,6 +147,7 @@ public sealed class SettingsServiceTests
         Assert.AreEqual("Ctrl+Shift+F", settings.SearchHotkeyPreset);
         Assert.IsFalse(settings.ReflowWindowsOnSidebar);
         Assert.IsFalse(settings.SearchAppsEnabled);
+        Assert.IsFalse(settings.SearchSettingsEnabled);
         Assert.IsFalse(settings.ShowScreenshotAction);
         Assert.IsTrue(settings.ShowVolumeUpAction);
         Assert.AreEqual("Light", settings.ThemeMode);

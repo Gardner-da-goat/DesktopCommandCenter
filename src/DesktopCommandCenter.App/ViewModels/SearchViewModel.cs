@@ -36,6 +36,7 @@ public sealed class SearchViewModel : ObservableObject
         Results = new ObservableCollection<SearchResultViewModel>();
     }
 
+    public event EventHandler<string>? SettingsNavigationRequested;
     public ObservableCollection<SearchResultViewModel> Results { get; }
 
     public string Query
@@ -153,6 +154,31 @@ public sealed class SearchViewModel : ObservableObject
                         macro.RunCommand.Execute(null);
                         Query = string.Empty;
                     }))));
+        }
+
+        if (_settings.SearchSettingsEnabled)
+        {
+            foreach (var category in _settings.Categories)
+            {
+                var score = MatchScore(query, category.Name, category.Description);
+                if (score <= 0)
+                {
+                    continue;
+                }
+
+                candidates.Add((
+                    score + 20,
+                    new SearchResultViewModel(
+                        SearchResultKind.Action,
+                        category.Name,
+                        "Setting · " + category.Description,
+                        "⚙",
+                        new RelayCommand(() =>
+                        {
+                            SettingsNavigationRequested?.Invoke(this, category.Name);
+                            Query = string.Empty;
+                        }))));
+            }
         }
 
         if (_settings.SearchActionsEnabled)
@@ -496,7 +522,8 @@ public sealed class SearchViewModel : ObservableObject
             e.PropertyName is nameof(SettingsViewModel.SearchAppsEnabled)
                 or nameof(SettingsViewModel.SearchWindowsEnabled)
                 or nameof(SettingsViewModel.SearchActionsEnabled)
-                or nameof(SettingsViewModel.SearchMacrosEnabled))
+                or nameof(SettingsViewModel.SearchMacrosEnabled)
+                or nameof(SettingsViewModel.SearchSettingsEnabled))
         {
             RefreshResults();
             NotifySearchState();

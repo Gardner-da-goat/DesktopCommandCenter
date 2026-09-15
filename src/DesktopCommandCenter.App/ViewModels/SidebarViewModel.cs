@@ -29,6 +29,7 @@ public sealed class SidebarViewModel : ObservableObject
         ShowSettingsCommand = new RelayCommand(ShowSettings);
 
         Settings.SettingsChanged += OnSettingsChanged;
+        Home.Search.SettingsNavigationRequested += OnSettingsNavigationRequested;
     }
 
     public HomeViewModel Home { get; }
@@ -98,6 +99,20 @@ public sealed class SidebarViewModel : ObservableObject
     }
 
     public void ShowSettings() => CurrentPage = Settings;
+
+    private void OnSettingsNavigationRequested(object? sender, string categoryName)
+    {
+        var category = Settings.Categories.FirstOrDefault(item =>
+            item.Name.Equals(categoryName, StringComparison.CurrentCultureIgnoreCase));
+
+        if (category is not null)
+        {
+            Settings.SelectedCategory = category;
+        }
+
+        CurrentPage = Settings;
+        Expand();
+    }
 
     private void OnSettingsChanged(object? sender, SettingChangedEventArgs e)
     {

@@ -60,7 +60,7 @@ public sealed class SidebarViewModel : ObservableObject
     public double SidebarWidth => _state.ExpandedWidth;
     public bool AnimationsEnabled => _state.AnimationsEnabled;
     public bool AlwaysOnTop => Settings.AlwaysOnTop;
-    public bool ToggleHotkeyEnabled => Settings.ToggleHotkeyEnabled;
+    public bool GlobalHotkeysEnabled => Settings.GlobalHotkeysEnabled;
 
     public void Expand()
     {
@@ -108,9 +108,9 @@ public sealed class SidebarViewModel : ObservableObject
         {
             OnPropertyChanged(nameof(AlwaysOnTop));
         }
-        else if (e.PropertyName == nameof(SettingsViewModel.ToggleHotkeyEnabled))
+        else if (e.PropertyName == nameof(SettingsViewModel.GlobalHotkeysEnabled))
         {
-            OnPropertyChanged(nameof(ToggleHotkeyEnabled));
+            OnPropertyChanged(nameof(GlobalHotkeysEnabled));
         }
     }
 }

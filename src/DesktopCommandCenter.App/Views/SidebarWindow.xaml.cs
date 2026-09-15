@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using DesktopCommandCenter.App.ViewModels;
 using DesktopCommandCenter.Core.State;
 using DesktopCommandCenter.Windows.Hotkeys;
@@ -55,9 +57,9 @@ public partial class SidebarWindow : Window
             return;
         }
 
-        if (_viewModel.ToggleHotkeyEnabled)
+        if (_viewModel.GlobalHotkeysEnabled)
         {
-            _ = _hotkeyService.RegisterToggleSidebar(_windowHandle);
+            _hotkeyService.RegisterDefaults(_windowHandle);
         }
         else
         {
@@ -77,8 +79,52 @@ public partial class SidebarWindow : Window
             _viewModel.Toggle();
             handled = true;
         }
+        else if (_hotkeyService.IsFocusSearchMessage(message, wParam))
+        {
+            _viewModel.ShowHome();
+            _viewModel.Expand();
+            Activate();
+            Dispatcher.BeginInvoke(
+                DispatcherPriority.Input,
+                new Action(FocusSearchBox));
+            handled = true;
+        }
 
         return 0;
+    }
+
+    private void FocusSearchBox()
+    {
+        var searchBox = FindVisualChild<System.Windows.Controls.TextBox>(this);
+        if (searchBox is null)
+        {
+            return;
+        }
+
+        searchBox.Focus();
+        searchBox.SelectAll();
+    }
+
+    private static T? FindVisualChild<T>(DependencyObject parent)
+        where T : DependencyObject
+    {
+        var childCount = VisualTreeHelper.GetChildrenCount(parent);
+        for (var index = 0; index < childCount; index++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, index);
+            if (child is T match)
+            {
+                return match;
+            }
+
+            var descendant = FindVisualChild<T>(child);
+            if (descendant is not null)
+            {
+                return descendant;
+            }
+        }
+
+        return null;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
@@ -105,7 +151,7 @@ public partial class SidebarWindow : Window
             Width = _viewModel.SidebarWidth;
             AnchorToWorkingArea();
         }
-        else if (e.PropertyName == nameof(SidebarViewModel.ToggleHotkeyEnabled))
+        else if (e.PropertyName == nameof(SidebarViewModel.GlobalHotkeysEnabled))
         {
             ApplyHotkeyRegistration();
         }
@@ -133,13 +179,18 @@ public partial class SidebarWindow : Window
                 : new QuadraticEase { EasingMode = EasingMode.EaseIn },
             FillBehavior = FillBehavior.Stop
         };
+
         animation.Completed += (_, _) =>
         {
             Width = targetWidth;
             AnchorToWorkingArea();
             CompleteVisualState();
         };
-        BeginAnimation(WidthProperty, animation, HandoffBehavior.SnapshotAndReplace);
+
+        BeginAnimation(
+            WidthProperty,
+            animation,
+            HandoffBehavior.SnapshotAndReplace);
     }
 
     private void CompleteVisualState()
@@ -150,7 +201,11 @@ public partial class SidebarWindow : Window
 
     private void AnchorToWorkingArea()
     {
-        if (!IsLoaded) return;
+        if (!IsLoaded)
+        {
+            return;
+        }
+
         var area = _monitorService.GetPrimaryWorkingArea();
         Height = area.Height;
         Top = area.Top;

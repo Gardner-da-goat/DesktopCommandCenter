@@ -100,10 +100,10 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.AutoCheckForUpdates, v => _settings.AutoCheckForUpdates = v);
     }
 
-    public bool ToggleHotkeyEnabled
+    public bool GlobalHotkeysEnabled
     {
-        get => _settings.ToggleHotkeyEnabled;
-        set => SetBoolean(value, () => _settings.ToggleHotkeyEnabled, v => _settings.ToggleHotkeyEnabled = v);
+        get => _settings.GlobalHotkeysEnabled;
+        set => SetBoolean(value, () => _settings.GlobalHotkeysEnabled, v => _settings.GlobalHotkeysEnabled = v);
     }
 
     public bool ShowSearchModule

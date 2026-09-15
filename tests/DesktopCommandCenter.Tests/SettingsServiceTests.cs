@@ -36,7 +36,7 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.AnimationsEnabled);
         Assert.IsTrue(settings.ShowTrayIcon);
         Assert.IsTrue(settings.AutoCheckForUpdates);
-        Assert.IsTrue(settings.ToggleHotkeyEnabled);
+        Assert.IsTrue(settings.GlobalHotkeysEnabled);
         Assert.IsTrue(settings.ShowSearchModule);
         Assert.IsTrue(settings.ShowFavoritesModule);
         Assert.IsTrue(settings.ShowCurrentWindowModule);
@@ -83,7 +83,7 @@ public sealed class SettingsServiceTests
             AnimationsEnabled = false,
             ShowTrayIcon = false,
             AutoCheckForUpdates = false,
-            ToggleHotkeyEnabled = false,
+            GlobalHotkeysEnabled = false,
             ShowFavoritesModule = false,
             ShowMacrosModule = false,
             FavoriteApps =
@@ -104,7 +104,7 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.AnimationsEnabled);
         Assert.IsFalse(settings.ShowTrayIcon);
         Assert.IsFalse(settings.AutoCheckForUpdates);
-        Assert.IsFalse(settings.ToggleHotkeyEnabled);
+        Assert.IsFalse(settings.GlobalHotkeysEnabled);
         Assert.IsFalse(settings.ShowFavoritesModule);
         Assert.IsFalse(settings.ShowMacrosModule);
         Assert.AreEqual(1, settings.FavoriteApps.Count);

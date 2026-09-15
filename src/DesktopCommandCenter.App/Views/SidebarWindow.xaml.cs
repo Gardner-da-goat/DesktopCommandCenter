@@ -135,6 +135,11 @@ public partial class SidebarWindow : Window
         return null;
     }
 
+    private void OnCollapsedHandleMouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+    {
+        _viewModel.Windows.CaptureForegroundNow();
+    }
+
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         Width = _viewModel.IsExpanded ? _viewModel.SidebarWidth : SidebarState.CollapsedWidth;

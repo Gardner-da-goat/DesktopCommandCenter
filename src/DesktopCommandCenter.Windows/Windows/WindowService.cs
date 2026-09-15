@@ -373,47 +373,26 @@ public sealed class WindowService
 
             var dpi = Math.Max(96u, NativeMethods.GetDpiForSystem());
             var sidebarWidthPixels = (int)Math.Ceiling(sidebarWidthDip * dpi / 96d);
-            var availableLeft = monitorInfo.Work.Left;
-            var availableTop = monitorInfo.Work.Top;
-            var availableRight = Math.Max(
-                availableLeft + 320,
-                monitorInfo.Work.Right - sidebarWidthPixels);
-            var availableBottom = monitorInfo.Work.Bottom;
-            var availableWidth = availableRight - availableLeft;
-            var availableHeight = availableBottom - availableTop;
 
-            if (availableWidth < 320 || availableHeight < 200)
+            var targetLeft = monitorInfo.Work.Left;
+            var targetTop = monitorInfo.Work.Top;
+            var targetWidth = Math.Max(
+                320,
+                (monitorInfo.Work.Right - monitorInfo.Work.Left) - sidebarWidthPixels);
+            var targetHeight = monitorInfo.Work.Bottom - monitorInfo.Work.Top;
+
+            if (targetWidth < 320 || targetHeight < 200)
             {
                 return null;
             }
 
             _ = NativeMethods.ShowWindow(handle, NativeMethods.SwRestore);
 
-            int targetX;
-            int targetY;
-            int targetWidth;
-            int targetHeight;
-
-            if (wasMaximized)
-            {
-                targetX = availableLeft;
-                targetY = availableTop;
-                targetWidth = availableWidth;
-                targetHeight = availableHeight;
-            }
-            else
-            {
-                targetWidth = Math.Min(snapshot.Width, availableWidth);
-                targetHeight = Math.Min(snapshot.Height, availableHeight);
-                targetX = Math.Clamp(snapshot.Left, availableLeft, availableRight - targetWidth);
-                targetY = Math.Clamp(snapshot.Top, availableTop, availableBottom - targetHeight);
-            }
-
             if (!NativeMethods.SetWindowPos(
                     handle,
                     0,
-                    targetX,
-                    targetY,
+                    targetLeft,
+                    targetTop,
                     targetWidth,
                     targetHeight,
                     NativeMethods.SwpNoActivate | NativeMethods.SwpShowWindow))

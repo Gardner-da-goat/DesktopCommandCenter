@@ -12,7 +12,7 @@
                 Background="{DynamicResource PanelBackground}"
                 BorderBrush="{DynamicResource BorderSubtle}"
                 BorderThickness="1,1,0,1"
-                CornerRadius="18,0,0,18">
+                CornerRadius="14,0,0,14">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -23,76 +23,102 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="18" ShadowDepth="-4" Direction="0"
-                                  Color="#90000000" Opacity="0.55" />
-            </Border.Effect>
+
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="58" />
+                    <RowDefinition Height="50" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" Margin="14,0,10,0">
+                <Grid Grid.Row="0" Margin="10,0,8,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Border Width="28" Height="28" CornerRadius="8" Background="{DynamicResource Accent}">
-                        <TextBlock Text="⌘" FontSize="15" FontWeight="SemiBold"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    <Border Width="24"
+                            Height="24"
+                            CornerRadius="7"
+                            Background="{DynamicResource Accent}">
+                        <TextBlock Text="⌘"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     </Border>
-                    <TextBlock Grid.Column="1" Text="Desktop Command Center"
+
+                    <TextBlock Grid.Column="1"
+                               Text="Desktop Command Center"
                                Style="{StaticResource AppTitleText}"
-                               Margin="10,0,6,0" VerticalAlignment="Center" />
-                    <Button Grid.Column="2" Style="{StaticResource IconButton}"
-                            Command="{Binding CollapseCommand}" ToolTip="Collapse">
-                        <TextBlock Text="❯" FontSize="15" />
+                               FontSize="15"
+                               Margin="8,0,4,0"
+                               VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis" />
+
+                    <Button Grid.Column="2"
+                            Width="30"
+                            Height="30"
+                            Style="{StaticResource IconButton}"
+                            Command="{Binding CollapseCommand}"
+                            ToolTip="Collapse">
+                        <TextBlock Text="❯" FontSize="13" />
                     </Button>
                 </Grid>
 
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="56" />
+                        <ColumnDefinition Width="48" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <Border Background="{DynamicResource NavigationBackground}"
                             BorderBrush="{DynamicResource BorderSubtle}"
                             BorderThickness="0,1,1,0">
-                        <StackPanel Margin="0,8,0,0">
+                        <StackPanel Margin="0,6,0,0">
                             <RadioButton GroupName="MainNavigation"
+                                         Width="36" Height="36" Margin="6,3"
                                          Style="{StaticResource NavigationButton}"
                                          IsChecked="{Binding IsHomeSelected, Mode=OneWay}"
-                                         Command="{Binding ShowHomeCommand}" ToolTip="Home">
-                                <TextBlock Text="⌂" FontFamily="Segoe UI Symbol" FontSize="20" />
+                                         Command="{Binding ShowHomeCommand}"
+                                         ToolTip="Home">
+                                <TextBlock Text="⌂" FontFamily="Segoe UI Symbol" FontSize="17" />
                             </RadioButton>
 
                             <RadioButton GroupName="MainNavigation"
+                                         Width="36" Height="36" Margin="6,3"
                                          Style="{StaticResource NavigationButton}"
                                          IsChecked="{Binding IsWindowsSelected, Mode=OneWay}"
-                                         Command="{Binding ShowWindowsCommand}" ToolTip="Windows">
-                                <TextBlock Text="▣" FontFamily="Segoe UI Symbol" FontSize="18" />
+                                         Command="{Binding ShowWindowsCommand}"
+                                         ToolTip="Windows">
+                                <TextBlock Text="▣" FontFamily="Segoe UI Symbol" FontSize="15" />
                             </RadioButton>
 
                             <RadioButton GroupName="MainNavigation"
+                                         Width="36" Height="36" Margin="6,3"
                                          Style="{StaticResource NavigationButton}"
                                          IsChecked="{Binding IsSettingsSelected, Mode=OneWay}"
-                                         Command="{Binding ShowSettingsCommand}" ToolTip="Settings">
-                                <TextBlock Text="⚙" FontFamily="Segoe UI Symbol" FontSize="18" />
+                                         Command="{Binding ShowSettingsCommand}"
+                                         ToolTip="Settings">
+                                <TextBlock Text="⚙" FontFamily="Segoe UI Symbol" FontSize="15" />
                             </RadioButton>
                         </StackPanel>
                     </Border>
 
-                    <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" />
+                    <ContentControl Grid.Column="1"
+                                    Content="{Binding CurrentPage}"
+                                    ClipToBounds="True" />
                 </Grid>
             </Grid>
         </Border>
 
-        <Button x:Name="CollapsedHandle" Width="34" Height="112"
-                HorizontalAlignment="Right" VerticalAlignment="Center"
-                Padding="0" Background="{DynamicResource PanelBackground}"
+        <Button x:Name="CollapsedHandle"
+                Width="34"
+                Height="98"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Padding="0"
+                Background="{DynamicResource PanelBackground}"
                 Command="{Binding ExpandCommand}"
                 ToolTip="Open Desktop Command Center">
             <Button.Style>
@@ -105,22 +131,29 @@
                                         Background="{TemplateBinding Background}"
                                         BorderBrush="{DynamicResource BorderSubtle}"
                                         BorderThickness="1,1,0,1"
-                                        CornerRadius="12,0,0,12">
+                                        CornerRadius="11,0,0,11">
                                     <StackPanel VerticalAlignment="Center">
-                                        <Border Width="22" Height="22" CornerRadius="7"
-                                                Background="{DynamicResource Accent}" Margin="0,0,0,10">
-                                            <TextBlock Text="⌘" FontSize="12" FontWeight="SemiBold"
-                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Border Width="20"
+                                                Height="20"
+                                                CornerRadius="6"
+                                                Background="{DynamicResource Accent}"
+                                                Margin="0,0,0,8">
+                                            <TextBlock Text="⌘"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" />
                                         </Border>
-                                        <TextBlock Text="❮" FontSize="14" HorizontalAlignment="Center" />
+                                        <TextBlock Text="❮"
+                                                   FontSize="12"
+                                                   HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="HandleChrome" Property="Background" Value="{DynamicResource CardHoverBackground}" />
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter TargetName="HandleChrome" Property="Opacity" Value="0.76" />
+                                        <Setter TargetName="HandleChrome"
+                                                Property="Background"
+                                                Value="{DynamicResource CardHoverBackground}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>

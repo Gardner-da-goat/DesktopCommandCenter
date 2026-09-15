@@ -184,15 +184,20 @@ public partial class SidebarWindow : Window
             return;
         }
 
-        _viewModel.Windows.Refresh();
-        var current = _viewModel.Windows.CurrentWindow;
-        if (current is null)
+        var handle = _viewModel.Windows.GetReflowTargetHandle();
+        if (handle == 0)
+        {
+            _viewModel.Windows.Refresh();
+            handle = _viewModel.Windows.GetReflowTargetHandle();
+        }
+
+        if (handle == 0)
         {
             return;
         }
 
         _reflowSnapshot = _windowService.ReflowForSidebar(
-            current.Handle,
+            handle,
             _viewModel.SidebarWidth);
     }
 
@@ -210,6 +215,7 @@ public partial class SidebarWindow : Window
     private void AnimateWidth(double targetWidth)
     {
         BeginAnimation(WidthProperty, null);
+
         if (!_viewModel.AnimationsEnabled)
         {
             Width = targetWidth;
@@ -223,7 +229,7 @@ public partial class SidebarWindow : Window
         {
             From = ActualWidth,
             To = targetWidth,
-            Duration = TimeSpan.FromMilliseconds(expanding ? 220 : 185),
+            Duration = TimeSpan.FromMilliseconds(expanding ? 180 : 150),
             EasingFunction = expanding
                 ? new CubicEase { EasingMode = EasingMode.EaseOut }
                 : new QuadraticEase { EasingMode = EasingMode.EaseIn },

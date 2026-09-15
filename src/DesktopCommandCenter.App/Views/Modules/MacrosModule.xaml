@@ -1,41 +1,40 @@
 <UserControl x:Class="DesktopCommandCenter.App.Views.Modules.MacrosModule"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Border Style="{StaticResource CardStyle}">
+    <Border Style="{StaticResource CardStyle}" Padding="10">
         <StackPanel>
-            <TextBlock Text="Macros" Style="{StaticResource SectionTitleText}" Margin="0,0,0,10" />
+            <TextBlock Text="Macros"
+                       Style="{StaticResource SectionTitleText}"
+                       Margin="0,0,0,6" />
 
             <ItemsControl ItemsSource="{Binding Macros.Items}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid Margin="0,0,0,8">
+                        <Grid Margin="0,0,0,5">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="4" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Border Width="4" Height="28"
+                            <Border Width="3"
                                     Background="{DynamicResource Accent}"
                                     CornerRadius="2" />
-                            <StackPanel Grid.Column="1" Margin="8,0,8,0" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Name}" />
-                                <TextBlock Text="{Binding Script}"
-                                           Style="{StaticResource MutedText}"
-                                           MaxWidth="150"
-                                           TextTrimming="CharacterEllipsis" />
-                            </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding Name}"
+                                       Margin="6,0"
+                                       VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis" />
                             <Button Grid.Column="2"
                                     Content="Run"
                                     Command="{Binding RunCommand}"
-                                    Padding="9,5"
-                                    VerticalAlignment="Center" />
+                                    Padding="7,4" />
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <TextBlock Text="Create a macro in Settings to run multi-step routines."
-                       Margin="0,2,0,0">
+            <TextBlock Text="Create macros in Settings."
+                       Margin="0,1,0,0">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock" BasedOn="{StaticResource MutedText}">
                         <Setter Property="Visibility" Value="Collapsed" />
@@ -47,10 +46,6 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-
-            <TextBlock Text="{Binding Macros.StatusMessage}"
-                       Style="{StaticResource MutedText}"
-                       Margin="0,7,0,0" />
         </StackPanel>
     </Border>
 </UserControl>

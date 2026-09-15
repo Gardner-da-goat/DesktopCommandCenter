@@ -8,6 +8,7 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
 {
     private readonly WindowService _windowService;
     private readonly DispatcherTimer _refreshTimer;
+    private readonly DispatcherTimer _foregroundTimer;
     private WindowItemViewModel? _currentWindow;
     private WindowItemViewModel? _selectedWindow;
     private nint _lastExternalForegroundHandle;
@@ -19,9 +20,16 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
         Windows = new ObservableCollection<WindowItemViewModel>();
         RefreshCommand = new RelayCommand(Refresh);
 
+        _foregroundTimer = new DispatcherTimer(DispatcherPriority.Send)
+        {
+            Interval = TimeSpan.FromMilliseconds(150)
+        };
+        _foregroundTimer.Tick += OnForegroundTimer;
+        _foregroundTimer.Start();
+
         _refreshTimer = new DispatcherTimer(DispatcherPriority.Background)
         {
-            Interval = TimeSpan.FromMilliseconds(1500)
+            Interval = TimeSpan.FromMilliseconds(1200)
         };
         _refreshTimer.Tick += OnRefreshTimer;
         _refreshTimer.Start();
@@ -31,6 +39,8 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
 
     public ObservableCollection<WindowItemViewModel> Windows { get; }
     public RelayCommand RefreshCommand { get; }
+
+    public nint LastExternalWindowHandle => _lastExternalForegroundHandle;
 
     public WindowItemViewModel? CurrentWindow
     {
@@ -70,15 +80,10 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
     {
         try
         {
+            CaptureForeground();
+
             var selectedHandle = SelectedWindow?.Handle ?? 0;
             var windowInfos = _windowService.GetWindows();
-            var foreground = _windowService.GetForegroundWindowInfo();
-
-            if (foreground is not null)
-            {
-                _lastExternalForegroundHandle = foreground.Handle;
-            }
-
             var liveHandles = windowInfos
                 .Select(info => info.Handle)
                 .ToHashSet();
@@ -87,9 +92,9 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
                 !liveHandles.Contains(_lastExternalForegroundHandle))
             {
                 _lastExternalForegroundHandle = 0;
+                OnPropertyChanged(nameof(LastExternalWindowHandle));
             }
 
-            var activeHandle = _lastExternalForegroundHandle;
             var byHandle = Windows
                 .GroupBy(item => item.Handle)
                 .ToDictionary(group => group.Key, group => group.First());
@@ -110,10 +115,11 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
                     Windows.Add(item);
                 }
 
-                item.Refresh(info, activeHandle);
+                item.Refresh(info, _lastExternalForegroundHandle);
             }
 
-            CurrentWindow = Windows.FirstOrDefault(item => item.Handle == activeHandle);
+            CurrentWindow =
+                Windows.FirstOrDefault(item => item.Handle == _lastExternalForegroundHandle);
 
             SelectedWindow =
                 Windows.FirstOrDefault(item => item.Handle == selectedHandle) ??
@@ -132,11 +138,59 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
         }
     }
 
+    public nint GetReflowTargetHandle()
+    {
+        CaptureForeground();
+
+        if (_lastExternalForegroundHandle != 0)
+        {
+            return _lastExternalForegroundHandle;
+        }
+
+        return CurrentWindow?.Handle ??
+               SelectedWindow?.Handle ??
+               0;
+    }
+
     public void Dispose()
     {
+        _foregroundTimer.Stop();
+        _foregroundTimer.Tick -= OnForegroundTimer;
         _refreshTimer.Stop();
         _refreshTimer.Tick -= OnRefreshTimer;
     }
 
+    private void CaptureForeground()
+    {
+        try
+        {
+            var foreground = _windowService.GetForegroundWindowInfo();
+            if (foreground is null || foreground.Handle == 0)
+            {
+                return;
+            }
+
+            if (_lastExternalForegroundHandle == foreground.Handle)
+            {
+                return;
+            }
+
+            _lastExternalForegroundHandle = foreground.Handle;
+            OnPropertyChanged(nameof(LastExternalWindowHandle));
+
+            var item = Windows.FirstOrDefault(candidate => candidate.Handle == foreground.Handle);
+            if (item is not null)
+            {
+                CurrentWindow = item;
+                item.Refresh(foreground, foreground.Handle);
+            }
+        }
+        catch
+        {
+            // Foreground tracking is best-effort and must never affect the shell.
+        }
+    }
+
+    private void OnForegroundTimer(object? sender, EventArgs e) => CaptureForeground();
     private void OnRefreshTimer(object? sender, EventArgs e) => Refresh();
 }

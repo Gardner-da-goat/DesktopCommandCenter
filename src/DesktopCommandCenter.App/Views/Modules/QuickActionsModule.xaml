@@ -3,24 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:DesktopCommandCenter.App.Controls">
     <StackPanel>
-        <TextBlock Text="Quick Actions" Style="{StaticResource SectionTitleText}" Margin="2,0,0,9" />
+        <TextBlock Text="Quick Actions"
+                   Style="{StaticResource SectionTitleText}"
+                   Margin="2,0,0,6" />
         <UniformGrid Columns="2" Rows="2">
-            <controls:QuickActionTile Icon="⇩"
-                                      Label="Downloads"
+            <controls:QuickActionTile Icon="⇩" Label="Downloads"
                                       Command="{Binding OpenDownloadsCommand}"
-                                      Margin="0,0,4,4" />
-            <controls:QuickActionTile Icon="▤"
-                                      Label="Task Manager"
+                                      Margin="0,0,3,3" />
+            <controls:QuickActionTile Icon="▤" Label="Task Manager"
                                       Command="{Binding OpenTaskManagerCommand}"
-                                      Margin="4,0,0,4" />
-            <controls:QuickActionTile Icon="⚙"
-                                      Label="Settings"
+                                      Margin="3,0,0,3" />
+            <controls:QuickActionTile Icon="⚙" Label="Settings"
                                       Command="{Binding OpenSettingsCommand}"
-                                      Margin="0,4,4,0" />
-            <controls:QuickActionTile Icon="⌨"
-                                      Label="Terminal"
+                                      Margin="0,3,3,0" />
+            <controls:QuickActionTile Icon="⌨" Label="Terminal"
                                       Command="{Binding OpenTerminalCommand}"
-                                      Margin="4,4,0,0" />
+                                      Margin="3,3,0,0" />
         </UniformGrid>
     </StackPanel>
 </UserControl>

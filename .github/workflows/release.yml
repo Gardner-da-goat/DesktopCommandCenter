@@ -23,6 +23,15 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Read app version
+        id: version
+        shell: pwsh
+        run: |
+          [xml]$project = Get-Content "src/DesktopCommandCenter.App/DesktopCommandCenter.App.csproj"
+          $version = $project.Project.PropertyGroup.Version
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=v$version" >> $env:GITHUB_OUTPUT
+
       - name: Restore
         run: dotnet restore DesktopCommandCenter.sln
 
@@ -49,22 +58,17 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          if ("$env:GITHUB_REF" -eq "refs/heads/main") {
-            $tag = "v0.2.0"
-          }
-          else {
-            $tag = "$env:GITHUB_REF_NAME"
-          }
-
-          gh release view $tag *> $null
+          gh release view "$env:RELEASE_TAG" *> $null
           if ($LASTEXITCODE -eq 0) {
-            Write-Host "Release $tag already exists. Skipping."
+            Write-Host "Release $env:RELEASE_TAG already exists. Skipping."
             exit 0
           }
 
-          gh release create $tag `
+          gh release create "$env:RELEASE_TAG" `
             "artifacts/DesktopCommandCenter-win-x64.zip" `
             --target "$env:GITHUB_SHA" `
-            --title "Desktop Command Center $tag" `
+            --title "Desktop Command Center $env:RELEASE_VERSION" `
             --generate-notes

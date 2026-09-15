@@ -2,14 +2,36 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
-        <Style x:Key="CompactComboBox" TargetType="ComboBox">
-            <Setter Property="Height" Value="30" />
-            <Setter Property="Padding" Value="8,3" />
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
-            <Setter Property="Background" Value="{DynamicResource CardBackground}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
-            <Setter Property="BorderThickness" Value="1" />
+        <Style x:Key="CompactCategoryItem" TargetType="ListBoxItem">
+            <Setter Property="Margin" Value="0,0,6,6" />
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Chrome"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{DynamicResource CardBackground}"
+                                BorderBrush="{DynamicResource BorderSubtle}"
+                                BorderThickness="1"
+                                CornerRadius="7">
+                            <ContentPresenter HorizontalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource CardHoverBackground}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentSoft}" />
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Accent}" />
+                                <Setter Property="Foreground" Value="{DynamicResource AccentHover}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="CompactStartOption" TargetType="RadioButton">
@@ -26,9 +48,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Chrome"
-                                        Property="Background"
-                                        Value="{DynamicResource Accent}" />
+                                <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Accent}" />
                                 <Setter Property="Foreground" Value="White" />
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -69,7 +89,7 @@
                         Value="{Binding DataContext.SidebarWidth, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Margin="0,0,0,8" />
 
-                <Grid Margin="0,0,0,7">
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Always on top" VerticalAlignment="Center" />
                     <CheckBox Grid.Column="1"
@@ -77,7 +97,7 @@
                               IsChecked="{Binding DataContext.AlwaysOnTop, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
 
-                <Grid Margin="0,0,0,7">
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Animations" VerticalAlignment="Center" />
                     <CheckBox Grid.Column="1"
@@ -97,25 +117,25 @@
 
         <DataTemplate x:Key="CustomizeHomeTemplate">
             <StackPanel>
-                <Grid Margin="0,0,0,7">
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Search" />
                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}"
                               IsChecked="{Binding DataContext.ShowSearchModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
-                <Grid Margin="0,0,0,7">
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Favorites" />
                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}"
                               IsChecked="{Binding DataContext.ShowFavoritesModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
-                <Grid Margin="0,0,0,7">
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Current Window" />
                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}"
                               IsChecked="{Binding DataContext.ShowCurrentWindowModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
-                <Grid Margin="0,0,0,7">
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Quick Actions" />
                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}"
@@ -135,7 +155,7 @@
                 <ItemsControl ItemsSource="{Binding DataContext.Favorites.Items, RelativeSource={RelativeSource AncestorType=UserControl}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="0,0,0,6">
+                            <Grid Margin="0,0,0,5">
                                 <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                 <TextBlock Text="{Binding Name}"
                                            TextTrimming="CharacterEllipsis"
@@ -152,13 +172,13 @@
                 </ItemsControl>
                 <TextBlock Text="Pin apps from Home search results."
                            Style="{StaticResource MutedText}"
-                           Margin="0,3,0,0" />
+                           Margin="0,2,0,0" />
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="HotkeysTemplate">
             <StackPanel>
-                <Grid Margin="0,0,0,8">
+                <Grid Margin="0,0,0,7">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <StackPanel>
                         <TextBlock Text="Global shortcuts" />
@@ -169,7 +189,7 @@
                               Style="{StaticResource ToggleSwitchStyle}"
                               IsChecked="{Binding DataContext.GlobalHotkeysEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
-                <TextBlock Text="Ctrl+Space toggles the sidebar. Ctrl+Shift+Space opens Home and focuses Search."
+                <TextBlock Text="Toggle sidebar or jump straight to Search."
                            Style="{StaticResource MutedText}"
                            TextWrapping="Wrap" />
             </StackPanel>
@@ -177,30 +197,30 @@
 
         <DataTemplate x:Key="MacrosTemplate">
             <StackPanel>
-                <TextBox Height="34"
+                <TextBox Height="32"
                          Style="{StaticResource ModernTextBox}"
                          Padding="8,0"
                          Tag="Macro name"
                          Text="{Binding DataContext.Macros.NewMacroName, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
-                         Margin="0,0,0,6" />
-                <TextBox Height="80"
+                         Margin="0,0,0,5" />
+                <TextBox Height="68"
                          Style="{StaticResource ModernTextBox}"
                          Padding="8"
                          Tag="Commands, one per line"
                          AcceptsReturn="True"
                          TextWrapping="Wrap"
                          VerticalContentAlignment="Top"
-                         VerticalScrollBarVisibility="Auto"
+                         VerticalScrollBarVisibility="Hidden"
                          Text="{Binding DataContext.Macros.NewMacroScript, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
-                         Margin="0,0,0,6" />
+                         Margin="0,0,0,5" />
                 <Button Content="Create"
                         Style="{StaticResource AccentButton}"
                         Command="{Binding DataContext.Macros.CreateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Margin="0,0,0,8" />
+                        Margin="0,0,0,7" />
                 <ItemsControl ItemsSource="{Binding DataContext.Macros.Items, RelativeSource={RelativeSource AncestorType=UserControl}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="0,0,0,6">
+                            <Grid Margin="0,0,0,5">
                                 <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                 <TextBlock Text="{Binding Name}"
                                            TextTrimming="CharacterEllipsis"
@@ -222,19 +242,19 @@
                 </ItemsControl>
                 <TextBlock Text="{Binding DataContext.Macros.StatusMessage, RelativeSource={RelativeSource AncestorType=UserControl}}"
                            Style="{StaticResource MutedText}"
-                           Margin="0,3,0,0" />
+                           Margin="0,2,0,0" />
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="UpdatesTemplate">
             <StackPanel>
-                <Grid Margin="0,0,0,7">
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Current" />
                     <TextBlock Grid.Column="1"
                                Text="{Binding DataContext.Updates.CurrentVersion, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                 </Grid>
-                <Grid Margin="0,0,0,7">
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Auto-check" />
                     <CheckBox Grid.Column="1"
@@ -243,12 +263,12 @@
                 </Grid>
                 <Button Content="Check for Updates"
                         Command="{Binding DataContext.Updates.CheckCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Margin="0,0,0,6" />
+                        Margin="0,0,0,5" />
                 <Button Content="Update &amp; Restart"
                         Style="{StaticResource AccentButton}"
                         Command="{Binding DataContext.Updates.UpdateAndRestartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         IsEnabled="{Binding DataContext.Updates.IsUpdateAvailable, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Margin="0,0,0,6" />
+                        Margin="0,0,0,5" />
                 <TextBlock Text="{Binding DataContext.Updates.StatusMessage, RelativeSource={RelativeSource AncestorType=UserControl}}"
                            Style="{StaticResource MutedText}"
                            TextWrapping="Wrap" />
@@ -261,25 +281,19 @@
                            Style="{StaticResource SecondaryText}" />
                 <TextBlock Text="More themes and transparency controls are planned."
                            Style="{StaticResource MutedText}"
-                           Margin="0,4,0,0"
+                           Margin="0,3,0,0"
                            TextWrapping="Wrap" />
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="GenericTemplate">
-            <StackPanel>
-                <TextBlock Text="{Binding Description}"
-                           Style="{StaticResource SecondaryText}"
-                           TextWrapping="Wrap" />
-                <TextBlock Text="More controls will appear here as this feature is completed."
-                           Style="{StaticResource MutedText}"
-                           Margin="0,4,0,0"
-                           TextWrapping="Wrap" />
-            </StackPanel>
+            <TextBlock Text="{Binding Description}"
+                       Style="{StaticResource SecondaryText}"
+                       TextWrapping="Wrap" />
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Margin="10">
+    <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -288,28 +302,51 @@
 
         <TextBlock Text="Settings"
                    Style="{StaticResource PageTitleText}"
-                   Margin="0,0,0,6" />
+                   Margin="2,0,0,7" />
 
-        <ComboBox Grid.Row="1"
-                  Style="{StaticResource CompactComboBox}"
-                  ItemsSource="{Binding Categories}"
-                  SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
-                  DisplayMemberPath="Name"
-                  Margin="0,0,0,8" />
+        <ListBox Grid.Row="1"
+                 ItemsSource="{Binding Categories}"
+                 SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                 ItemContainerStyle="{StaticResource CompactCategoryItem}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 Padding="0"
+                 Margin="0,0,-6,2"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="2" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"
+                               FontSize="10.5"
+                               TextTrimming="CharacterEllipsis"
+                               HorizontalAlignment="Center" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <ScrollViewer Grid.Row="2"
-                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Disabled"
                       PanningMode="VerticalOnly">
-            <Border Style="{StaticResource CardStyle}" Padding="10">
+            <Border Style="{StaticResource CardStyle}"
+                    Padding="9"
+                    Margin="0,2,0,8">
                 <StackPanel>
-                    <TextBlock Text="{Binding SelectedCategory.Name}"
-                               Style="{StaticResource SectionTitleText}"
-                               Margin="0,0,0,2" />
-                    <TextBlock Text="{Binding SelectedCategory.Description}"
-                               Style="{StaticResource MutedText}"
-                               TextWrapping="Wrap"
-                               Margin="0,0,0,8" />
+                    <DockPanel Margin="0,0,0,6">
+                        <TextBlock Text="{Binding SelectedCategory.Name}"
+                                   Style="{StaticResource SectionTitleText}" />
+                        <TextBlock DockPanel.Dock="Right"
+                                   Text="{Binding SelectedCategory.Description}"
+                                   Style="{StaticResource MutedText}"
+                                   MaxWidth="150"
+                                   TextAlignment="Right"
+                                   TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
 
                     <ContentControl Content="{Binding SelectedCategory}">
                         <ContentControl.Style>

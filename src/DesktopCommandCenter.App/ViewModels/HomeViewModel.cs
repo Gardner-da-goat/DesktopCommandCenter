@@ -28,6 +28,8 @@ public sealed class HomeViewModel : ObservableObject
         VolumeDownCommand = new RelayCommand(() => _ = shellActions.VolumeDown());
         OpenClipboardCommand = new RelayCommand(() => _ = shellActions.OpenClipboardHistory());
         PlayPauseCommand = new RelayCommand(() => _ = shellActions.PlayPause());
+        NextTrackCommand = new RelayCommand(() => _ = shellActions.NextTrack());
+        PreviousTrackCommand = new RelayCommand(() => _ = shellActions.PreviousTrack());
         _windowsViewModel.PropertyChanged += OnWindowsPropertyChanged;
         _settingsViewModel.SettingsChanged += OnSettingsChanged;
     }
@@ -38,7 +40,8 @@ public sealed class HomeViewModel : ObservableObject
         new("favorites", "Favorites", true, 1),
         new("current-window", "Current Window", true, 2),
         new("quick-actions", "Quick Actions", true, 3),
-        new("macros", "Macros", true, 4)
+        new("macros", "Macros", true, 4),
+        new("media", "Media", false, 5)
     ];
 
     public SearchViewModel Search { get; }
@@ -54,6 +57,8 @@ public sealed class HomeViewModel : ObservableObject
     public RelayCommand VolumeDownCommand { get; }
     public RelayCommand OpenClipboardCommand { get; }
     public RelayCommand PlayPauseCommand { get; }
+    public RelayCommand NextTrackCommand { get; }
+    public RelayCommand PreviousTrackCommand { get; }
 
     public WindowItemViewModel? CurrentWindow => _windowsViewModel.CurrentWindow;
     public bool HasCurrentWindow => _windowsViewModel.HasCurrentWindow;
@@ -63,6 +68,7 @@ public sealed class HomeViewModel : ObservableObject
     public bool ShowCurrentWindowModule => _settingsViewModel.ShowCurrentWindowModule;
     public bool ShowQuickActionsModule => _settingsViewModel.ShowQuickActionsModule;
     public bool ShowMacrosModule => _settingsViewModel.ShowMacrosModule;
+    public bool ShowMediaModule => _settingsViewModel.ShowMediaModule;
 
     public bool ShowDownloadsAction => _settingsViewModel.ShowDownloadsAction;
     public bool ShowTaskManagerAction => _settingsViewModel.ShowTaskManagerAction;
@@ -102,6 +108,9 @@ public sealed class HomeViewModel : ObservableObject
                 break;
             case nameof(SettingsViewModel.ShowMacrosModule):
                 OnPropertyChanged(nameof(ShowMacrosModule));
+                break;
+            case nameof(SettingsViewModel.ShowMediaModule):
+                OnPropertyChanged(nameof(ShowMediaModule));
                 break;
             case nameof(SettingsViewModel.ShowDownloadsAction):
                 OnPropertyChanged(nameof(ShowDownloadsAction));

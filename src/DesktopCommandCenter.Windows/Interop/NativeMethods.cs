@@ -25,6 +25,8 @@ internal static class NativeMethods
     internal const byte VkVolumeMute = 0xAD;
     internal const byte VkVolumeDown = 0xAE;
     internal const byte VkVolumeUp = 0xAF;
+    internal const byte VkMediaNextTrack = 0xB0;
+    internal const byte VkMediaPreviousTrack = 0xB1;
     internal const byte VkMediaPlayPause = 0xB3;
     internal const byte VkLWin = 0x5B;
     internal const byte VkV = 0x56;

@@ -187,6 +187,8 @@ public sealed class SearchViewModel : ObservableObject
             AddActionCandidate(candidates, query, "Volume Down", "Decrease system volume", "−", _shellActions.VolumeDown);
             AddActionCandidate(candidates, query, "Clipboard History", "Open Windows clipboard history", "▣", _shellActions.OpenClipboardHistory);
             AddActionCandidate(candidates, query, "Play Pause", "Toggle media playback", "▶", _shellActions.PlayPause);
+            AddActionCandidate(candidates, query, "Next Track", "Skip to the next media track", "»", _shellActions.NextTrack);
+            AddActionCandidate(candidates, query, "Previous Track", "Go to the previous media track", "«", _shellActions.PreviousTrack);
         }
 
         foreach (var result in candidates

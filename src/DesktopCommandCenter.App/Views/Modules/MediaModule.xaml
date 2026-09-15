@@ -1,0 +1,36 @@
+<UserControl x:Class="DesktopCommandCenter.App.Views.Modules.MediaModule"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Style="{StaticResource CardStyle}" Padding="10">
+        <StackPanel>
+            <TextBlock Text="Media"
+                       Style="{StaticResource SectionTitleText}"
+                       Margin="0,0,0,7" />
+            <UniformGrid Columns="3" Margin="0,0,0,6">
+                <Button Content="«"
+                        Command="{Binding PreviousTrackCommand}"
+                        ToolTip="Previous track"
+                        Margin="0,0,3,0" />
+                <Button Content="▶ / ❚❚"
+                        Command="{Binding PlayPauseCommand}"
+                        ToolTip="Play or pause"
+                        Margin="3,0" />
+                <Button Content="»"
+                        Command="{Binding NextTrackCommand}"
+                        ToolTip="Next track"
+                        Margin="3,0,0,0" />
+            </UniformGrid>
+            <UniformGrid Columns="3">
+                <Button Content="− Vol"
+                        Command="{Binding VolumeDownCommand}"
+                        Margin="0,0,3,0" />
+                <Button Content="Mute"
+                        Command="{Binding ToggleMuteCommand}"
+                        Margin="3,0" />
+                <Button Content="+ Vol"
+                        Command="{Binding VolumeUpCommand}"
+                        Margin="3,0,0,0" />
+            </UniformGrid>
+        </StackPanel>
+    </Border>
+</UserControl>

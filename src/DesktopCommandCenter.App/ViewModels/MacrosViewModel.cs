@@ -258,6 +258,16 @@ public sealed class MacrosViewModel : ObservableObject
             return _shellActions.PlayPause();
         }
 
+        if (line.Equals("next-track", StringComparison.OrdinalIgnoreCase))
+        {
+            return _shellActions.NextTrack();
+        }
+
+        if (line.Equals("previous-track", StringComparison.OrdinalIgnoreCase))
+        {
+            return _shellActions.PreviousTrack();
+        }
+
         _windows.Refresh();
         var current = _windows.CurrentWindow;
         if (current is null)

@@ -34,6 +34,8 @@ public sealed class ShellActionService
     public bool VolumeUp() => SendMediaKey(NativeMethods.VkVolumeUp);
     public bool VolumeDown() => SendMediaKey(NativeMethods.VkVolumeDown);
     public bool PlayPause() => SendMediaKey(NativeMethods.VkMediaPlayPause);
+    public bool NextTrack() => SendMediaKey(NativeMethods.VkMediaNextTrack);
+    public bool PreviousTrack() => SendMediaKey(NativeMethods.VkMediaPreviousTrack);
 
     public bool OpenClipboardHistory()
     {

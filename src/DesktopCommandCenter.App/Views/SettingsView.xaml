@@ -201,11 +201,17 @@
                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}"
                               IsChecked="{Binding DataContext.ShowQuickActionsModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
-                <Grid>
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Macros" />
                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}"
                               IsChecked="{Binding DataContext.ShowMacrosModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Media Controls" />
+                    <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}"
+                              IsChecked="{Binding DataContext.ShowMediaModule, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
             </StackPanel>
         </DataTemplate>

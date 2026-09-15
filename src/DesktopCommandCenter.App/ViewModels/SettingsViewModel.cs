@@ -378,6 +378,12 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.ShowQuickActionsModule, v => _settings.ShowQuickActionsModule = v);
     }
 
+    public bool ShowMediaModule
+    {
+        get => _settings.ShowMediaModule;
+        set => SetBoolean(value, () => _settings.ShowMediaModule, v => _settings.ShowMediaModule = v);
+    }
+
     public bool ShowMacrosModule
     {
         get => _settings.ShowMacrosModule;

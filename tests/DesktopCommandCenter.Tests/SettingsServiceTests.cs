@@ -35,6 +35,11 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.AlwaysOnTop);
         Assert.IsTrue(settings.AnimationsEnabled);
         Assert.IsTrue(settings.ShowTrayIcon);
+        Assert.IsTrue(settings.ShowSearchModule);
+        Assert.IsTrue(settings.ShowFavoritesModule);
+        Assert.IsTrue(settings.ShowCurrentWindowModule);
+        Assert.IsTrue(settings.ShowQuickActionsModule);
+        Assert.IsTrue(settings.ShowMacrosModule);
     }
 
     [TestMethod]
@@ -42,8 +47,11 @@ public sealed class SettingsServiceTests
     {
         Directory.CreateDirectory(_directory);
         File.WriteAllText(_path, """
-            { "settingsVersion": 1, "startCollapsed": false, "sidebarWidth": 420,
-              "alwaysOnTop": false, "animationsEnabled": false, "showTrayIcon": false }
+            { "settingsVersion": 2, "startCollapsed": false, "sidebarWidth": 420,
+              "alwaysOnTop": false, "animationsEnabled": false, "showTrayIcon": false,
+              "showSearchModule": false, "showFavoritesModule": true,
+              "showCurrentWindowModule": true, "showQuickActionsModule": false,
+              "showMacrosModule": true }
             """);
 
         var settings = new SettingsService(_path).Load();
@@ -53,6 +61,8 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.AlwaysOnTop);
         Assert.IsFalse(settings.AnimationsEnabled);
         Assert.IsFalse(settings.ShowTrayIcon);
+        Assert.IsFalse(settings.ShowSearchModule);
+        Assert.IsFalse(settings.ShowQuickActionsModule);
     }
 
     [TestMethod]
@@ -65,7 +75,9 @@ public sealed class SettingsServiceTests
             SidebarWidth = 488,
             AlwaysOnTop = false,
             AnimationsEnabled = false,
-            ShowTrayIcon = false
+            ShowTrayIcon = false,
+            ShowFavoritesModule = false,
+            ShowMacrosModule = false
         });
 
         var settings = service.Load();
@@ -75,6 +87,8 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.AlwaysOnTop);
         Assert.IsFalse(settings.AnimationsEnabled);
         Assert.IsFalse(settings.ShowTrayIcon);
+        Assert.IsFalse(settings.ShowFavoritesModule);
+        Assert.IsFalse(settings.ShowMacrosModule);
     }
 
     [TestMethod]
@@ -87,6 +101,7 @@ public sealed class SettingsServiceTests
 
         Assert.IsTrue(settings.StartCollapsed);
         Assert.AreEqual(AppSettings.DefaultSidebarWidth, settings.SidebarWidth);
+        Assert.IsTrue(settings.ShowSearchModule);
     }
 
     [TestMethod]
@@ -102,6 +117,6 @@ public sealed class SettingsServiceTests
     [TestMethod]
     public void SettingsVersionDefaultsCorrectly()
     {
-        Assert.AreEqual(1, new AppSettings().SettingsVersion);
+        Assert.AreEqual(AppSettings.CurrentVersion, new AppSettings().SettingsVersion);
     }
 }

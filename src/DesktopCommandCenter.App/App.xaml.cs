@@ -38,7 +38,8 @@ public partial class App : System.Windows.Application
         var homeViewModel = new HomeViewModel(
             _windowsViewModel,
             searchViewModel,
-            shellActions);
+            shellActions,
+            _settingsViewModel);
 
         var sidebarViewModel = new SidebarViewModel(
             settings,

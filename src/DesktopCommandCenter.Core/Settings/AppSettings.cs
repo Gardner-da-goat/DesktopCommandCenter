@@ -2,7 +2,7 @@ namespace DesktopCommandCenter.Core.Settings;
 
 public sealed class AppSettings
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
     public const double MinimumSidebarWidth = 300;
     public const double MaximumSidebarWidth = 520;
     public const double DefaultSidebarWidth = 360;
@@ -21,6 +21,12 @@ public sealed class AppSettings
     public bool AlwaysOnTop { get; set; } = true;
     public bool AnimationsEnabled { get; set; } = true;
     public bool ShowTrayIcon { get; set; } = true;
+
+    public bool ShowSearchModule { get; set; } = true;
+    public bool ShowFavoritesModule { get; set; } = true;
+    public bool ShowCurrentWindowModule { get; set; } = true;
+    public bool ShowQuickActionsModule { get; set; } = true;
+    public bool ShowMacrosModule { get; set; } = true;
 
     public static double ClampSidebarWidth(double width)
     {

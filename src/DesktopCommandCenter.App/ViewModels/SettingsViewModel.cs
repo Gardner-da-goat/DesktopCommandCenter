@@ -83,7 +83,41 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.ShowTrayIcon, v => _settings.ShowTrayIcon = v);
     }
 
-    private void SetBoolean(bool value, Func<bool> getValue, Action<bool> setValue, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+    public bool ShowSearchModule
+    {
+        get => _settings.ShowSearchModule;
+        set => SetBoolean(value, () => _settings.ShowSearchModule, v => _settings.ShowSearchModule = v);
+    }
+
+    public bool ShowFavoritesModule
+    {
+        get => _settings.ShowFavoritesModule;
+        set => SetBoolean(value, () => _settings.ShowFavoritesModule, v => _settings.ShowFavoritesModule = v);
+    }
+
+    public bool ShowCurrentWindowModule
+    {
+        get => _settings.ShowCurrentWindowModule;
+        set => SetBoolean(value, () => _settings.ShowCurrentWindowModule, v => _settings.ShowCurrentWindowModule = v);
+    }
+
+    public bool ShowQuickActionsModule
+    {
+        get => _settings.ShowQuickActionsModule;
+        set => SetBoolean(value, () => _settings.ShowQuickActionsModule, v => _settings.ShowQuickActionsModule = v);
+    }
+
+    public bool ShowMacrosModule
+    {
+        get => _settings.ShowMacrosModule;
+        set => SetBoolean(value, () => _settings.ShowMacrosModule, v => _settings.ShowMacrosModule = v);
+    }
+
+    private void SetBoolean(
+        bool value,
+        Func<bool> getValue,
+        Action<bool> setValue,
+        [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
     {
         if (getValue() == value) return;
         setValue(value);

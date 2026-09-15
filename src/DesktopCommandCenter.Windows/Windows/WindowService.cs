@@ -547,7 +547,7 @@ public sealed class WindowService
             if (NativeMethods.DwmGetWindowAttribute(
                     handle,
                     NativeMethods.DwmwaCloaked,
-                    out var cloaked,
+                    out int cloaked,
                     sizeof(int)) == 0 &&
                 cloaked != 0)
             {

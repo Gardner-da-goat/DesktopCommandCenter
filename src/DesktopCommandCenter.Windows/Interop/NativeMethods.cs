@@ -19,6 +19,8 @@ internal static class NativeMethods
     internal const uint ModShift = 0x0004;
     internal const uint ModNoRepeat = 0x4000;
     internal const uint VkSpace = 0x20;
+    internal const byte VkVolumeMute = 0xAD;
+    internal const uint KeyeventfKeyup = 0x0002;
     internal const int SwMinimize = 6;
     internal const int SwMaximize = 3;
     internal const int SwRestore = 9;
@@ -128,6 +130,9 @@ internal static class NativeMethods
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static extern bool UnregisterHotKey(nint hWnd, int id);
+
+    [DllImport("user32.dll")]
+    internal static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, nuint extraInfo);
 
     [DllImport("user32.dll")]
     internal static extern nint MonitorFromPoint(Point point, uint flags);

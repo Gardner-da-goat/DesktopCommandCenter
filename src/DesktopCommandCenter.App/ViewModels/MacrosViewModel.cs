@@ -11,6 +11,7 @@ public sealed class MacrosViewModel : ObservableObject
     private readonly FavoritesViewModel _favorites;
     private readonly WindowsViewModel _windows;
     private readonly ShellActionService _shellActions;
+    private readonly CommandsViewModel _commands;
 
     private string _newMacroName = string.Empty;
     private string _newMacroScript = string.Empty;
@@ -22,13 +23,15 @@ public sealed class MacrosViewModel : ObservableObject
         ISettingsService settingsService,
         FavoritesViewModel favorites,
         WindowsViewModel windows,
-        ShellActionService shellActions)
+        ShellActionService shellActions,
+        CommandsViewModel commands)
     {
         _settings = settings;
         _settingsService = settingsService;
         _favorites = favorites;
         _windows = windows;
         _shellActions = shellActions;
+        _commands = commands;
 
         Items = new ObservableCollection<MacroItemViewModel>();
         foreach (var macro in _settings.Macros)
@@ -176,6 +179,21 @@ public sealed class MacrosViewModel : ObservableObject
             }
 
             favorite.LaunchCommand.Execute(null);
+            return true;
+        }
+
+        if (line.StartsWith("command ", StringComparison.OrdinalIgnoreCase))
+        {
+            var name = line["command ".Length..].Trim();
+            var command = _commands.Items.FirstOrDefault(item =>
+                item.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+
+            if (command is null)
+            {
+                return false;
+            }
+
+            command.RunCommand.Execute(null);
             return true;
         }
 

@@ -22,6 +22,8 @@ public sealed class HomeViewModel : ObservableObject
         OpenTaskManagerCommand = new RelayCommand(() => _ = shellActions.OpenTaskManager());
         OpenSettingsCommand = new RelayCommand(() => _ = shellActions.OpenWindowsSettings());
         OpenTerminalCommand = new RelayCommand(() => _ = shellActions.OpenTerminal());
+        OpenScreenshotCommand = new RelayCommand(() => _ = shellActions.OpenScreenshot());
+        ToggleMuteCommand = new RelayCommand(() => _ = shellActions.ToggleMute());
         _windowsViewModel.PropertyChanged += OnWindowsPropertyChanged;
         _settingsViewModel.SettingsChanged += OnSettingsChanged;
     }
@@ -42,6 +44,8 @@ public sealed class HomeViewModel : ObservableObject
     public RelayCommand OpenTaskManagerCommand { get; }
     public RelayCommand OpenSettingsCommand { get; }
     public RelayCommand OpenTerminalCommand { get; }
+    public RelayCommand OpenScreenshotCommand { get; }
+    public RelayCommand ToggleMuteCommand { get; }
 
     public WindowItemViewModel? CurrentWindow => _windowsViewModel.CurrentWindow;
     public bool HasCurrentWindow => _windowsViewModel.HasCurrentWindow;
@@ -51,6 +55,13 @@ public sealed class HomeViewModel : ObservableObject
     public bool ShowCurrentWindowModule => _settingsViewModel.ShowCurrentWindowModule;
     public bool ShowQuickActionsModule => _settingsViewModel.ShowQuickActionsModule;
     public bool ShowMacrosModule => _settingsViewModel.ShowMacrosModule;
+
+    public bool ShowDownloadsAction => _settingsViewModel.ShowDownloadsAction;
+    public bool ShowTaskManagerAction => _settingsViewModel.ShowTaskManagerAction;
+    public bool ShowWindowsSettingsAction => _settingsViewModel.ShowWindowsSettingsAction;
+    public bool ShowTerminalAction => _settingsViewModel.ShowTerminalAction;
+    public bool ShowScreenshotAction => _settingsViewModel.ShowScreenshotAction;
+    public bool ShowMuteAction => _settingsViewModel.ShowMuteAction;
 
     private void OnWindowsPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -79,6 +90,24 @@ public sealed class HomeViewModel : ObservableObject
                 break;
             case nameof(SettingsViewModel.ShowMacrosModule):
                 OnPropertyChanged(nameof(ShowMacrosModule));
+                break;
+            case nameof(SettingsViewModel.ShowDownloadsAction):
+                OnPropertyChanged(nameof(ShowDownloadsAction));
+                break;
+            case nameof(SettingsViewModel.ShowTaskManagerAction):
+                OnPropertyChanged(nameof(ShowTaskManagerAction));
+                break;
+            case nameof(SettingsViewModel.ShowWindowsSettingsAction):
+                OnPropertyChanged(nameof(ShowWindowsSettingsAction));
+                break;
+            case nameof(SettingsViewModel.ShowTerminalAction):
+                OnPropertyChanged(nameof(ShowTerminalAction));
+                break;
+            case nameof(SettingsViewModel.ShowScreenshotAction):
+                OnPropertyChanged(nameof(ShowScreenshotAction));
+                break;
+            case nameof(SettingsViewModel.ShowMuteAction):
+                OnPropertyChanged(nameof(ShowMuteAction));
                 break;
         }
     }

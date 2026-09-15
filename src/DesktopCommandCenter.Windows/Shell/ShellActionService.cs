@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using DesktopCommandCenter.Windows.Interop;
 
 namespace DesktopCommandCenter.Windows.Shell;
 
@@ -18,6 +19,30 @@ public sealed class ShellActionService
     public bool OpenTaskManager() => Start("taskmgr.exe");
 
     public bool OpenWindowsSettings() => Start("ms-settings:");
+
+    public bool OpenScreenshot()
+    {
+        if (Start("ms-screenclip:"))
+        {
+            return true;
+        }
+
+        return Start("snippingtool.exe");
+    }
+
+    public bool ToggleMute()
+    {
+        try
+        {
+            NativeMethods.keybd_event(NativeMethods.VkVolumeMute, 0, 0, 0);
+            NativeMethods.keybd_event(NativeMethods.VkVolumeMute, 0, NativeMethods.KeyeventfKeyup, 0);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
     public bool OpenTerminal()
     {

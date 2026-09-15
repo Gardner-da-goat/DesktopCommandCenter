@@ -38,6 +38,13 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.ShowTrayIcon);
         Assert.IsTrue(settings.AutoCheckForUpdates);
         Assert.IsTrue(settings.GlobalHotkeysEnabled);
+        Assert.IsTrue(settings.ReflowWindowsOnSidebar);
+        Assert.IsTrue(settings.SearchAppsEnabled);
+        Assert.IsTrue(settings.SearchWindowsEnabled);
+        Assert.IsTrue(settings.SearchActionsEnabled);
+        Assert.IsTrue(settings.SearchMacrosEnabled);
+        Assert.IsTrue(settings.ShowScreenshotAction);
+        Assert.IsTrue(settings.ShowMuteAction);
         Assert.IsTrue(settings.ShowSearchModule);
         Assert.IsTrue(settings.ShowFavoritesModule);
         Assert.IsTrue(settings.ShowCurrentWindowModule);
@@ -45,6 +52,7 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.ShowMacrosModule);
         Assert.AreEqual(0, settings.FavoriteApps.Count);
         Assert.AreEqual(0, settings.Macros.Count);
+        Assert.AreEqual(0, settings.CustomCommands.Count);
     }
 
     [TestMethod]
@@ -86,6 +94,9 @@ public sealed class SettingsServiceTests
             ShowTrayIcon = false,
             AutoCheckForUpdates = false,
             GlobalHotkeysEnabled = false,
+            ReflowWindowsOnSidebar = false,
+            SearchAppsEnabled = false,
+            ShowScreenshotAction = false,
             ShowFavoritesModule = false,
             ShowMacrosModule = false,
             FavoriteApps =
@@ -95,6 +106,10 @@ public sealed class SettingsServiceTests
             Macros =
             [
                 new MacroSetting { Id = "work", Name = "Work", Script = "terminal\ndelay 250" }
+            ],
+            CustomCommands =
+            [
+                new CustomCommandSetting { Id = "docs", Name = "Docs", Target = "https://example.com" }
             ]
         });
 
@@ -108,12 +123,17 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.ShowTrayIcon);
         Assert.IsFalse(settings.AutoCheckForUpdates);
         Assert.IsFalse(settings.GlobalHotkeysEnabled);
+        Assert.IsFalse(settings.ReflowWindowsOnSidebar);
+        Assert.IsFalse(settings.SearchAppsEnabled);
+        Assert.IsFalse(settings.ShowScreenshotAction);
         Assert.IsFalse(settings.ShowFavoritesModule);
         Assert.IsFalse(settings.ShowMacrosModule);
         Assert.AreEqual(1, settings.FavoriteApps.Count);
         Assert.AreEqual("Example", settings.FavoriteApps[0].Name);
         Assert.AreEqual(1, settings.Macros.Count);
         Assert.AreEqual("Work", settings.Macros[0].Name);
+        Assert.AreEqual(1, settings.CustomCommands.Count);
+        Assert.AreEqual("Docs", settings.CustomCommands[0].Name);
     }
 
     [TestMethod]

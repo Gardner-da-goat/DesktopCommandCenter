@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using DesktopCommandCenter.Core.Settings;
+using DesktopCommandCenter.Windows.Shell;
 
 namespace DesktopCommandCenter.App.ViewModels;
 
@@ -14,13 +15,24 @@ public sealed class SettingsViewModel : ObservableObject
         ISettingsService settingsService,
         FavoritesViewModel favorites,
         MacrosViewModel macros,
-        UpdatesViewModel updates)
+        CommandsViewModel commands,
+        UpdatesViewModel updates,
+        ShellActionService shellActions)
     {
         _settings = settings;
         _settingsService = settingsService;
         Favorites = favorites;
         Macros = macros;
+        Commands = commands;
         Updates = updates;
+        OpenSettingsFolderCommand = new RelayCommand(() =>
+        {
+            var folder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "DesktopCommandCenter");
+            Directory.CreateDirectory(folder);
+            _ = shellActions.OpenPath(folder);
+        });
         DecreaseSidebarWidthCommand = new RelayCommand(() => SidebarWidth -= 20);
         IncreaseSidebarWidthCommand = new RelayCommand(() => SidebarWidth += 20);
         Width320Command = new RelayCommand(() => SidebarWidth = 320);
@@ -49,7 +61,9 @@ public sealed class SettingsViewModel : ObservableObject
     public ObservableCollection<SettingsCategory> Categories { get; }
     public FavoritesViewModel Favorites { get; }
     public MacrosViewModel Macros { get; }
+    public CommandsViewModel Commands { get; }
     public UpdatesViewModel Updates { get; }
+    public RelayCommand OpenSettingsFolderCommand { get; }
     public RelayCommand DecreaseSidebarWidthCommand { get; }
     public RelayCommand IncreaseSidebarWidthCommand { get; }
     public RelayCommand Width320Command { get; }
@@ -154,6 +168,72 @@ public sealed class SettingsViewModel : ObservableObject
     {
         get => _settings.GlobalHotkeysEnabled;
         set => SetBoolean(value, () => _settings.GlobalHotkeysEnabled, v => _settings.GlobalHotkeysEnabled = v);
+    }
+
+    public bool ReflowWindowsOnSidebar
+    {
+        get => _settings.ReflowWindowsOnSidebar;
+        set => SetBoolean(value, () => _settings.ReflowWindowsOnSidebar, v => _settings.ReflowWindowsOnSidebar = v);
+    }
+
+    public bool SearchAppsEnabled
+    {
+        get => _settings.SearchAppsEnabled;
+        set => SetBoolean(value, () => _settings.SearchAppsEnabled, v => _settings.SearchAppsEnabled = v);
+    }
+
+    public bool SearchWindowsEnabled
+    {
+        get => _settings.SearchWindowsEnabled;
+        set => SetBoolean(value, () => _settings.SearchWindowsEnabled, v => _settings.SearchWindowsEnabled = v);
+    }
+
+    public bool SearchActionsEnabled
+    {
+        get => _settings.SearchActionsEnabled;
+        set => SetBoolean(value, () => _settings.SearchActionsEnabled, v => _settings.SearchActionsEnabled = v);
+    }
+
+    public bool SearchMacrosEnabled
+    {
+        get => _settings.SearchMacrosEnabled;
+        set => SetBoolean(value, () => _settings.SearchMacrosEnabled, v => _settings.SearchMacrosEnabled = v);
+    }
+
+    public bool ShowDownloadsAction
+    {
+        get => _settings.ShowDownloadsAction;
+        set => SetBoolean(value, () => _settings.ShowDownloadsAction, v => _settings.ShowDownloadsAction = v);
+    }
+
+    public bool ShowTaskManagerAction
+    {
+        get => _settings.ShowTaskManagerAction;
+        set => SetBoolean(value, () => _settings.ShowTaskManagerAction, v => _settings.ShowTaskManagerAction = v);
+    }
+
+    public bool ShowWindowsSettingsAction
+    {
+        get => _settings.ShowWindowsSettingsAction;
+        set => SetBoolean(value, () => _settings.ShowWindowsSettingsAction, v => _settings.ShowWindowsSettingsAction = v);
+    }
+
+    public bool ShowTerminalAction
+    {
+        get => _settings.ShowTerminalAction;
+        set => SetBoolean(value, () => _settings.ShowTerminalAction, v => _settings.ShowTerminalAction = v);
+    }
+
+    public bool ShowScreenshotAction
+    {
+        get => _settings.ShowScreenshotAction;
+        set => SetBoolean(value, () => _settings.ShowScreenshotAction, v => _settings.ShowScreenshotAction = v);
+    }
+
+    public bool ShowMuteAction
+    {
+        get => _settings.ShowMuteAction;
+        set => SetBoolean(value, () => _settings.ShowMuteAction, v => _settings.ShowMuteAction = v);
     }
 
     public bool ShowSearchModule

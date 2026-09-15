@@ -190,11 +190,20 @@ public partial class SidebarWindow : Window
                 ReflowAllWindows();
             }
         }
+        else if (e.PropertyName == nameof(SidebarViewModel.ReflowWindowsOnSidebar))
+        {
+            RestoreAllWindows();
+
+            if (_viewModel.IsExpanded)
+            {
+                ReflowAllWindows();
+            }
+        }
     }
 
     private void ReflowAllWindows()
     {
-        if (_reflowSnapshots.Count > 0)
+        if (!_viewModel.ReflowWindowsOnSidebar || _reflowSnapshots.Count > 0)
         {
             return;
         }

@@ -236,6 +236,103 @@
             </StackPanel>
         </DataTemplate>
 
+        <DataTemplate x:Key="QuickActionsTemplate">
+            <StackPanel>
+                <TextBlock Text="Choose the actions shown on Home."
+                           Style="{StaticResource MutedText}"
+                           Margin="0,0,0,7" />
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Downloads"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowDownloadsAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Task Manager"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowTaskManagerAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Windows Settings"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowWindowsSettingsAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Terminal"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowTerminalAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Screenshot"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowScreenshotAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Mute"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowMuteAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CommandsTemplate">
+            <StackPanel>
+                <TextBlock Text="Add a searchable command that opens a file, app, folder, or URL."
+                           Style="{StaticResource MutedText}"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,6" />
+                <TextBox Height="32"
+                         Style="{StaticResource ModernTextBox}"
+                         Padding="8,0"
+                         Tag="Command name"
+                         Text="{Binding DataContext.Commands.NewCommandName, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,5" />
+                <TextBox Height="32"
+                         Style="{StaticResource ModernTextBox}"
+                         Padding="8,0"
+                         Tag="Target: path, app, folder, or URL"
+                         Text="{Binding DataContext.Commands.NewCommandTarget, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,5" />
+                <Button Content="Add Command"
+                        Style="{StaticResource AccentButton}"
+                        Command="{Binding DataContext.Commands.CreateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Margin="0,0,0,7" />
+                <ItemsControl ItemsSource="{Binding DataContext.Commands.Items, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,5">
+                                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding Target}" Style="{StaticResource MutedText}" FontSize="9" TextTrimming="CharacterEllipsis" MaxWidth="190"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="Run" Command="{Binding RunCommand}" Padding="6,4" Margin="3,0"/>
+                                <Button Grid.Column="2" Content="×" Command="{Binding RemoveCommand}" Foreground="{DynamicResource Danger}" Background="Transparent" Padding="5,4"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Text="{Binding DataContext.Commands.StatusMessage, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                           Style="{StaticResource MutedText}" Margin="0,2,0,0"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SearchTemplate">
+            <StackPanel>
+                <TextBlock Text="Search sources"
+                           Style="{StaticResource SecondaryText}"
+                           Margin="0,0,0,7"/>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Installed apps"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.SearchAppsEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Open windows"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.SearchWindowsEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Actions &amp; commands"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.SearchActionsEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Macros"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.SearchMacrosEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="WindowsSettingsTemplate">
+            <StackPanel>
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Make room for the sidebar"/>
+                        <TextBlock Text="Resize all visible primary-monitor windows while the sidebar is open."
+                                   Style="{StaticResource MutedText}" TextWrapping="Wrap" MaxWidth="250"/>
+                    </StackPanel>
+                    <CheckBox Grid.Column="1"
+                              Style="{StaticResource ToggleSwitchStyle}"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding DataContext.ReflowWindowsOnSidebar, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                </Grid>
+                <TextBlock Text="Windows return to their previous size and position when the sidebar collapses or exits."
+                           Style="{StaticResource MutedText}" TextWrapping="Wrap"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="AdvancedTemplate">
+            <StackPanel>
+                <Button Content="Open Settings Folder"
+                        Command="{Binding DataContext.OpenSettingsFolderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Margin="0,0,0,6"/>
+                <TextBlock Text="Settings, favorites, macros, commands, and layout preferences are stored separately from the app files."
+                           Style="{StaticResource MutedText}" TextWrapping="Wrap"/>
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate x:Key="HotkeysTemplate">
             <StackPanel>
                 <Grid Margin="0,0,0,7">
@@ -421,6 +518,21 @@
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding SelectedCategory.Name}" Value="Favorites">
                                         <Setter Property="ContentTemplate" Value="{StaticResource FavoritesTemplate}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedCategory.Name}" Value="Quick Actions">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource QuickActionsTemplate}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedCategory.Name}" Value="Commands">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource CommandsTemplate}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedCategory.Name}" Value="Search">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource SearchTemplate}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedCategory.Name}" Value="Windows">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource WindowsSettingsTemplate}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedCategory.Name}" Value="Advanced">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource AdvancedTemplate}" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding SelectedCategory.Name}" Value="Hotkeys">
                                         <Setter Property="ContentTemplate" Value="{StaticResource HotkeysTemplate}" />

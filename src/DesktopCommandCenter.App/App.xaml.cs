@@ -42,26 +42,36 @@ public partial class App : System.Windows.Application
 
         _windowsViewModel = new WindowsViewModel(windowService);
 
+        var commandsViewModel = new CommandsViewModel(
+            settings,
+            settingsService,
+            shellActions);
+
         var macrosViewModel = new MacrosViewModel(
             settings,
             settingsService,
             favoritesViewModel,
             _windowsViewModel,
-            shellActions);
+            shellActions,
+            commandsViewModel);
 
         _settingsViewModel = new SettingsViewModel(
             settings,
             settingsService,
             favoritesViewModel,
             macrosViewModel,
-            updatesViewModel);
+            commandsViewModel,
+            updatesViewModel,
+            shellActions);
 
         var searchViewModel = new SearchViewModel(
             _windowsViewModel,
             appLauncher,
             shellActions,
             favoritesViewModel,
-            macrosViewModel);
+            macrosViewModel,
+            commandsViewModel,
+            _settingsViewModel);
 
         var homeViewModel = new HomeViewModel(
             _windowsViewModel,

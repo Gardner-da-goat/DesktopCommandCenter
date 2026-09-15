@@ -11,6 +11,8 @@ public sealed class SearchViewModel : ObservableObject
     private readonly ShellActionService _shellActions;
     private readonly FavoritesViewModel _favorites;
     private readonly MacrosViewModel _macros;
+    private readonly CommandsViewModel _commands;
+    private readonly SettingsViewModel _settings;
     private IReadOnlyList<InstalledAppInfo>? _installedApps;
     private string _query = string.Empty;
 
@@ -19,13 +21,18 @@ public sealed class SearchViewModel : ObservableObject
         AppLauncherService appLauncher,
         ShellActionService shellActions,
         FavoritesViewModel favorites,
-        MacrosViewModel macros)
+        MacrosViewModel macros,
+        CommandsViewModel commands,
+        SettingsViewModel settings)
     {
         _windowsViewModel = windowsViewModel;
         _appLauncher = appLauncher;
         _shellActions = shellActions;
         _favorites = favorites;
         _macros = macros;
+        _commands = commands;
+        _settings = settings;
+        _settings.SettingsChanged += OnSettingsChanged;
         Results = new ObservableCollection<SearchResultViewModel>();
     }
 
@@ -60,13 +67,24 @@ public sealed class SearchViewModel : ObservableObject
             return;
         }
 
-        _windowsViewModel.Refresh();
-        _installedApps ??= _appLauncher.GetInstalledApps();
+        if (_settings.SearchWindowsEnabled)
+        {
+            _windowsViewModel.Refresh();
+        }
+
+        if (_settings.SearchAppsEnabled)
+        {
+            _installedApps ??= _appLauncher.GetInstalledApps();
+        }
 
         var candidates = new List<(int Score, SearchResultViewModel Result)>();
 
-        AddDirectCommandCandidates(candidates, query);
+        if (_settings.SearchActionsEnabled)
+        {
+            AddDirectCommandCandidates(candidates, query);
+        }
 
+        if (_settings.SearchWindowsEnabled)
         foreach (var window in _windowsViewModel.Windows)
         {
             var score = MatchScore(query, window.Title, window.ProcessName);
@@ -89,7 +107,8 @@ public sealed class SearchViewModel : ObservableObject
                     }))));
         }
 
-        foreach (var app in _installedApps)
+        if (_settings.SearchAppsEnabled)
+        foreach (var app in _installedApps ?? [])
         {
             var score = MatchScore(query, app.Name);
             if (score <= 0)
@@ -113,6 +132,7 @@ public sealed class SearchViewModel : ObservableObject
                     new RelayCommand(() => _ = _favorites.AddFavorite(app)))));
         }
 
+        if (_settings.SearchMacrosEnabled)
         foreach (var macro in _macros.Items)
         {
             var score = MatchScore(query, macro.Name, macro.Script);
@@ -135,10 +155,35 @@ public sealed class SearchViewModel : ObservableObject
                     }))));
         }
 
-        AddActionCandidate(candidates, query, "Downloads", "Open your Downloads folder", "⇩", _shellActions.OpenDownloads);
-        AddActionCandidate(candidates, query, "Task Manager", "Open Task Manager", "▤", _shellActions.OpenTaskManager);
-        AddActionCandidate(candidates, query, "Windows Settings", "Open Windows Settings", "⚙", _shellActions.OpenWindowsSettings);
-        AddActionCandidate(candidates, query, "Terminal", "Open Windows Terminal", "⌨", _shellActions.OpenTerminal);
+        if (_settings.SearchActionsEnabled)
+        {
+            foreach (var command in _commands.Items)
+            {
+                var score = MatchScore(query, command.Name, command.Target);
+                if (score > 0)
+                {
+                    candidates.Add((
+                        score + 18,
+                        new SearchResultViewModel(
+                            SearchResultKind.Action,
+                            command.Name,
+                            $"Command · {command.Target}",
+                            "›",
+                            new RelayCommand(() =>
+                            {
+                                command.RunCommand.Execute(null);
+                                Query = string.Empty;
+                            }))));
+                }
+            }
+
+            AddActionCandidate(candidates, query, "Downloads", "Open your Downloads folder", "⇩", _shellActions.OpenDownloads);
+            AddActionCandidate(candidates, query, "Task Manager", "Open Task Manager", "▤", _shellActions.OpenTaskManager);
+            AddActionCandidate(candidates, query, "Windows Settings", "Open Windows Settings", "⚙", _shellActions.OpenWindowsSettings);
+            AddActionCandidate(candidates, query, "Terminal", "Open Windows Terminal", "⌨", _shellActions.OpenTerminal);
+            AddActionCandidate(candidates, query, "Screenshot", "Open Windows screen capture", "▧", _shellActions.OpenScreenshot);
+            AddActionCandidate(candidates, query, "Mute", "Toggle system mute", "♪", _shellActions.ToggleMute);
+        }
 
         foreach (var result in candidates
                      .OrderByDescending(candidate => candidate.Score)
@@ -421,6 +466,19 @@ public sealed class SearchViewModel : ObservableObject
                     _ = action();
                     Query = string.Empty;
                 }))));
+    }
+
+    private void OnSettingsChanged(object? sender, SettingChangedEventArgs e)
+    {
+        if (HasQuery &&
+            e.PropertyName is nameof(SettingsViewModel.SearchAppsEnabled)
+                or nameof(SettingsViewModel.SearchWindowsEnabled)
+                or nameof(SettingsViewModel.SearchActionsEnabled)
+                or nameof(SettingsViewModel.SearchMacrosEnabled))
+        {
+            RefreshResults();
+            NotifySearchState();
+        }
     }
 
     private void NotifySearchState()

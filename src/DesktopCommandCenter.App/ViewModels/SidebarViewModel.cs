@@ -61,6 +61,7 @@ public sealed class SidebarViewModel : ObservableObject
     public bool AnimationsEnabled => _state.AnimationsEnabled;
     public bool AlwaysOnTop => Settings.AlwaysOnTop;
     public bool GlobalHotkeysEnabled => Settings.GlobalHotkeysEnabled;
+    public bool ReflowWindowsOnSidebar => Settings.ReflowWindowsOnSidebar;
     public SidebarEdge SidebarEdge => Settings.SidebarEdge;
     public bool IsSidebarOnLeft => SidebarEdge == SidebarEdge.Left;
     public string HandleArrowGlyph => IsSidebarOnLeft ? "❯" : "❮";
@@ -115,6 +116,10 @@ public sealed class SidebarViewModel : ObservableObject
         else if (e.PropertyName == nameof(SettingsViewModel.GlobalHotkeysEnabled))
         {
             OnPropertyChanged(nameof(GlobalHotkeysEnabled));
+        }
+        else if (e.PropertyName == nameof(SettingsViewModel.ReflowWindowsOnSidebar))
+        {
+            OnPropertyChanged(nameof(ReflowWindowsOnSidebar));
         }
         else if (e.PropertyName == nameof(SettingsViewModel.SidebarEdge))
         {

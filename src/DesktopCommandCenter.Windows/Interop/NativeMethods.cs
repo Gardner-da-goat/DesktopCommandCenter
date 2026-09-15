@@ -26,6 +26,7 @@ internal static class NativeMethods
     internal const uint SwpNoMove = 0x0002;
     internal const uint SwpNoActivate = 0x0010;
     internal const uint SwpShowWindow = 0x0040;
+    internal const int DwmwaExtendedFrameBounds = 9;
     internal const int DwmwaCloaked = 14;
 
     internal static readonly nint HwndTopmost = new(-1);
@@ -146,6 +147,13 @@ internal static class NativeMethods
         nint hWnd,
         int attribute,
         out int value,
+        int valueSize);
+
+    [DllImport("dwmapi.dll")]
+    internal static extern int DwmGetWindowAttribute(
+        nint hWnd,
+        int attribute,
+        out Rect value,
         int valueSize);
 
     [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]

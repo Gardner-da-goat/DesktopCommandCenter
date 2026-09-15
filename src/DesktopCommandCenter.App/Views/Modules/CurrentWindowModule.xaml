@@ -41,7 +41,6 @@
             <Slider Style="{StaticResource ModernSlider}"
                     Minimum="20"
                     Maximum="100"
-                    Height="18"
                     Value="{Binding CurrentWindow.Opacity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     IsEnabled="{Binding HasCurrentWindow}"
                     Margin="0,0,0,6" />

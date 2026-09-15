@@ -22,7 +22,7 @@ public partial class SidebarWindow : Window
     private HwndSource? _source;
     private nint _windowHandle;
     private bool _closingForExit;
-    private WindowReflowSnapshot? _reflowSnapshot;
+    private IReadOnlyList<WindowReflowSnapshot> _reflowSnapshots = [];
 
     public SidebarWindow(
         SidebarViewModel viewModel,
@@ -45,7 +45,7 @@ public partial class SidebarWindow : Window
 
     public void CloseForExit()
     {
-        RestoreCurrentWindow();
+        RestoreAllWindows();
         _closingForExit = true;
         Close();
     }
@@ -147,7 +147,7 @@ public partial class SidebarWindow : Window
 
         if (_viewModel.IsExpanded)
         {
-            ReflowCurrentWindow();
+            ReflowAllWindows();
         }
     }
 
@@ -157,11 +157,11 @@ public partial class SidebarWindow : Window
         {
             if (_viewModel.IsExpanded)
             {
-                ReflowCurrentWindow();
+                ReflowAllWindows();
             }
             else
             {
-                RestoreCurrentWindow();
+                RestoreAllWindows();
                 ExpandedPanel.Visibility = Visibility.Visible;
                 CollapsedHandle.Visibility = Visibility.Collapsed;
             }
@@ -170,11 +170,11 @@ public partial class SidebarWindow : Window
         }
         else if (e.PropertyName == nameof(SidebarViewModel.SidebarWidth) && _viewModel.IsExpanded)
         {
-            RestoreCurrentWindow();
+            RestoreAllWindows();
             BeginAnimation(WidthProperty, null);
             Width = _viewModel.SidebarWidth;
             AnchorToWorkingArea();
-            ReflowCurrentWindow();
+            ReflowAllWindows();
         }
         else if (e.PropertyName == nameof(SidebarViewModel.GlobalHotkeysEnabled))
         {
@@ -182,39 +182,26 @@ public partial class SidebarWindow : Window
         }
     }
 
-    private void ReflowCurrentWindow()
+    private void ReflowAllWindows()
     {
-        if (_reflowSnapshot is not null)
+        if (_reflowSnapshots.Count > 0)
         {
             return;
         }
 
-        var handle = _viewModel.Windows.GetReflowTargetHandle();
-        if (handle == 0)
-        {
-            _viewModel.Windows.Refresh();
-            handle = _viewModel.Windows.GetReflowTargetHandle();
-        }
-
-        if (handle == 0)
-        {
-            return;
-        }
-
-        _reflowSnapshot = _windowService.ReflowForSidebar(
-            handle,
+        _reflowSnapshots = _windowService.ReflowAllForSidebar(
             _viewModel.SidebarWidth);
     }
 
-    private void RestoreCurrentWindow()
+    private void RestoreAllWindows()
     {
-        if (_reflowSnapshot is null)
+        if (_reflowSnapshots.Count == 0)
         {
             return;
         }
 
-        _ = _windowService.RestoreReflow(_reflowSnapshot);
-        _reflowSnapshot = null;
+        _windowService.RestoreReflows(_reflowSnapshots);
+        _reflowSnapshots = [];
     }
 
     private void AnimateWidth(double targetWidth)
@@ -277,12 +264,12 @@ public partial class SidebarWindow : Window
     {
         Dispatcher.Invoke(() =>
         {
-            RestoreCurrentWindow();
+            RestoreAllWindows();
             AnchorToWorkingArea();
 
             if (_viewModel.IsExpanded)
             {
-                ReflowCurrentWindow();
+                ReflowAllWindows();
             }
         });
     }
@@ -296,7 +283,7 @@ public partial class SidebarWindow : Window
             return;
         }
 
-        RestoreCurrentWindow();
+        RestoreAllWindows();
         _source?.RemoveHook(WindowProc);
         _source = null;
         _windowHandle = 0;

@@ -325,6 +325,30 @@ public sealed class WindowService
         }
     }
 
+    public IReadOnlyList<WindowReflowSnapshot> ReflowAllForSidebar(double sidebarWidthDip)
+    {
+        var snapshots = new List<WindowReflowSnapshot>();
+
+        foreach (var window in GetWindows())
+        {
+            var snapshot = ReflowForSidebar(window.Handle, sidebarWidthDip);
+            if (snapshot is not null)
+            {
+                snapshots.Add(snapshot);
+            }
+        }
+
+        return snapshots;
+    }
+
+    public void RestoreReflows(IEnumerable<WindowReflowSnapshot> snapshots)
+    {
+        foreach (var snapshot in snapshots.Reverse())
+        {
+            _ = RestoreReflow(snapshot);
+        }
+    }
+
     public WindowReflowSnapshot? ReflowForSidebar(nint handle, double sidebarWidthDip)
     {
         try
@@ -373,26 +397,67 @@ public sealed class WindowService
 
             var dpi = Math.Max(96u, NativeMethods.GetDpiForSystem());
             var sidebarWidthPixels = (int)Math.Ceiling(sidebarWidthDip * dpi / 96d);
+            var availableLeft = monitorInfo.Work.Left;
+            var availableTop = monitorInfo.Work.Top;
+            var availableRight = monitorInfo.Work.Right - sidebarWidthPixels;
+            var availableBottom = monitorInfo.Work.Bottom;
+            var availableWidth = availableRight - availableLeft;
+            var availableHeight = availableBottom - availableTop;
 
-            var targetLeft = monitorInfo.Work.Left;
-            var targetTop = monitorInfo.Work.Top;
-            var targetWidth = Math.Max(
-                320,
-                (monitorInfo.Work.Right - monitorInfo.Work.Left) - sidebarWidthPixels);
-            var targetHeight = monitorInfo.Work.Bottom - monitorInfo.Work.Top;
-
-            if (targetWidth < 320 || targetHeight < 200)
+            if (availableWidth < 320 || availableHeight < 200)
             {
                 return null;
             }
 
+            var rightFrameInset = 0;
+            try
+            {
+                if (NativeMethods.DwmGetWindowAttribute(
+                        handle,
+                        NativeMethods.DwmwaExtendedFrameBounds,
+                        out NativeMethods.Rect frameRect,
+                        Marshal.SizeOf<NativeMethods.Rect>()) == 0)
+                {
+                    rightFrameInset = Math.Clamp(rect.Right - frameRect.Right, 0, 32);
+                }
+            }
+            catch
+            {
+                rightFrameInset = 0;
+            }
+
             _ = NativeMethods.ShowWindow(handle, NativeMethods.SwRestore);
+
+            int targetX;
+            int targetY;
+            int targetWidth;
+            int targetHeight;
+
+            if (wasMaximized)
+            {
+                targetX = availableLeft;
+                targetY = availableTop;
+                targetWidth = availableWidth + rightFrameInset;
+                targetHeight = availableHeight;
+            }
+            else
+            {
+                targetWidth = Math.Min(snapshot.Width, availableWidth + rightFrameInset);
+                targetHeight = Math.Min(snapshot.Height, availableHeight);
+
+                var maximumLeft = availableRight + rightFrameInset - targetWidth;
+                targetX = Math.Clamp(snapshot.Left, availableLeft, Math.Max(availableLeft, maximumLeft));
+                targetY = Math.Clamp(
+                    snapshot.Top,
+                    availableTop,
+                    Math.Max(availableTop, availableBottom - targetHeight));
+            }
 
             if (!NativeMethods.SetWindowPos(
                     handle,
                     0,
-                    targetLeft,
-                    targetTop,
+                    targetX,
+                    targetY,
                     targetWidth,
                     targetHeight,
                     NativeMethods.SwpNoActivate | NativeMethods.SwpShowWindow))

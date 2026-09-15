@@ -187,19 +187,28 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
-                    <Border Background="{TemplateBinding Background}" CornerRadius="2" />
+                    <Grid Height="22" Background="Transparent">
+                        <Border Height="4"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="2" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="ModernSlider" TargetType="Slider">
-        <Setter Property="Height" Value="24" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Slider">
-                    <Grid VerticalAlignment="Center">
-                        <Track x:Name="PART_Track" Height="4"
+                    <Grid Height="28" VerticalAlignment="Center" ClipToBounds="False">
+                        <Track x:Name="PART_Track"
+                               Height="22"
+                               VerticalAlignment="Center"
                                Minimum="{TemplateBinding Minimum}"
                                Maximum="{TemplateBinding Maximum}"
                                Value="{TemplateBinding Value}">
@@ -209,13 +218,20 @@
                                               Command="{x:Static Slider.DecreaseLarge}" />
                             </Track.DecreaseRepeatButton>
                             <Track.Thumb>
-                                <Thumb Width="14" Height="14">
+                                <Thumb Width="16" Height="16">
                                     <Thumb.Template>
                                         <ControlTemplate TargetType="Thumb">
-                                            <Ellipse x:Name="ThumbCircle" Fill="White" Stroke="{DynamicResource Accent}" StrokeThickness="2" />
+                                            <Grid Width="16" Height="16">
+                                                <Ellipse x:Name="ThumbCircle"
+                                                         Fill="White"
+                                                         Stroke="{DynamicResource Accent}"
+                                                         StrokeThickness="2" />
+                                            </Grid>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsDragging" Value="True">
-                                                    <Setter TargetName="ThumbCircle" Property="Fill" Value="{DynamicResource AccentHover}" />
+                                                    <Setter TargetName="ThumbCircle"
+                                                            Property="Fill"
+                                                            Value="{DynamicResource AccentHover}" />
                                                 </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>

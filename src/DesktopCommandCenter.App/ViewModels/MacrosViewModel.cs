@@ -228,6 +228,36 @@ public sealed class MacrosViewModel : ObservableObject
             return _shellActions.OpenTerminal();
         }
 
+        if (line.Equals("screenshot", StringComparison.OrdinalIgnoreCase))
+        {
+            return _shellActions.OpenScreenshot();
+        }
+
+        if (line.Equals("mute", StringComparison.OrdinalIgnoreCase))
+        {
+            return _shellActions.ToggleMute();
+        }
+
+        if (line.Equals("volume-up", StringComparison.OrdinalIgnoreCase))
+        {
+            return _shellActions.VolumeUp();
+        }
+
+        if (line.Equals("volume-down", StringComparison.OrdinalIgnoreCase))
+        {
+            return _shellActions.VolumeDown();
+        }
+
+        if (line.Equals("clipboard", StringComparison.OrdinalIgnoreCase))
+        {
+            return _shellActions.OpenClipboardHistory();
+        }
+
+        if (line.Equals("play-pause", StringComparison.OrdinalIgnoreCase))
+        {
+            return _shellActions.PlayPause();
+        }
+
         _windows.Refresh();
         var current = _windows.CurrentWindow;
         if (current is null)

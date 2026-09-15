@@ -30,12 +30,44 @@ public sealed class ShellActionService
         return Start("snippingtool.exe");
     }
 
-    public bool ToggleMute()
+    public bool ToggleMute() => SendMediaKey(NativeMethods.VkVolumeMute);
+    public bool VolumeUp() => SendMediaKey(NativeMethods.VkVolumeUp);
+    public bool VolumeDown() => SendMediaKey(NativeMethods.VkVolumeDown);
+    public bool PlayPause() => SendMediaKey(NativeMethods.VkMediaPlayPause);
+
+    public bool OpenClipboardHistory()
     {
         try
         {
-            NativeMethods.keybd_event(NativeMethods.VkVolumeMute, 0, 0, 0);
-            NativeMethods.keybd_event(NativeMethods.VkVolumeMute, 0, NativeMethods.KeyeventfKeyup, 0);
+            NativeMethods.keybd_event(NativeMethods.VkLWin, 0, 0, 0);
+            NativeMethods.keybd_event(NativeMethods.VkV, 0, 0, 0);
+            NativeMethods.keybd_event(NativeMethods.VkV, 0, NativeMethods.KeyeventfKeyup, 0);
+            NativeMethods.keybd_event(NativeMethods.VkLWin, 0, NativeMethods.KeyeventfKeyup, 0);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public bool SearchWeb(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return false;
+        }
+
+        var url = "https://www.google.com/search?q=" + Uri.EscapeDataString(query.Trim());
+        return OpenPath(url);
+    }
+
+    private static bool SendMediaKey(byte virtualKey)
+    {
+        try
+        {
+            NativeMethods.keybd_event(virtualKey, 0, 0, 0);
+            NativeMethods.keybd_event(virtualKey, 0, NativeMethods.KeyeventfKeyup, 0);
             return true;
         }
         catch

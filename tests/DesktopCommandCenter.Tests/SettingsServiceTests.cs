@@ -45,6 +45,11 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.SearchMacrosEnabled);
         Assert.IsTrue(settings.ShowScreenshotAction);
         Assert.IsTrue(settings.ShowMuteAction);
+        Assert.IsFalse(settings.ShowVolumeUpAction);
+        Assert.IsFalse(settings.ShowVolumeDownAction);
+        Assert.IsFalse(settings.ShowClipboardAction);
+        Assert.IsFalse(settings.ShowPlayPauseAction);
+        Assert.AreEqual("Blue", settings.AccentName);
         Assert.IsTrue(settings.ShowSearchModule);
         Assert.IsTrue(settings.ShowFavoritesModule);
         Assert.IsTrue(settings.ShowCurrentWindowModule);
@@ -97,6 +102,8 @@ public sealed class SettingsServiceTests
             ReflowWindowsOnSidebar = false,
             SearchAppsEnabled = false,
             ShowScreenshotAction = false,
+            ShowVolumeUpAction = true,
+            AccentName = "Purple",
             ShowFavoritesModule = false,
             ShowMacrosModule = false,
             FavoriteApps =
@@ -126,6 +133,8 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.ReflowWindowsOnSidebar);
         Assert.IsFalse(settings.SearchAppsEnabled);
         Assert.IsFalse(settings.ShowScreenshotAction);
+        Assert.IsTrue(settings.ShowVolumeUpAction);
+        Assert.AreEqual("Purple", settings.AccentName);
         Assert.IsFalse(settings.ShowFavoritesModule);
         Assert.IsFalse(settings.ShowMacrosModule);
         Assert.AreEqual(1, settings.FavoriteApps.Count);

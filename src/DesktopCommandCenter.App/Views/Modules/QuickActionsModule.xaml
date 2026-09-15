@@ -30,6 +30,22 @@
             <controls:QuickActionTile Icon="♪" Label="Mute"
                                       Command="{Binding ToggleMuteCommand}"
                                       Visibility="{Binding ShowMuteAction, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      Margin="3,3,0,3" />
+            <controls:QuickActionTile Icon="+" Label="Volume Up"
+                                      Command="{Binding VolumeUpCommand}"
+                                      Visibility="{Binding ShowVolumeUpAction, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      Margin="0,3,3,3" />
+            <controls:QuickActionTile Icon="−" Label="Volume Down"
+                                      Command="{Binding VolumeDownCommand}"
+                                      Visibility="{Binding ShowVolumeDownAction, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      Margin="3,3,0,3" />
+            <controls:QuickActionTile Icon="▣" Label="Clipboard"
+                                      Command="{Binding OpenClipboardCommand}"
+                                      Visibility="{Binding ShowClipboardAction, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      Margin="0,3,3,0" />
+            <controls:QuickActionTile Icon="▶" Label="Play / Pause"
+                                      Command="{Binding PlayPauseCommand}"
+                                      Visibility="{Binding ShowPlayPauseAction, Converter={StaticResource BooleanToVisibilityConverter}}"
                                       Margin="3,3,0,0" />
         </UniformGrid>
     </StackPanel>

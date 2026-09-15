@@ -17,6 +17,7 @@ public partial class App : System.Windows.Application
     private SettingsViewModel? _settingsViewModel;
     private WindowsViewModel? _windowsViewModel;
     private bool _isExiting;
+    private AppearanceService? _appearanceService;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -28,6 +29,8 @@ public partial class App : System.Windows.Application
         var appLauncher = new AppLauncherService();
         var updatesViewModel = new UpdatesViewModel(new UpdateService());
         var windowService = new WindowService();
+        _appearanceService = new AppearanceService();
+        _appearanceService.ApplyAccent(settings.AccentName);
 
         var executablePath = Environment.ProcessPath;
         if (!string.IsNullOrWhiteSpace(executablePath))
@@ -122,6 +125,11 @@ public partial class App : System.Windows.Application
         if (e.PropertyName == nameof(SettingsViewModel.ShowTrayIcon))
         {
             _trayIcon?.SetVisible(_settingsViewModel?.ShowTrayIcon == true);
+        }
+        else if (e.PropertyName == nameof(SettingsViewModel.AccentName) &&
+                 _settingsViewModel is not null)
+        {
+            _appearanceService?.ApplyAccent(_settingsViewModel.AccentName);
         }
     }
 

@@ -39,6 +39,10 @@ public sealed class SettingsViewModel : ObservableObject
         Width360Command = new RelayCommand(() => SidebarWidth = 360);
         Width420Command = new RelayCommand(() => SidebarWidth = 420);
         Width480Command = new RelayCommand(() => SidebarWidth = 480);
+        AccentBlueCommand = new RelayCommand(() => AccentName = "Blue");
+        AccentPurpleCommand = new RelayCommand(() => AccentName = "Purple");
+        AccentGreenCommand = new RelayCommand(() => AccentName = "Green");
+        AccentOrangeCommand = new RelayCommand(() => AccentName = "Orange");
         Categories = new ObservableCollection<SettingsCategory>
         {
             new("General", "Startup, sidebar, and application behavior."),
@@ -70,6 +74,10 @@ public sealed class SettingsViewModel : ObservableObject
     public RelayCommand Width360Command { get; }
     public RelayCommand Width420Command { get; }
     public RelayCommand Width480Command { get; }
+    public RelayCommand AccentBlueCommand { get; }
+    public RelayCommand AccentPurpleCommand { get; }
+    public RelayCommand AccentGreenCommand { get; }
+    public RelayCommand AccentOrangeCommand { get; }
 
     public SettingsCategory SelectedCategory
     {
@@ -234,6 +242,54 @@ public sealed class SettingsViewModel : ObservableObject
     {
         get => _settings.ShowMuteAction;
         set => SetBoolean(value, () => _settings.ShowMuteAction, v => _settings.ShowMuteAction = v);
+    }
+
+    public bool ShowVolumeUpAction
+    {
+        get => _settings.ShowVolumeUpAction;
+        set => SetBoolean(value, () => _settings.ShowVolumeUpAction, v => _settings.ShowVolumeUpAction = v);
+    }
+
+    public bool ShowVolumeDownAction
+    {
+        get => _settings.ShowVolumeDownAction;
+        set => SetBoolean(value, () => _settings.ShowVolumeDownAction, v => _settings.ShowVolumeDownAction = v);
+    }
+
+    public bool ShowClipboardAction
+    {
+        get => _settings.ShowClipboardAction;
+        set => SetBoolean(value, () => _settings.ShowClipboardAction, v => _settings.ShowClipboardAction = v);
+    }
+
+    public bool ShowPlayPauseAction
+    {
+        get => _settings.ShowPlayPauseAction;
+        set => SetBoolean(value, () => _settings.ShowPlayPauseAction, v => _settings.ShowPlayPauseAction = v);
+    }
+
+    public string AccentName
+    {
+        get => string.IsNullOrWhiteSpace(_settings.AccentName) ? "Blue" : _settings.AccentName;
+        set
+        {
+            var normalized = value switch
+            {
+                "Purple" => "Purple",
+                "Green" => "Green",
+                "Orange" => "Orange",
+                _ => "Blue"
+            };
+
+            if (string.Equals(_settings.AccentName, normalized, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            _settings.AccentName = normalized;
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
     }
 
     public bool ShowSearchModule

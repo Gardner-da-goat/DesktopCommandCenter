@@ -24,6 +24,10 @@ public sealed class HomeViewModel : ObservableObject
         OpenTerminalCommand = new RelayCommand(() => _ = shellActions.OpenTerminal());
         OpenScreenshotCommand = new RelayCommand(() => _ = shellActions.OpenScreenshot());
         ToggleMuteCommand = new RelayCommand(() => _ = shellActions.ToggleMute());
+        VolumeUpCommand = new RelayCommand(() => _ = shellActions.VolumeUp());
+        VolumeDownCommand = new RelayCommand(() => _ = shellActions.VolumeDown());
+        OpenClipboardCommand = new RelayCommand(() => _ = shellActions.OpenClipboardHistory());
+        PlayPauseCommand = new RelayCommand(() => _ = shellActions.PlayPause());
         _windowsViewModel.PropertyChanged += OnWindowsPropertyChanged;
         _settingsViewModel.SettingsChanged += OnSettingsChanged;
     }
@@ -46,6 +50,10 @@ public sealed class HomeViewModel : ObservableObject
     public RelayCommand OpenTerminalCommand { get; }
     public RelayCommand OpenScreenshotCommand { get; }
     public RelayCommand ToggleMuteCommand { get; }
+    public RelayCommand VolumeUpCommand { get; }
+    public RelayCommand VolumeDownCommand { get; }
+    public RelayCommand OpenClipboardCommand { get; }
+    public RelayCommand PlayPauseCommand { get; }
 
     public WindowItemViewModel? CurrentWindow => _windowsViewModel.CurrentWindow;
     public bool HasCurrentWindow => _windowsViewModel.HasCurrentWindow;
@@ -62,6 +70,10 @@ public sealed class HomeViewModel : ObservableObject
     public bool ShowTerminalAction => _settingsViewModel.ShowTerminalAction;
     public bool ShowScreenshotAction => _settingsViewModel.ShowScreenshotAction;
     public bool ShowMuteAction => _settingsViewModel.ShowMuteAction;
+    public bool ShowVolumeUpAction => _settingsViewModel.ShowVolumeUpAction;
+    public bool ShowVolumeDownAction => _settingsViewModel.ShowVolumeDownAction;
+    public bool ShowClipboardAction => _settingsViewModel.ShowClipboardAction;
+    public bool ShowPlayPauseAction => _settingsViewModel.ShowPlayPauseAction;
 
     private void OnWindowsPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -108,6 +120,18 @@ public sealed class HomeViewModel : ObservableObject
                 break;
             case nameof(SettingsViewModel.ShowMuteAction):
                 OnPropertyChanged(nameof(ShowMuteAction));
+                break;
+            case nameof(SettingsViewModel.ShowVolumeUpAction):
+                OnPropertyChanged(nameof(ShowVolumeUpAction));
+                break;
+            case nameof(SettingsViewModel.ShowVolumeDownAction):
+                OnPropertyChanged(nameof(ShowVolumeDownAction));
+                break;
+            case nameof(SettingsViewModel.ShowClipboardAction):
+                OnPropertyChanged(nameof(ShowClipboardAction));
+                break;
+            case nameof(SettingsViewModel.ShowPlayPauseAction):
+                OnPropertyChanged(nameof(ShowPlayPauseAction));
                 break;
         }
     }

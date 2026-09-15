@@ -183,6 +183,10 @@ public sealed class SearchViewModel : ObservableObject
             AddActionCandidate(candidates, query, "Terminal", "Open Windows Terminal", "⌨", _shellActions.OpenTerminal);
             AddActionCandidate(candidates, query, "Screenshot", "Open Windows screen capture", "▧", _shellActions.OpenScreenshot);
             AddActionCandidate(candidates, query, "Mute", "Toggle system mute", "♪", _shellActions.ToggleMute);
+            AddActionCandidate(candidates, query, "Volume Up", "Increase system volume", "+", _shellActions.VolumeUp);
+            AddActionCandidate(candidates, query, "Volume Down", "Decrease system volume", "−", _shellActions.VolumeDown);
+            AddActionCandidate(candidates, query, "Clipboard History", "Open Windows clipboard history", "▣", _shellActions.OpenClipboardHistory);
+            AddActionCandidate(candidates, query, "Play Pause", "Toggle media playback", "▶", _shellActions.PlayPause);
         }
 
         foreach (var result in candidates
@@ -200,6 +204,22 @@ public sealed class SearchViewModel : ObservableObject
         string query)
     {
         var current = _windowsViewModel.CurrentWindow;
+
+        if (TryGetArgument(query, "web", out var webQuery) && webQuery.Length > 0)
+        {
+            candidates.Add((
+                300,
+                new SearchResultViewModel(
+                    SearchResultKind.Action,
+                    $"Search the web for “{webQuery}”",
+                    "Command · default browser",
+                    "⌕",
+                    new RelayCommand(() =>
+                    {
+                        _ = _shellActions.SearchWeb(webQuery);
+                        Query = string.Empty;
+                    }))));
+        }
 
         if (TryGetArgument(query, "open", out var appQuery) && appQuery.Length > 0)
         {

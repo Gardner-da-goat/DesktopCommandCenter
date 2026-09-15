@@ -246,7 +246,11 @@
                 <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Windows Settings"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowWindowsSettingsAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
                 <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Terminal"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowTerminalAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
                 <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Screenshot"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowScreenshotAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
-                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Mute"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowMuteAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Mute"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowMuteAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Volume Up"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowVolumeUpAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Volume Down"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowVolumeDownAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid Margin="0,0,0,5"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Clipboard History"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowClipboardAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Play / Pause"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding DataContext.ShowPlayPauseAction, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/></Grid>
             </StackPanel>
         </DataTemplate>
 
@@ -434,12 +438,34 @@
 
         <DataTemplate x:Key="AppearanceTemplate">
             <StackPanel>
-                <TextBlock Text="Dark theme is active."
-                           Style="{StaticResource SecondaryText}" />
-                <TextBlock Text="More themes and transparency controls are planned."
+                <TextBlock Text="Accent color"
+                           Style="{StaticResource SecondaryText}"
+                           Margin="0,0,0,6" />
+                <UniformGrid Columns="4">
+                    <Button Content="Blue"
+                            Command="{Binding DataContext.AccentBlueCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,5"
+                            Margin="0,0,3,0" />
+                    <Button Content="Purple"
+                            Command="{Binding DataContext.AccentPurpleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,5"
+                            Margin="3,0" />
+                    <Button Content="Green"
+                            Command="{Binding DataContext.AccentGreenCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,5"
+                            Margin="3,0" />
+                    <Button Content="Orange"
+                            Command="{Binding DataContext.AccentOrangeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,5"
+                            Margin="3,0,0,0" />
+                </UniformGrid>
+                <TextBlock Text="{Binding DataContext.AccentName, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat=Current accent: {0}}"
                            Style="{StaticResource MutedText}"
-                           Margin="0,3,0,0"
-                           TextWrapping="Wrap" />
+                           Margin="0,7,0,0" />
+                <TextBlock Text="The interface stays dark and opaque for readability; the accent can be changed without restarting."
+                           Style="{StaticResource MutedText}"
+                           TextWrapping="Wrap"
+                           Margin="0,5,0,0" />
             </StackPanel>
         </DataTemplate>
 

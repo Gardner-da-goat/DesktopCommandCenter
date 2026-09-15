@@ -20,6 +20,11 @@ internal static class NativeMethods
     internal const uint ModNoRepeat = 0x4000;
     internal const uint VkSpace = 0x20;
     internal const byte VkVolumeMute = 0xAD;
+    internal const byte VkVolumeDown = 0xAE;
+    internal const byte VkVolumeUp = 0xAF;
+    internal const byte VkMediaPlayPause = 0xB3;
+    internal const byte VkLWin = 0x5B;
+    internal const byte VkV = 0x56;
     internal const uint KeyeventfKeyup = 0x0002;
     internal const int SwMinimize = 6;
     internal const int SwMaximize = 3;

@@ -68,6 +68,14 @@
                                          Command="{Binding ShowHomeCommand}" ToolTip="Home">
                                 <TextBlock Text="⌂" FontFamily="Segoe UI Symbol" FontSize="20" />
                             </RadioButton>
+
+                            <RadioButton GroupName="MainNavigation"
+                                         Style="{StaticResource NavigationButton}"
+                                         IsChecked="{Binding IsWindowsSelected, Mode=OneWay}"
+                                         Command="{Binding ShowWindowsCommand}" ToolTip="Windows">
+                                <TextBlock Text="▣" FontFamily="Segoe UI Symbol" FontSize="18" />
+                            </RadioButton>
+
                             <RadioButton GroupName="MainNavigation"
                                          Style="{StaticResource NavigationButton}"
                                          IsChecked="{Binding IsSettingsSelected, Mode=OneWay}"

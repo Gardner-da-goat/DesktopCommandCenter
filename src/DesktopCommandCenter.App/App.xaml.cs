@@ -4,6 +4,7 @@ using DesktopCommandCenter.App.ViewModels;
 using DesktopCommandCenter.App.Views;
 using DesktopCommandCenter.Core.Settings;
 using DesktopCommandCenter.Windows.Monitors;
+using DesktopCommandCenter.Windows.Windows;
 
 namespace DesktopCommandCenter.App;
 
@@ -12,6 +13,7 @@ public partial class App : System.Windows.Application
     private SidebarWindow? _window;
     private TrayIconService? _trayIcon;
     private SettingsViewModel? _settingsViewModel;
+    private WindowsViewModel? _windowsViewModel;
     private bool _isExiting;
 
     protected override void OnStartup(StartupEventArgs e)
@@ -21,9 +23,12 @@ public partial class App : System.Windows.Application
         var settingsService = new SettingsService();
         var settings = settingsService.Load();
         _settingsViewModel = new SettingsViewModel(settings, settingsService);
+        _windowsViewModel = new WindowsViewModel(new WindowService());
+        var homeViewModel = new HomeViewModel(_windowsViewModel);
         var sidebarViewModel = new SidebarViewModel(
             settings,
-            new HomeViewModel(),
+            homeViewModel,
+            _windowsViewModel,
             _settingsViewModel);
 
         _window = new SidebarWindow(sidebarViewModel, new MonitorService());
@@ -80,7 +85,12 @@ public partial class App : System.Windows.Application
         }
 
         _isExiting = true;
-        _settingsViewModel!.SettingsChanged -= OnSettingsChanged;
+        if (_settingsViewModel is not null)
+        {
+            _settingsViewModel.SettingsChanged -= OnSettingsChanged;
+        }
+
+        _windowsViewModel?.Dispose();
         _trayIcon?.Dispose();
         _trayIcon = null;
         _window?.CloseForExit();
@@ -89,6 +99,7 @@ public partial class App : System.Windows.Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _windowsViewModel?.Dispose();
         _trayIcon?.Dispose();
         base.OnExit(e);
     }

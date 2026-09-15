@@ -9,10 +9,15 @@ public sealed class SidebarViewModel : ObservableObject
     private readonly SidebarState _state;
     private object _currentPage;
 
-    public SidebarViewModel(AppSettings settings, HomeViewModel home, SettingsViewModel settingsViewModel)
+    public SidebarViewModel(
+        AppSettings settings,
+        HomeViewModel home,
+        WindowsViewModel windows,
+        SettingsViewModel settingsViewModel)
     {
         _state = new SidebarState(settings);
         Home = home;
+        Windows = windows;
         Settings = settingsViewModel;
         _currentPage = Home;
 
@@ -20,17 +25,20 @@ public sealed class SidebarViewModel : ObservableObject
         ExpandCommand = new RelayCommand(Expand);
         CollapseCommand = new RelayCommand(Collapse);
         ShowHomeCommand = new RelayCommand(ShowHome);
+        ShowWindowsCommand = new RelayCommand(ShowWindows);
         ShowSettingsCommand = new RelayCommand(ShowSettings);
 
         Settings.SettingsChanged += OnSettingsChanged;
     }
 
     public HomeViewModel Home { get; }
+    public WindowsViewModel Windows { get; }
     public SettingsViewModel Settings { get; }
     public ICommand ToggleCommand { get; }
     public ICommand ExpandCommand { get; }
     public ICommand CollapseCommand { get; }
     public ICommand ShowHomeCommand { get; }
+    public ICommand ShowWindowsCommand { get; }
     public ICommand ShowSettingsCommand { get; }
 
     public object CurrentPage
@@ -40,12 +48,14 @@ public sealed class SidebarViewModel : ObservableObject
         {
             if (!SetProperty(ref _currentPage, value)) return;
             OnPropertyChanged(nameof(IsHomeSelected));
+            OnPropertyChanged(nameof(IsWindowsSelected));
             OnPropertyChanged(nameof(IsSettingsSelected));
         }
     }
 
     public bool IsExpanded => _state.IsExpanded;
     public bool IsHomeSelected => ReferenceEquals(CurrentPage, Home);
+    public bool IsWindowsSelected => ReferenceEquals(CurrentPage, Windows);
     public bool IsSettingsSelected => ReferenceEquals(CurrentPage, Settings);
     public double SidebarWidth => _state.ExpandedWidth;
     public bool AnimationsEnabled => _state.AnimationsEnabled;
@@ -72,6 +82,13 @@ public sealed class SidebarViewModel : ObservableObject
     }
 
     public void ShowHome() => CurrentPage = Home;
+
+    public void ShowWindows()
+    {
+        Windows.Refresh();
+        CurrentPage = Windows;
+    }
+
     public void ShowSettings() => CurrentPage = Settings;
 
     private void OnSettingsChanged(object? sender, SettingChangedEventArgs e)

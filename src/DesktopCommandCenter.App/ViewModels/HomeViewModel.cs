@@ -37,6 +37,7 @@ public sealed class HomeViewModel : ObservableObject
 
     public SearchViewModel Search { get; }
     public FavoritesViewModel Favorites => _settingsViewModel.Favorites;
+    public MacrosViewModel Macros => _settingsViewModel.Macros;
     public RelayCommand OpenDownloadsCommand { get; }
     public RelayCommand OpenTaskManagerCommand { get; }
     public RelayCommand OpenSettingsCommand { get; }

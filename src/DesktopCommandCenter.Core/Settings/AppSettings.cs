@@ -2,7 +2,7 @@ namespace DesktopCommandCenter.Core.Settings;
 
 public sealed class AppSettings
 {
-    public const int CurrentVersion = 3;
+    public const int CurrentVersion = 4;
     public const double MinimumSidebarWidth = 300;
     public const double MaximumSidebarWidth = 520;
     public const double DefaultSidebarWidth = 360;
@@ -29,6 +29,7 @@ public sealed class AppSettings
     public bool ShowMacrosModule { get; set; } = true;
 
     public List<FavoriteAppSetting> FavoriteApps { get; set; } = [];
+    public List<MacroSetting> Macros { get; set; } = [];
 
     public static double ClampSidebarWidth(double width)
     {
@@ -44,6 +45,7 @@ public sealed class AppSettings
     {
         SettingsVersion = CurrentVersion;
         SidebarWidth = SidebarWidth;
+
         FavoriteApps ??= [];
         FavoriteApps = FavoriteApps
             .Where(item =>
@@ -52,6 +54,24 @@ public sealed class AppSettings
             .GroupBy(item => item.LaunchPath, StringComparer.OrdinalIgnoreCase)
             .Select(group => group.First())
             .ToList();
+
+        Macros ??= [];
+        foreach (var macro in Macros)
+        {
+            if (string.IsNullOrWhiteSpace(macro.Id))
+            {
+                macro.Id = Guid.NewGuid().ToString("N");
+            }
+        }
+
+        Macros = Macros
+            .Where(macro =>
+                !string.IsNullOrWhiteSpace(macro.Name) &&
+                !string.IsNullOrWhiteSpace(macro.Script))
+            .GroupBy(macro => macro.Id, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.First())
+            .ToList();
+
         return this;
     }
 }

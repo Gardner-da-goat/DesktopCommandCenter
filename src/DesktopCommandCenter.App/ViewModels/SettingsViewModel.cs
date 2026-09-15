@@ -12,11 +12,13 @@ public sealed class SettingsViewModel : ObservableObject
     public SettingsViewModel(
         AppSettings settings,
         ISettingsService settingsService,
-        FavoritesViewModel favorites)
+        FavoritesViewModel favorites,
+        MacrosViewModel macros)
     {
         _settings = settings;
         _settingsService = settingsService;
         Favorites = favorites;
+        Macros = macros;
         Categories = new ObservableCollection<SettingsCategory>
         {
             new("General", "Startup, sidebar, and application behavior."),
@@ -38,6 +40,7 @@ public sealed class SettingsViewModel : ObservableObject
     public event EventHandler<SettingChangedEventArgs>? SettingsChanged;
     public ObservableCollection<SettingsCategory> Categories { get; }
     public FavoritesViewModel Favorites { get; }
+    public MacrosViewModel Macros { get; }
 
     public SettingsCategory SelectedCategory
     {

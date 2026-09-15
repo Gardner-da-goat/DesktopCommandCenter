@@ -26,20 +26,33 @@ public partial class App : System.Windows.Application
         var settings = settingsService.Load();
         var shellActions = new ShellActionService();
         var appLauncher = new AppLauncherService();
-        var favoritesViewModel = new FavoritesViewModel(settings, settingsService, appLauncher);
+
+        var favoritesViewModel = new FavoritesViewModel(
+            settings,
+            settingsService,
+            appLauncher);
+
+        _windowsViewModel = new WindowsViewModel(new WindowService());
+
+        var macrosViewModel = new MacrosViewModel(
+            settings,
+            settingsService,
+            favoritesViewModel,
+            _windowsViewModel,
+            shellActions);
 
         _settingsViewModel = new SettingsViewModel(
             settings,
             settingsService,
-            favoritesViewModel);
-
-        _windowsViewModel = new WindowsViewModel(new WindowService());
+            favoritesViewModel,
+            macrosViewModel);
 
         var searchViewModel = new SearchViewModel(
             _windowsViewModel,
             appLauncher,
             shellActions,
-            favoritesViewModel);
+            favoritesViewModel,
+            macrosViewModel);
 
         var homeViewModel = new HomeViewModel(
             _windowsViewModel,

@@ -4,19 +4,53 @@
     <Border Style="{StaticResource CardStyle}">
         <StackPanel>
             <TextBlock Text="Macros" Style="{StaticResource SectionTitleText}" Margin="0,0,0,10" />
-            <Grid Margin="0,0,0,8">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                <Border Width="4" Height="24" Background="{DynamicResource Accent}" CornerRadius="2" />
-                <TextBlock Grid.Column="1" Text="Work Mode" Margin="8,0,0,0" VerticalAlignment="Center" />
-                <TextBlock Grid.Column="2" Text="Coming soon" Style="{StaticResource MutedText}" VerticalAlignment="Center" />
-            </Grid>
-            <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                <Border Width="4" Height="24" Background="{DynamicResource Success}" CornerRadius="2" />
-                <TextBlock Grid.Column="1" Text="Gaming Mode" Margin="8,0,0,0" VerticalAlignment="Center" />
-                <TextBlock Grid.Column="2" Text="Coming soon" Style="{StaticResource MutedText}" VerticalAlignment="Center" />
-            </Grid>
-            <Button Content="＋  Create Macro" HorizontalAlignment="Stretch" IsEnabled="False" />
+
+            <ItemsControl ItemsSource="{Binding Macros.Items}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border Width="4" Height="28"
+                                    Background="{DynamicResource Accent}"
+                                    CornerRadius="2" />
+                            <StackPanel Grid.Column="1" Margin="8,0,8,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text="{Binding Script}"
+                                           Style="{StaticResource MutedText}"
+                                           MaxWidth="150"
+                                           TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                            <Button Grid.Column="2"
+                                    Content="Run"
+                                    Command="{Binding RunCommand}"
+                                    Padding="9,5"
+                                    VerticalAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="Create a macro in Settings to run multi-step routines."
+                       Margin="0,2,0,0">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource MutedText}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Macros.HasMacros}" Value="False">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <TextBlock Text="{Binding Macros.StatusMessage}"
+                       Style="{StaticResource MutedText}"
+                       Margin="0,7,0,0" />
         </StackPanel>
     </Border>
 </UserControl>

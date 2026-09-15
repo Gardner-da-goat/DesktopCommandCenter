@@ -10,6 +10,7 @@ public sealed class SearchViewModel : ObservableObject
     private readonly AppLauncherService _appLauncher;
     private readonly ShellActionService _shellActions;
     private readonly FavoritesViewModel _favorites;
+    private readonly MacrosViewModel _macros;
     private IReadOnlyList<InstalledAppInfo>? _installedApps;
     private string _query = string.Empty;
 
@@ -17,12 +18,14 @@ public sealed class SearchViewModel : ObservableObject
         WindowsViewModel windowsViewModel,
         AppLauncherService appLauncher,
         ShellActionService shellActions,
-        FavoritesViewModel favorites)
+        FavoritesViewModel favorites,
+        MacrosViewModel macros)
     {
         _windowsViewModel = windowsViewModel;
         _appLauncher = appLauncher;
         _shellActions = shellActions;
         _favorites = favorites;
+        _macros = macros;
         Results = new ObservableCollection<SearchResultViewModel>();
     }
 
@@ -106,6 +109,28 @@ public sealed class SearchViewModel : ObservableObject
                     }),
                     "Pin",
                     new RelayCommand(() => _ = _favorites.AddFavorite(app)))));
+        }
+
+        foreach (var macro in _macros.Items)
+        {
+            var score = MatchScore(query, macro.Name, macro.Script);
+            if (score <= 0)
+            {
+                continue;
+            }
+
+            candidates.Add((
+                score + 12,
+                new SearchResultViewModel(
+                    SearchResultKind.Macro,
+                    macro.Name,
+                    "Macro",
+                    "▶",
+                    new RelayCommand(() =>
+                    {
+                        macro.RunCommand.Execute(null);
+                        Query = string.Empty;
+                    }))));
         }
 
         AddActionCandidate(candidates, query, "Downloads", "Open your Downloads folder", "⇩", _shellActions.OpenDownloads);

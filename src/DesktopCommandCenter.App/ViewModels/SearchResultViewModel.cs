@@ -6,7 +6,8 @@ public enum SearchResultKind
 {
     App,
     Window,
-    Action
+    Action,
+    Macro
 }
 
 public sealed class SearchResultViewModel

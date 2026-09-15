@@ -40,6 +40,8 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.ShowCurrentWindowModule);
         Assert.IsTrue(settings.ShowQuickActionsModule);
         Assert.IsTrue(settings.ShowMacrosModule);
+        Assert.AreEqual(0, settings.FavoriteApps.Count);
+        Assert.AreEqual(0, settings.Macros.Count);
     }
 
     [TestMethod]
@@ -47,7 +49,7 @@ public sealed class SettingsServiceTests
     {
         Directory.CreateDirectory(_directory);
         File.WriteAllText(_path, """
-            { "settingsVersion": 2, "startCollapsed": false, "sidebarWidth": 420,
+            { "settingsVersion": 4, "startCollapsed": false, "sidebarWidth": 420,
               "alwaysOnTop": false, "animationsEnabled": false, "showTrayIcon": false,
               "showSearchModule": false, "showFavoritesModule": true,
               "showCurrentWindowModule": true, "showQuickActionsModule": false,
@@ -77,7 +79,15 @@ public sealed class SettingsServiceTests
             AnimationsEnabled = false,
             ShowTrayIcon = false,
             ShowFavoritesModule = false,
-            ShowMacrosModule = false
+            ShowMacrosModule = false,
+            FavoriteApps =
+            [
+                new FavoriteAppSetting { Name = "Example", LaunchPath = @"C:\Example.lnk" }
+            ],
+            Macros =
+            [
+                new MacroSetting { Id = "work", Name = "Work", Script = "terminal\ndelay 250" }
+            ]
         });
 
         var settings = service.Load();
@@ -89,6 +99,10 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.ShowTrayIcon);
         Assert.IsFalse(settings.ShowFavoritesModule);
         Assert.IsFalse(settings.ShowMacrosModule);
+        Assert.AreEqual(1, settings.FavoriteApps.Count);
+        Assert.AreEqual("Example", settings.FavoriteApps[0].Name);
+        Assert.AreEqual(1, settings.Macros.Count);
+        Assert.AreEqual("Work", settings.Macros[0].Name);
     }
 
     [TestMethod]

@@ -35,6 +35,7 @@ public sealed class SettingsServiceTests
         Assert.IsTrue(settings.AlwaysOnTop);
         Assert.IsTrue(settings.AnimationsEnabled);
         Assert.IsTrue(settings.ShowTrayIcon);
+        Assert.IsTrue(settings.AutoCheckForUpdates);
         Assert.IsTrue(settings.ShowSearchModule);
         Assert.IsTrue(settings.ShowFavoritesModule);
         Assert.IsTrue(settings.ShowCurrentWindowModule);
@@ -49,8 +50,9 @@ public sealed class SettingsServiceTests
     {
         Directory.CreateDirectory(_directory);
         File.WriteAllText(_path, """
-            { "settingsVersion": 4, "startCollapsed": false, "sidebarWidth": 420,
+            { "settingsVersion": 5, "startCollapsed": false, "sidebarWidth": 420,
               "alwaysOnTop": false, "animationsEnabled": false, "showTrayIcon": false,
+              "autoCheckForUpdates": false,
               "showSearchModule": false, "showFavoritesModule": true,
               "showCurrentWindowModule": true, "showQuickActionsModule": false,
               "showMacrosModule": true }
@@ -63,6 +65,7 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.AlwaysOnTop);
         Assert.IsFalse(settings.AnimationsEnabled);
         Assert.IsFalse(settings.ShowTrayIcon);
+        Assert.IsFalse(settings.AutoCheckForUpdates);
         Assert.IsFalse(settings.ShowSearchModule);
         Assert.IsFalse(settings.ShowQuickActionsModule);
     }
@@ -78,6 +81,7 @@ public sealed class SettingsServiceTests
             AlwaysOnTop = false,
             AnimationsEnabled = false,
             ShowTrayIcon = false,
+            AutoCheckForUpdates = false,
             ShowFavoritesModule = false,
             ShowMacrosModule = false,
             FavoriteApps =
@@ -97,6 +101,7 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.AlwaysOnTop);
         Assert.IsFalse(settings.AnimationsEnabled);
         Assert.IsFalse(settings.ShowTrayIcon);
+        Assert.IsFalse(settings.AutoCheckForUpdates);
         Assert.IsFalse(settings.ShowFavoritesModule);
         Assert.IsFalse(settings.ShowMacrosModule);
         Assert.AreEqual(1, settings.FavoriteApps.Count);

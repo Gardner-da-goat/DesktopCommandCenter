@@ -26,6 +26,7 @@ public partial class App : System.Windows.Application
         var settings = settingsService.Load();
         var shellActions = new ShellActionService();
         var appLauncher = new AppLauncherService();
+        var updatesViewModel = new UpdatesViewModel(new UpdateService());
 
         var favoritesViewModel = new FavoritesViewModel(
             settings,
@@ -45,7 +46,8 @@ public partial class App : System.Windows.Application
             settings,
             settingsService,
             favoritesViewModel,
-            macrosViewModel);
+            macrosViewModel,
+            updatesViewModel);
 
         var searchViewModel = new SearchViewModel(
             _windowsViewModel,
@@ -84,7 +86,14 @@ public partial class App : System.Windows.Application
 
         _trayIcon.SetVisible(settings.ShowTrayIcon);
         _settingsViewModel.SettingsChanged += OnSettingsChanged;
+        _settingsViewModel.Updates.RestartRequested += OnUpdateRestartRequested;
+
         _window.Show();
+
+        if (settings.AutoCheckForUpdates)
+        {
+            _ = _settingsViewModel.Updates.CheckForUpdatesAsync();
+        }
     }
 
     private void OnSettingsChanged(object? sender, SettingChangedEventArgs e)
@@ -94,6 +103,8 @@ public partial class App : System.Windows.Application
             _trayIcon?.SetVisible(_settingsViewModel?.ShowTrayIcon == true);
         }
     }
+
+    private void OnUpdateRestartRequested(object? sender, EventArgs e) => ExitApplication();
 
     private void ActivateSidebar()
     {
@@ -123,6 +134,7 @@ public partial class App : System.Windows.Application
         if (_settingsViewModel is not null)
         {
             _settingsViewModel.SettingsChanged -= OnSettingsChanged;
+            _settingsViewModel.Updates.RestartRequested -= OnUpdateRestartRequested;
         }
 
         _windowsViewModel?.Dispose();

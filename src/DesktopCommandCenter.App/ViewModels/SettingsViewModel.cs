@@ -13,12 +13,14 @@ public sealed class SettingsViewModel : ObservableObject
         AppSettings settings,
         ISettingsService settingsService,
         FavoritesViewModel favorites,
-        MacrosViewModel macros)
+        MacrosViewModel macros,
+        UpdatesViewModel updates)
     {
         _settings = settings;
         _settingsService = settingsService;
         Favorites = favorites;
         Macros = macros;
+        Updates = updates;
         Categories = new ObservableCollection<SettingsCategory>
         {
             new("General", "Startup, sidebar, and application behavior."),
@@ -41,6 +43,7 @@ public sealed class SettingsViewModel : ObservableObject
     public ObservableCollection<SettingsCategory> Categories { get; }
     public FavoritesViewModel Favorites { get; }
     public MacrosViewModel Macros { get; }
+    public UpdatesViewModel Updates { get; }
 
     public SettingsCategory SelectedCategory
     {
@@ -89,6 +92,12 @@ public sealed class SettingsViewModel : ObservableObject
     {
         get => _settings.ShowTrayIcon;
         set => SetBoolean(value, () => _settings.ShowTrayIcon, v => _settings.ShowTrayIcon = v);
+    }
+
+    public bool AutoCheckForUpdates
+    {
+        get => _settings.AutoCheckForUpdates;
+        set => SetBoolean(value, () => _settings.AutoCheckForUpdates, v => _settings.AutoCheckForUpdates = v);
     }
 
     public bool ShowSearchModule

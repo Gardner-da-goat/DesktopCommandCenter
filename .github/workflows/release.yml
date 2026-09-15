@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore DesktopCommandCenter.sln
+
+      - name: Build
+        run: dotnet build DesktopCommandCenter.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test DesktopCommandCenter.sln --configuration Release --no-build --verbosity normal
+
+      - name: Publish Windows x64
+        run: >
+          dotnet publish src/DesktopCommandCenter.App/DesktopCommandCenter.App.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          --output artifacts/publish
+
+      - name: Create release archive
+        shell: pwsh
+        run: |
+          Compress-Archive -Path artifacts/publish/* -DestinationPath artifacts/DesktopCommandCenter-win-x64.zip -Force
+
+      - name: Create GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$env:GITHUB_REF_NAME" `
+            "artifacts/DesktopCommandCenter-win-x64.zip" `
+            --title "$env:GITHUB_REF_NAME" `
+            --generate-notes

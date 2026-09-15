@@ -298,11 +298,51 @@
 
         <DataTemplate x:Key="UpdatesTemplate">
             <StackPanel>
-                <Grid Margin="0,0,0,13"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Current Version" Style="{StaticResource SecondaryText}"/><TextBlock Grid.Column="1" Text="0.1.0"/></Grid>
-                <Grid Margin="0,0,0,13"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Update Channel" Style="{StaticResource SecondaryText}"/><TextBlock Grid.Column="1" Text="Stable"/></Grid>
-                <Grid Margin="0,0,0,14"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Automatically Check for Updates" TextWrapping="Wrap"/><CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True" IsEnabled="False"/></Grid>
-                <Button Content="Check for Updates" IsEnabled="False" />
-                <TextBlock Text="Updater not connected yet." Style="{StaticResource MutedText}" Margin="0,10,0,0" />
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Current Version" Style="{StaticResource SecondaryText}"/>
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding DataContext.Updates.CurrentVersion, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Latest Release" Style="{StaticResource SecondaryText}"/>
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding DataContext.Updates.LatestVersion, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Automatically Check for Updates"/>
+                        <TextBlock Text="Check GitHub Releases when the app starts." Style="{StaticResource MutedText}"/>
+                    </StackPanel>
+                    <CheckBox Grid.Column="1"
+                              Style="{StaticResource ToggleSwitchStyle}"
+                              IsChecked="{Binding DataContext.AutoCheckForUpdates, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                </Grid>
+
+                <Button Content="Check for Updates"
+                        Command="{Binding DataContext.Updates.CheckCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Margin="0,0,0,8"/>
+
+                <Button Content="Update &amp; Restart"
+                        Style="{StaticResource AccentButton}"
+                        Command="{Binding DataContext.Updates.UpdateAndRestartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        IsEnabled="{Binding DataContext.Updates.IsUpdateAvailable, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Margin="0,0,0,10"/>
+
+                <TextBlock Text="{Binding DataContext.Updates.StatusMessage, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                           Style="{StaticResource MutedText}"
+                           TextWrapping="Wrap"/>
+
+                <ProgressBar Height="4"
+                             Minimum="0"
+                             Maximum="1"
+                             Value="{Binding DataContext.Updates.DownloadProgress, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                             Margin="0,10,0,0"
+                             Visibility="{Binding DataContext.Updates.IsDownloading, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </StackPanel>
         </DataTemplate>
 

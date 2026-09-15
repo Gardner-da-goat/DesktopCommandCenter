@@ -53,6 +53,8 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.ShowVolumeDownAction);
         Assert.IsFalse(settings.ShowClipboardAction);
         Assert.IsFalse(settings.ShowPlayPauseAction);
+        Assert.IsFalse(settings.ShowDesktopAction);
+        Assert.IsFalse(settings.ShowLockAction);
         Assert.AreEqual("Dark", settings.ThemeMode);
         Assert.AreEqual("Blue", settings.AccentName);
         Assert.IsTrue(settings.ShowSearchModule);
@@ -114,6 +116,7 @@ public sealed class SettingsServiceTests
             SearchSettingsEnabled = false,
             ShowScreenshotAction = false,
             ShowVolumeUpAction = true,
+            ShowDesktopAction = true,
             ThemeMode = "Light",
             AccentName = "Purple",
             ShowFavoritesModule = false,
@@ -150,6 +153,7 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.SearchSettingsEnabled);
         Assert.IsFalse(settings.ShowScreenshotAction);
         Assert.IsTrue(settings.ShowVolumeUpAction);
+        Assert.IsTrue(settings.ShowDesktopAction);
         Assert.AreEqual("Light", settings.ThemeMode);
         Assert.AreEqual("Purple", settings.AccentName);
         Assert.IsFalse(settings.ShowFavoritesModule);

@@ -325,6 +325,18 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.ShowPlayPauseAction, v => _settings.ShowPlayPauseAction = v);
     }
 
+    public bool ShowDesktopAction
+    {
+        get => _settings.ShowDesktopAction;
+        set => SetBoolean(value, () => _settings.ShowDesktopAction, v => _settings.ShowDesktopAction = v);
+    }
+
+    public bool ShowLockAction
+    {
+        get => _settings.ShowLockAction;
+        set => SetBoolean(value, () => _settings.ShowLockAction, v => _settings.ShowLockAction = v);
+    }
+
     public string ThemeMode
     {
         get => NormalizeThemeMode(_settings.ThemeMode);

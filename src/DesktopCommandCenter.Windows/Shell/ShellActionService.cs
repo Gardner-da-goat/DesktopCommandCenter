@@ -37,6 +37,34 @@ public sealed class ShellActionService
     public bool NextTrack() => SendMediaKey(NativeMethods.VkMediaNextTrack);
     public bool PreviousTrack() => SendMediaKey(NativeMethods.VkMediaPreviousTrack);
 
+    public bool ShowDesktop()
+    {
+        try
+        {
+            NativeMethods.keybd_event(NativeMethods.VkLWin, 0, 0, 0);
+            NativeMethods.keybd_event(NativeMethods.VkDByte, 0, 0, 0);
+            NativeMethods.keybd_event(NativeMethods.VkDByte, 0, NativeMethods.KeyeventfKeyup, 0);
+            NativeMethods.keybd_event(NativeMethods.VkLWin, 0, NativeMethods.KeyeventfKeyup, 0);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public bool LockComputer()
+    {
+        try
+        {
+            return NativeMethods.LockWorkStation();
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public bool OpenClipboardHistory()
     {
         try

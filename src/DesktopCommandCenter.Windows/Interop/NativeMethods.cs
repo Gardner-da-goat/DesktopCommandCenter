@@ -30,6 +30,7 @@ internal static class NativeMethods
     internal const byte VkMediaPlayPause = 0xB3;
     internal const byte VkLWin = 0x5B;
     internal const byte VkV = 0x56;
+    internal const byte VkDByte = 0x44;
     internal const uint KeyeventfKeyup = 0x0002;
     internal const int SwMinimize = 6;
     internal const int SwMaximize = 3;
@@ -143,6 +144,10 @@ internal static class NativeMethods
 
     [DllImport("user32.dll")]
     internal static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, nuint extraInfo);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool LockWorkStation();
 
     [DllImport("user32.dll")]
     internal static extern nint MonitorFromPoint(Point point, uint flags);

@@ -2,7 +2,7 @@ namespace DesktopCommandCenter.Core.Settings;
 
 public sealed class AppSettings
 {
-    public const int CurrentVersion = 15;
+    public const int CurrentVersion = 16;
     public const double MinimumSidebarWidth = 300;
     public const double MaximumSidebarWidth = 520;
     public const double DefaultSidebarWidth = 360;
@@ -45,6 +45,8 @@ public sealed class AppSettings
     public bool ShowVolumeDownAction { get; set; } = false;
     public bool ShowClipboardAction { get; set; } = false;
     public bool ShowPlayPauseAction { get; set; } = false;
+    public bool ShowDesktopAction { get; set; } = false;
+    public bool ShowLockAction { get; set; } = false;
 
     public string ThemeMode { get; set; } = "Dark";
     public string AccentName { get; set; } = "Blue";

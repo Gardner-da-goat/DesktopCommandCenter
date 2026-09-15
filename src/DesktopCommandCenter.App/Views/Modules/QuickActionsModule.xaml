@@ -46,6 +46,14 @@
             <controls:QuickActionTile Icon="▶" Label="Play / Pause"
                                       Command="{Binding PlayPauseCommand}"
                                       Visibility="{Binding ShowPlayPauseAction, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      Margin="3,3,0,3" />
+            <controls:QuickActionTile Icon="▭" Label="Show Desktop"
+                                      Command="{Binding ShowDesktopCommand}"
+                                      Visibility="{Binding ShowDesktopAction, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      Margin="0,3,3,0" />
+            <controls:QuickActionTile Icon="◈" Label="Lock"
+                                      Command="{Binding LockComputerCommand}"
+                                      Visibility="{Binding ShowLockAction, Converter={StaticResource BooleanToVisibilityConverter}}"
                                       Margin="3,3,0,0" />
         </UniformGrid>
     </StackPanel>

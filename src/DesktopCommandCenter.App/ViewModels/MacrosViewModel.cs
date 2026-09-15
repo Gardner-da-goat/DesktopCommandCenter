@@ -268,6 +268,16 @@ public sealed class MacrosViewModel : ObservableObject
             return _shellActions.PreviousTrack();
         }
 
+        if (line.Equals("show-desktop", StringComparison.OrdinalIgnoreCase))
+        {
+            return _shellActions.ShowDesktop();
+        }
+
+        if (line.Equals("lock", StringComparison.OrdinalIgnoreCase))
+        {
+            return _shellActions.LockComputer();
+        }
+
         _windows.Refresh();
         var current = _windows.CurrentWindow;
         if (current is null)

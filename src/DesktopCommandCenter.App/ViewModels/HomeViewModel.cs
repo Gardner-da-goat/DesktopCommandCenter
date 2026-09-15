@@ -30,6 +30,8 @@ public sealed class HomeViewModel : ObservableObject
         PlayPauseCommand = new RelayCommand(() => _ = shellActions.PlayPause());
         NextTrackCommand = new RelayCommand(() => _ = shellActions.NextTrack());
         PreviousTrackCommand = new RelayCommand(() => _ = shellActions.PreviousTrack());
+        ShowDesktopCommand = new RelayCommand(() => _ = shellActions.ShowDesktop());
+        LockComputerCommand = new RelayCommand(() => _ = shellActions.LockComputer());
         _windowsViewModel.PropertyChanged += OnWindowsPropertyChanged;
         _settingsViewModel.SettingsChanged += OnSettingsChanged;
     }
@@ -59,6 +61,8 @@ public sealed class HomeViewModel : ObservableObject
     public RelayCommand PlayPauseCommand { get; }
     public RelayCommand NextTrackCommand { get; }
     public RelayCommand PreviousTrackCommand { get; }
+    public RelayCommand ShowDesktopCommand { get; }
+    public RelayCommand LockComputerCommand { get; }
 
     public WindowItemViewModel? CurrentWindow => _windowsViewModel.CurrentWindow;
     public bool HasCurrentWindow => _windowsViewModel.HasCurrentWindow;
@@ -80,6 +84,8 @@ public sealed class HomeViewModel : ObservableObject
     public bool ShowVolumeDownAction => _settingsViewModel.ShowVolumeDownAction;
     public bool ShowClipboardAction => _settingsViewModel.ShowClipboardAction;
     public bool ShowPlayPauseAction => _settingsViewModel.ShowPlayPauseAction;
+    public bool ShowDesktopAction => _settingsViewModel.ShowDesktopAction;
+    public bool ShowLockAction => _settingsViewModel.ShowLockAction;
 
     private void OnWindowsPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -141,6 +147,12 @@ public sealed class HomeViewModel : ObservableObject
                 break;
             case nameof(SettingsViewModel.ShowPlayPauseAction):
                 OnPropertyChanged(nameof(ShowPlayPauseAction));
+                break;
+            case nameof(SettingsViewModel.ShowDesktopAction):
+                OnPropertyChanged(nameof(ShowDesktopAction));
+                break;
+            case nameof(SettingsViewModel.ShowLockAction):
+                OnPropertyChanged(nameof(ShowLockAction));
                 break;
         }
     }

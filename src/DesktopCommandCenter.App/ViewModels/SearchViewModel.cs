@@ -215,6 +215,8 @@ public sealed class SearchViewModel : ObservableObject
             AddActionCandidate(candidates, query, "Play Pause", "Toggle media playback", "▶", _shellActions.PlayPause);
             AddActionCandidate(candidates, query, "Next Track", "Skip to the next media track", "»", _shellActions.NextTrack);
             AddActionCandidate(candidates, query, "Previous Track", "Go to the previous media track", "«", _shellActions.PreviousTrack);
+            AddActionCandidate(candidates, query, "Show Desktop", "Minimize or restore windows to reveal the desktop", "▭", _shellActions.ShowDesktop);
+            AddActionCandidate(candidates, query, "Lock Computer", "Lock the current Windows session", "◈", _shellActions.LockComputer);
         }
 
         foreach (var result in candidates

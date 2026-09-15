@@ -8,6 +8,7 @@ using DesktopCommandCenter.App.ViewModels;
 using DesktopCommandCenter.Core.State;
 using DesktopCommandCenter.Windows.Hotkeys;
 using DesktopCommandCenter.Windows.Monitors;
+using DesktopCommandCenter.Windows.Windows;
 using Microsoft.Win32;
 
 namespace DesktopCommandCenter.App.Views;
@@ -16,16 +17,22 @@ public partial class SidebarWindow : Window
 {
     private readonly SidebarViewModel _viewModel;
     private readonly MonitorService _monitorService;
+    private readonly WindowService _windowService;
     private readonly GlobalHotkeyService _hotkeyService = new();
     private HwndSource? _source;
     private nint _windowHandle;
     private bool _closingForExit;
+    private WindowReflowSnapshot? _reflowSnapshot;
 
-    public SidebarWindow(SidebarViewModel viewModel, MonitorService monitorService)
+    public SidebarWindow(
+        SidebarViewModel viewModel,
+        MonitorService monitorService,
+        WindowService windowService)
     {
         InitializeComponent();
         _viewModel = viewModel;
         _monitorService = monitorService;
+        _windowService = windowService;
         DataContext = viewModel;
 
         SourceInitialized += OnSourceInitialized;
@@ -38,6 +45,7 @@ public partial class SidebarWindow : Window
 
     public void CloseForExit()
     {
+        RestoreCurrentWindow();
         _closingForExit = true;
         Close();
     }
@@ -131,14 +139,24 @@ public partial class SidebarWindow : Window
     {
         Width = _viewModel.IsExpanded ? _viewModel.SidebarWidth : SidebarState.CollapsedWidth;
         AnchorToWorkingArea();
+
+        if (_viewModel.IsExpanded)
+        {
+            ReflowCurrentWindow();
+        }
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(SidebarViewModel.IsExpanded))
         {
-            if (!_viewModel.IsExpanded)
+            if (_viewModel.IsExpanded)
             {
+                ReflowCurrentWindow();
+            }
+            else
+            {
+                RestoreCurrentWindow();
                 ExpandedPanel.Visibility = Visibility.Visible;
                 CollapsedHandle.Visibility = Visibility.Collapsed;
             }
@@ -147,14 +165,46 @@ public partial class SidebarWindow : Window
         }
         else if (e.PropertyName == nameof(SidebarViewModel.SidebarWidth) && _viewModel.IsExpanded)
         {
+            RestoreCurrentWindow();
             BeginAnimation(WidthProperty, null);
             Width = _viewModel.SidebarWidth;
             AnchorToWorkingArea();
+            ReflowCurrentWindow();
         }
         else if (e.PropertyName == nameof(SidebarViewModel.GlobalHotkeysEnabled))
         {
             ApplyHotkeyRegistration();
         }
+    }
+
+    private void ReflowCurrentWindow()
+    {
+        if (_reflowSnapshot is not null)
+        {
+            return;
+        }
+
+        _viewModel.Windows.Refresh();
+        var current = _viewModel.Windows.CurrentWindow;
+        if (current is null)
+        {
+            return;
+        }
+
+        _reflowSnapshot = _windowService.ReflowForSidebar(
+            current.Handle,
+            _viewModel.SidebarWidth);
+    }
+
+    private void RestoreCurrentWindow()
+    {
+        if (_reflowSnapshot is null)
+        {
+            return;
+        }
+
+        _ = _windowService.RestoreReflow(_reflowSnapshot);
+        _reflowSnapshot = null;
     }
 
     private void AnimateWidth(double targetWidth)
@@ -212,8 +262,19 @@ public partial class SidebarWindow : Window
         Left = area.Left + area.Width - ActualWidth;
     }
 
-    private void OnDisplaySettingsChanged(object? sender, EventArgs e) =>
-        Dispatcher.Invoke(AnchorToWorkingArea);
+    private void OnDisplaySettingsChanged(object? sender, EventArgs e)
+    {
+        Dispatcher.Invoke(() =>
+        {
+            RestoreCurrentWindow();
+            AnchorToWorkingArea();
+
+            if (_viewModel.IsExpanded)
+            {
+                ReflowCurrentWindow();
+            }
+        });
+    }
 
     private void OnClosing(object? sender, CancelEventArgs e)
     {
@@ -224,6 +285,7 @@ public partial class SidebarWindow : Window
             return;
         }
 
+        RestoreCurrentWindow();
         _source?.RemoveHook(WindowProc);
         _source = null;
         _windowHandle = 0;

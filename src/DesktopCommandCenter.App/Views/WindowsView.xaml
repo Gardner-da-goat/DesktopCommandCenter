@@ -4,168 +4,168 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled"
                   PanningMode="VerticalOnly">
-        <StackPanel Margin="14,14,14,24">
-            <Grid Margin="2,0,0,12">
+        <StackPanel Margin="10,10,10,18">
+            <Grid Margin="0,0,0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <TextBlock Text="Windows" Style="{StaticResource PageTitleText}" />
-                    <TextBlock Style="{StaticResource MutedText}" Margin="0,3,0,0">
-                        <Run Text="{Binding WindowCount}" />
-                        <Run Text=" open windows" />
-                    </TextBlock>
+                    <TextBlock Text="{Binding StatusMessage}"
+                               Style="{StaticResource MutedText}"
+                               Margin="0,2,0,0" />
                 </StackPanel>
                 <Button Grid.Column="1"
                         Content="Refresh"
                         Command="{Binding RefreshCommand}"
-                        VerticalAlignment="Center"
-                        Padding="10,6" />
+                        Padding="8,5"
+                        VerticalAlignment="Center" />
             </Grid>
 
-            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,14">
+            <Border Style="{StaticResource CardStyle}" Padding="8" Margin="0,0,0,8">
                 <StackPanel>
-                    <TextBlock Text="Window controls" Style="{StaticResource SectionTitleText}" />
-                    <TextBlock Text="Focus, resize, pin, move, and adjust opacity without leaving the command center."
-                               Style="{StaticResource MutedText}" Margin="0,4,0,0" />
-                </StackPanel>
-            </Border>
-
-            <ItemsControl ItemsSource="{Binding Windows}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12">
-                            <StackPanel>
+                    <TextBlock Text="Choose a window"
+                               Style="{StaticResource SecondaryText}"
+                               Margin="2,0,0,5" />
+                    <ListBox ItemsSource="{Binding Windows}"
+                             SelectedItem="{Binding SelectedWindow, Mode=TwoWay}"
+                             MaxHeight="150"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Padding="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ItemContainerStyle="{StaticResource SettingsCategoryItem}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
                                         <TextBlock Text="{Binding Title}"
                                                    FontWeight="SemiBold"
+                                                   FontSize="11.5"
                                                    TextTrimming="CharacterEllipsis" />
                                         <TextBlock Text="{Binding ProcessName}"
                                                    Style="{StaticResource MutedText}"
-                                                   Margin="0,3,0,0" />
+                                                   FontSize="10"
+                                                   Margin="0,1,0,0" />
                                     </StackPanel>
-                                    <Border Grid.Column="1"
-                                            Width="7" Height="7"
-                                            CornerRadius="4"
-                                            Background="{DynamicResource Accent}"
-                                            VerticalAlignment="Top"
-                                            Margin="8,5,0,0">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Opacity" Value="0" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="●"
+                                               Foreground="{DynamicResource Accent}"
+                                               FontSize="8"
+                                               Margin="6,0,0,0"
+                                               VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                                        <Setter Property="Opacity" Value="1" />
+                                                        <Setter Property="Visibility" Value="Visible" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
-                                        </Border.Style>
-                                    </Border>
-                                </Grid>
-
-                                <Button Content="Focus"
-                                        Command="{Binding ActivateCommand}"
-                                        Style="{StaticResource AccentButton}"
-                                        Margin="0,12,0,12" />
-
-                                <DockPanel Margin="0,0,0,4">
-                                    <TextBlock Text="Opacity" Style="{StaticResource SecondaryText}" />
-                                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource MutedText}">
-                                        <Run Text="{Binding Opacity}" />
-                                        <Run Text="%" />
+                                        </TextBlock.Style>
                                     </TextBlock>
-                                </DockPanel>
-                                <Slider Minimum="20" Maximum="100"
-                                        TickFrequency="1"
-                                        IsSnapToTickEnabled="False"
-                                        Style="{StaticResource ModernSlider}"
-                                        Value="{Binding Opacity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                <Grid Margin="0,8,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Text="Always on top" />
-                                        <TextBlock Text="Keep this window above normal windows."
-                                                   Style="{StaticResource MutedText}" />
-                                    </StackPanel>
-                                    <CheckBox Grid.Column="1"
-                                              Style="{StaticResource ToggleSwitchStyle}"
-                                              VerticalAlignment="Center"
-                                              IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}" />
                                 </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Border>
 
-                                <Grid Margin="0,0,0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="6" />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="6" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <Button Content="Minimize" Command="{Binding MinimizeCommand}" Padding="5,7" />
-                                    <Button Grid.Column="2" Content="Maximize" Command="{Binding MaximizeCommand}" Padding="5,7" />
-                                    <Button Grid.Column="4" Content="Restore" Command="{Binding RestoreCommand}" Padding="5,7" />
-                                </Grid>
+            <Border Style="{StaticResource CardStyle}"
+                    Padding="10"
+                    Visibility="{Binding HasSelectedWindow, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel>
+                    <TextBlock Text="{Binding SelectedWindow.Title}"
+                               Style="{StaticResource SectionTitleText}"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="{Binding SelectedWindow.ProcessName}"
+                               Style="{StaticResource MutedText}"
+                               Margin="0,2,0,8" />
 
-                                <Grid Margin="0,0,0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="6" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <Button Content="Snap Left" Command="{Binding SnapLeftCommand}" />
-                                    <Button Grid.Column="2" Content="Snap Right" Command="{Binding SnapRightCommand}" />
-                                </Grid>
+                    <Button Content="Focus"
+                            Style="{StaticResource AccentButton}"
+                            Command="{Binding SelectedWindow.ActivateCommand}"
+                            Margin="0,0,0,8" />
 
-                                <Grid Margin="0,0,0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="6" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <Button Content="Center" Command="{Binding CenterCommand}" />
-                                    <Button Grid.Column="2"
-                                            Content="Next Monitor"
-                                            Command="{Binding MoveToNextMonitorCommand}"
-                                            ToolTip="Move this window to the next monitor and center it." />
-                                </Grid>
+                    <DockPanel Margin="0,0,0,2">
+                        <TextBlock Text="Opacity" Style="{StaticResource SecondaryText}" />
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource MutedText}">
+                            <Run Text="{Binding SelectedWindow.Opacity}" />
+                            <Run Text="%" />
+                        </TextBlock>
+                    </DockPanel>
 
-                                <Button Content="Close Window"
-                                        Command="{Binding CloseCommand}"
-                                        Foreground="{DynamicResource Danger}"
-                                        Background="Transparent"
-                                        HorizontalAlignment="Left"
-                                        Padding="0,5"
-                                        ToolTip="Ask the application to close this window. Unsaved work may prompt inside that app." />
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                    <Slider Minimum="20"
+                            Maximum="100"
+                            TickFrequency="1"
+                            Style="{StaticResource ModernSlider}"
+                            Value="{Binding SelectedWindow.Opacity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Margin="0,0,0,6" />
 
-            <TextBlock Text="No normal application windows are currently available."
-                       HorizontalAlignment="Center"
-                       Margin="0,20">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock" BasedOn="{StaticResource MutedText}">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding WindowCount}" Value="0">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Always on top"
+                                   VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1"
+                                  Style="{StaticResource ToggleSwitchStyle}"
+                                  IsChecked="{Binding SelectedWindow.IsAlwaysOnTop, Mode=TwoWay}" />
+                    </Grid>
+
+                    <UniformGrid Columns="3" Margin="0,0,0,6">
+                        <Button Content="Min"
+                                Command="{Binding SelectedWindow.MinimizeCommand}"
+                                Padding="5,6"
+                                Margin="0,0,3,0" />
+                        <Button Content="Max"
+                                Command="{Binding SelectedWindow.MaximizeCommand}"
+                                Padding="5,6"
+                                Margin="3,0" />
+                        <Button Content="Restore"
+                                Command="{Binding SelectedWindow.RestoreCommand}"
+                                Padding="5,6"
+                                Margin="3,0,0,0" />
+                    </UniformGrid>
+
+                    <UniformGrid Columns="2" Margin="0,0,0,6">
+                        <Button Content="Snap Left"
+                                Command="{Binding SelectedWindow.SnapLeftCommand}"
+                                Padding="5,6"
+                                Margin="0,0,3,0" />
+                        <Button Content="Snap Right"
+                                Command="{Binding SelectedWindow.SnapRightCommand}"
+                                Padding="5,6"
+                                Margin="3,0,0,0" />
+                    </UniformGrid>
+
+                    <UniformGrid Columns="2" Margin="0,0,0,6">
+                        <Button Content="Center"
+                                Command="{Binding SelectedWindow.CenterCommand}"
+                                Padding="5,6"
+                                Margin="0,0,3,0" />
+                        <Button Content="Next Monitor"
+                                Command="{Binding SelectedWindow.MoveToNextMonitorCommand}"
+                                Padding="5,6"
+                                Margin="3,0,0,0" />
+                    </UniformGrid>
+
+                    <Button Content="Close Window"
+                            Command="{Binding SelectedWindow.CloseCommand}"
+                            Foreground="{DynamicResource Danger}"
+                            Background="Transparent"
+                            HorizontalAlignment="Left"
+                            Padding="0,4" />
+                </StackPanel>
+            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

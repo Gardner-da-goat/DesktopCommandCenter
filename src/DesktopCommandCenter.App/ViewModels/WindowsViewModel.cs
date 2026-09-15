@@ -9,7 +9,9 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
     private readonly WindowService _windowService;
     private readonly DispatcherTimer _refreshTimer;
     private WindowItemViewModel? _currentWindow;
+    private WindowItemViewModel? _selectedWindow;
     private nint _lastExternalForegroundHandle;
+    private string _statusMessage = "Ready";
 
     public WindowsViewModel(WindowService windowService)
     {
@@ -19,7 +21,7 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
 
         _refreshTimer = new DispatcherTimer(DispatcherPriority.Background)
         {
-            Interval = TimeSpan.FromMilliseconds(1000)
+            Interval = TimeSpan.FromMilliseconds(1500)
         };
         _refreshTimer.Tick += OnRefreshTimer;
         _refreshTimer.Start();
@@ -42,52 +44,92 @@ public sealed class WindowsViewModel : ObservableObject, IDisposable
         }
     }
 
+    public WindowItemViewModel? SelectedWindow
+    {
+        get => _selectedWindow;
+        set
+        {
+            if (SetProperty(ref _selectedWindow, value))
+            {
+                OnPropertyChanged(nameof(HasSelectedWindow));
+            }
+        }
+    }
+
     public bool HasCurrentWindow => CurrentWindow is not null;
+    public bool HasSelectedWindow => SelectedWindow is not null;
     public int WindowCount => Windows.Count;
+
+    public string StatusMessage
+    {
+        get => _statusMessage;
+        private set => SetProperty(ref _statusMessage, value);
+    }
 
     public void Refresh()
     {
-        var windowInfos = _windowService.GetWindows();
-        var foreground = _windowService.GetForegroundWindowInfo();
-        if (foreground is not null)
+        try
         {
-            _lastExternalForegroundHandle = foreground.Handle;
-        }
+            var selectedHandle = SelectedWindow?.Handle ?? 0;
+            var windowInfos = _windowService.GetWindows();
+            var foreground = _windowService.GetForegroundWindowInfo();
 
-        var liveHandles = windowInfos
-            .Select(info => info.Handle)
-            .ToHashSet();
-
-        if (_lastExternalForegroundHandle != 0 &&
-            !liveHandles.Contains(_lastExternalForegroundHandle))
-        {
-            _lastExternalForegroundHandle = 0;
-        }
-
-        var activeHandle = _lastExternalForegroundHandle;
-        var byHandle = Windows.ToDictionary(item => item.Handle);
-
-        for (var index = Windows.Count - 1; index >= 0; index--)
-        {
-            if (!liveHandles.Contains(Windows[index].Handle))
+            if (foreground is not null)
             {
-                Windows.RemoveAt(index);
-            }
-        }
-
-        foreach (var info in windowInfos)
-        {
-            if (!byHandle.TryGetValue(info.Handle, out var item) || !Windows.Contains(item))
-            {
-                item = new WindowItemViewModel(info, _windowService);
-                Windows.Add(item);
+                _lastExternalForegroundHandle = foreground.Handle;
             }
 
-            item.Refresh(info, activeHandle);
-        }
+            var liveHandles = windowInfos
+                .Select(info => info.Handle)
+                .ToHashSet();
 
-        CurrentWindow = Windows.FirstOrDefault(item => item.Handle == activeHandle);
-        OnPropertyChanged(nameof(WindowCount));
+            if (_lastExternalForegroundHandle != 0 &&
+                !liveHandles.Contains(_lastExternalForegroundHandle))
+            {
+                _lastExternalForegroundHandle = 0;
+            }
+
+            var activeHandle = _lastExternalForegroundHandle;
+            var byHandle = Windows
+                .GroupBy(item => item.Handle)
+                .ToDictionary(group => group.Key, group => group.First());
+
+            for (var index = Windows.Count - 1; index >= 0; index--)
+            {
+                if (!liveHandles.Contains(Windows[index].Handle))
+                {
+                    Windows.RemoveAt(index);
+                }
+            }
+
+            foreach (var info in windowInfos)
+            {
+                if (!byHandle.TryGetValue(info.Handle, out var item) || !Windows.Contains(item))
+                {
+                    item = new WindowItemViewModel(info, _windowService);
+                    Windows.Add(item);
+                }
+
+                item.Refresh(info, activeHandle);
+            }
+
+            CurrentWindow = Windows.FirstOrDefault(item => item.Handle == activeHandle);
+
+            SelectedWindow =
+                Windows.FirstOrDefault(item => item.Handle == selectedHandle) ??
+                CurrentWindow ??
+                Windows.FirstOrDefault();
+
+            StatusMessage = WindowCount == 0
+                ? "No normal application windows found."
+                : $"{WindowCount} window{(WindowCount == 1 ? string.Empty : "s")} available.";
+
+            OnPropertyChanged(nameof(WindowCount));
+        }
+        catch
+        {
+            StatusMessage = "Windows could not be refreshed. The sidebar is still usable.";
+        }
     }
 
     public void Dispose()

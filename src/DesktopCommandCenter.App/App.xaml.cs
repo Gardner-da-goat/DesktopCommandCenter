@@ -27,13 +27,20 @@ public partial class App : System.Windows.Application
         var shellActions = new ShellActionService();
         var appLauncher = new AppLauncherService();
         var updatesViewModel = new UpdatesViewModel(new UpdateService());
+        var windowService = new WindowService();
+
+        var executablePath = Environment.ProcessPath;
+        if (!string.IsNullOrWhiteSpace(executablePath))
+        {
+            _ = shellActions.EnsureDesktopShortcut(executablePath);
+        }
 
         var favoritesViewModel = new FavoritesViewModel(
             settings,
             settingsService,
             appLauncher);
 
-        _windowsViewModel = new WindowsViewModel(new WindowService());
+        _windowsViewModel = new WindowsViewModel(windowService);
 
         var macrosViewModel = new MacrosViewModel(
             settings,
@@ -68,7 +75,11 @@ public partial class App : System.Windows.Application
             _windowsViewModel,
             _settingsViewModel);
 
-        _window = new SidebarWindow(sidebarViewModel, new MonitorService());
+        _window = new SidebarWindow(
+            sidebarViewModel,
+            new MonitorService(),
+            windowService);
+
         _trayIcon = new TrayIconService(
             open: () => RunOnUi(() =>
             {

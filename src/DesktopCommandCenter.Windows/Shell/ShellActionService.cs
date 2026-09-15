@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace DesktopCommandCenter.Windows.Shell;
 
@@ -25,6 +27,109 @@ public sealed class ShellActionService
         }
 
         return Start("powershell.exe");
+    }
+
+    public bool EnsureDesktopShortcut(string executablePath)
+    {
+        if (string.IsNullOrWhiteSpace(executablePath) || !File.Exists(executablePath))
+        {
+            return false;
+        }
+
+        object? shell = null;
+        object? shortcut = null;
+
+        try
+        {
+            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            if (string.IsNullOrWhiteSpace(desktop))
+            {
+                return false;
+            }
+
+            Directory.CreateDirectory(desktop);
+            var shortcutPath = Path.Combine(desktop, "Desktop Command Center.lnk");
+
+            var shellType = Type.GetTypeFromProgID("WScript.Shell");
+            if (shellType is null)
+            {
+                return false;
+            }
+
+            shell = Activator.CreateInstance(shellType);
+            if (shell is null)
+            {
+                return false;
+            }
+
+            shortcut = shellType.InvokeMember(
+                "CreateShortcut",
+                BindingFlags.InvokeMethod,
+                null,
+                shell,
+                [shortcutPath]);
+
+            if (shortcut is null)
+            {
+                return false;
+            }
+
+            var shortcutType = shortcut.GetType();
+            var workingDirectory = Path.GetDirectoryName(executablePath) ?? AppContext.BaseDirectory;
+
+            shortcutType.InvokeMember(
+                "TargetPath",
+                BindingFlags.SetProperty,
+                null,
+                shortcut,
+                [executablePath]);
+
+            shortcutType.InvokeMember(
+                "WorkingDirectory",
+                BindingFlags.SetProperty,
+                null,
+                shortcut,
+                [workingDirectory]);
+
+            shortcutType.InvokeMember(
+                "Description",
+                BindingFlags.SetProperty,
+                null,
+                shortcut,
+                ["Desktop Command Center"]);
+
+            shortcutType.InvokeMember(
+                "IconLocation",
+                BindingFlags.SetProperty,
+                null,
+                shortcut,
+                [$"{executablePath},0"]);
+
+            shortcutType.InvokeMember(
+                "Save",
+                BindingFlags.InvokeMethod,
+                null,
+                shortcut,
+                null);
+
+            return File.Exists(shortcutPath);
+        }
+        catch
+        {
+            return false;
+        }
+        finally
+        {
+            if (shortcut is not null && Marshal.IsComObject(shortcut))
+            {
+                Marshal.FinalReleaseComObject(shortcut);
+            }
+
+            if (shell is not null && Marshal.IsComObject(shell))
+            {
+                Marshal.FinalReleaseComObject(shell);
+            }
+        }
     }
 
     public bool OpenPath(string path)

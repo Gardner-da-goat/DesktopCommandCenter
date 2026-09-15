@@ -55,6 +55,14 @@ internal static class NativeMethods
     internal static extern bool IsWindowVisible(nint hWnd);
 
     [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool IsZoomed(nint hWnd);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool IsIconic(nint hWnd);
+
+    [DllImport("user32.dll")]
     internal static extern int GetWindowTextLength(nint hWnd);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]

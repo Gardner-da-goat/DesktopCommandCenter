@@ -65,6 +65,8 @@ public sealed class SearchViewModel : ObservableObject
 
         var candidates = new List<(int Score, SearchResultViewModel Result)>();
 
+        AddDirectCommandCandidates(candidates, query);
+
         foreach (var window in _windowsViewModel.Windows)
         {
             var score = MatchScore(query, window.Title, window.ProcessName);
@@ -148,6 +150,251 @@ public sealed class SearchViewModel : ObservableObject
         }
     }
 
+    private void AddDirectCommandCandidates(
+        ICollection<(int Score, SearchResultViewModel Result)> candidates,
+        string query)
+    {
+        var current = _windowsViewModel.CurrentWindow;
+
+        if (TryGetArgument(query, "open", out var appQuery) && appQuery.Length > 0)
+        {
+            foreach (var app in (_installedApps ?? [])
+                         .Select(app => (App: app, Score: MatchScore(appQuery, app.Name)))
+                         .Where(candidate => candidate.Score > 0)
+                         .OrderByDescending(candidate => candidate.Score)
+                         .Take(3))
+            {
+                candidates.Add((
+                    200 + app.Score,
+                    new SearchResultViewModel(
+                        SearchResultKind.Action,
+                        $"Open {app.App.Name}",
+                        "Command · launch app",
+                        "▶",
+                        new RelayCommand(() =>
+                        {
+                            _ = _appLauncher.Launch(app.App);
+                            Query = string.Empty;
+                        }))));
+            }
+        }
+
+        if ((TryGetArgument(query, "focus", out var windowQuery) ||
+             TryGetArgument(query, "activate", out windowQuery)) &&
+            windowQuery.Length > 0)
+        {
+            foreach (var window in FindWindows(windowQuery).Take(3))
+            {
+                candidates.Add((
+                    220,
+                    new SearchResultViewModel(
+                        SearchResultKind.Action,
+                        $"Focus {window.Title}",
+                        $"Command · {window.ProcessName}",
+                        "▣",
+                        new RelayCommand(() =>
+                        {
+                            window.ActivateCommand.Execute(null);
+                            Query = string.Empty;
+                        }))));
+            }
+        }
+
+        if (TryGetArgument(query, "close", out var closeQuery) && closeQuery.Length > 0)
+        {
+            foreach (var window in FindWindows(closeQuery).Take(3))
+            {
+                candidates.Add((
+                    220,
+                    new SearchResultViewModel(
+                        SearchResultKind.Action,
+                        $"Close {window.Title}",
+                        $"Command · asks {window.ProcessName} to close",
+                        "×",
+                        new RelayCommand(() =>
+                        {
+                            window.CloseCommand.Execute(null);
+                            Query = string.Empty;
+                        }))));
+            }
+        }
+
+        if (TryGetArgument(query, "macro", out var macroQuery) && macroQuery.Length > 0)
+        {
+            foreach (var macro in _macros.Items
+                         .Select(item => (Item: item, Score: MatchScore(macroQuery, item.Name)))
+                         .Where(candidate => candidate.Score > 0)
+                         .OrderByDescending(candidate => candidate.Score)
+                         .Take(3))
+            {
+                candidates.Add((
+                    210 + macro.Score,
+                    new SearchResultViewModel(
+                        SearchResultKind.Macro,
+                        $"Run {macro.Item.Name}",
+                        "Command · macro",
+                        "▶",
+                        new RelayCommand(() =>
+                        {
+                            macro.Item.RunCommand.Execute(null);
+                            Query = string.Empty;
+                        }))));
+            }
+        }
+
+        if (current is null)
+        {
+            return;
+        }
+
+        if (TryGetArgument(query, "opacity", out var opacityText) &&
+            int.TryParse(opacityText, out var opacity))
+        {
+            var clamped = Math.Clamp(opacity, 20, 100);
+            AddCurrentWindowCommand(
+                candidates,
+                $"Set opacity to {clamped}%",
+                $"Current window · {current.Title}",
+                "◐",
+                () => current.Opacity = clamped);
+        }
+
+        if (query.Equals("top on", StringComparison.OrdinalIgnoreCase) ||
+            query.Equals("always on top", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(
+                candidates,
+                "Turn always-on-top on",
+                $"Current window · {current.Title}",
+                "↑",
+                () => current.IsAlwaysOnTop = true);
+        }
+
+        if (query.Equals("top off", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(
+                candidates,
+                "Turn always-on-top off",
+                $"Current window · {current.Title}",
+                "↓",
+                () => current.IsAlwaysOnTop = false);
+        }
+
+        if (query.Equals("snap left", StringComparison.OrdinalIgnoreCase) ||
+            query.Equals("move left", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(
+                candidates,
+                "Snap current window left",
+                current.Title,
+                "◧",
+                () => current.SnapLeftCommand.Execute(null));
+        }
+
+        if (query.Equals("snap right", StringComparison.OrdinalIgnoreCase) ||
+            query.Equals("move right", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(
+                candidates,
+                "Snap current window right",
+                current.Title,
+                "◨",
+                () => current.SnapRightCommand.Execute(null));
+        }
+
+        if (query.Equals("center", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(
+                candidates,
+                "Center current window",
+                current.Title,
+                "◎",
+                () => current.CenterCommand.Execute(null));
+        }
+
+        if (query.Equals("minimize", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(
+                candidates,
+                "Minimize current window",
+                current.Title,
+                "—",
+                () => current.MinimizeCommand.Execute(null));
+        }
+
+        if (query.Equals("maximize", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(
+                candidates,
+                "Maximize current window",
+                current.Title,
+                "□",
+                () => current.MaximizeCommand.Execute(null));
+        }
+
+        if (query.Equals("restore", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(
+                candidates,
+                "Restore current window",
+                current.Title,
+                "↙",
+                () => current.RestoreCommand.Execute(null));
+        }
+
+        if (query.Equals("next monitor", StringComparison.OrdinalIgnoreCase) ||
+            query.Equals("move monitor", StringComparison.OrdinalIgnoreCase))
+        {
+            AddCurrentWindowCommand(
+                candidates,
+                "Move current window to next monitor",
+                current.Title,
+                "⇥",
+                () => current.MoveToNextMonitorCommand.Execute(null));
+        }
+    }
+
+    private IEnumerable<WindowItemViewModel> FindWindows(string query) =>
+        _windowsViewModel.Windows
+            .Select(window => (Window: window, Score: MatchScore(query, window.Title, window.ProcessName)))
+            .Where(candidate => candidate.Score > 0)
+            .OrderByDescending(candidate => candidate.Score)
+            .Select(candidate => candidate.Window);
+
+    private void AddCurrentWindowCommand(
+        ICollection<(int Score, SearchResultViewModel Result)> candidates,
+        string title,
+        string subtitle,
+        string glyph,
+        Action action)
+    {
+        candidates.Add((
+            250,
+            new SearchResultViewModel(
+                SearchResultKind.Action,
+                title,
+                subtitle,
+                glyph,
+                new RelayCommand(() =>
+                {
+                    action();
+                    Query = string.Empty;
+                }))));
+    }
+
+    private static bool TryGetArgument(string query, string command, out string argument)
+    {
+        var prefix = command + " ";
+        if (query.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            argument = query[prefix.Length..].Trim();
+            return true;
+        }
+
+        argument = string.Empty;
+        return false;
+    }
+
     private void AddActionCandidate(
         ICollection<(int Score, SearchResultViewModel Result)> candidates,
         string query,
@@ -217,7 +464,10 @@ public sealed class SearchViewModel : ObservableObject
 
     private static bool ContainsAllTokens(string value, string query)
     {
-        var tokens = query.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var tokens = query.Split(
+            ' ',
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
         return tokens.Length > 1 &&
                tokens.All(token => value.Contains(token, StringComparison.CurrentCultureIgnoreCase));
     }

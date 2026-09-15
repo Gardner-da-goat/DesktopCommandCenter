@@ -120,7 +120,8 @@
                 Padding="0"
                 Background="{DynamicResource PanelBackground}"
                 Command="{Binding ExpandCommand}"
-                ToolTip="Open Desktop Command Center">
+                ToolTip="Open Desktop Command Center"
+                MouseEnter="OnCollapsedHandleMouseEnter">
             <Button.Style>
                 <Style TargetType="Button">
                     <Setter Property="Visibility" Value="Visible" />

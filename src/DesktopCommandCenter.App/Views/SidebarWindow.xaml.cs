@@ -1,8 +1,10 @@
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media.Animation;
 using DesktopCommandCenter.App.ViewModels;
 using DesktopCommandCenter.Core.State;
+using DesktopCommandCenter.Windows.Hotkeys;
 using DesktopCommandCenter.Windows.Monitors;
 using Microsoft.Win32;
 
@@ -12,6 +14,8 @@ public partial class SidebarWindow : Window
 {
     private readonly SidebarViewModel _viewModel;
     private readonly MonitorService _monitorService;
+    private readonly GlobalHotkeyService _hotkeyService = new();
+    private HwndSource? _source;
     private bool _closingForExit;
 
     public SidebarWindow(SidebarViewModel viewModel, MonitorService monitorService)
@@ -21,6 +25,7 @@ public partial class SidebarWindow : Window
         _monitorService = monitorService;
         DataContext = viewModel;
 
+        SourceInitialized += OnSourceInitialized;
         Loaded += OnLoaded;
         SizeChanged += (_, _) => AnchorToWorkingArea();
         Closing += OnClosing;
@@ -32,6 +37,30 @@ public partial class SidebarWindow : Window
     {
         _closingForExit = true;
         Close();
+    }
+
+    private void OnSourceInitialized(object? sender, EventArgs e)
+    {
+        var handle = new WindowInteropHelper(this).Handle;
+        _source = HwndSource.FromHwnd(handle);
+        _source?.AddHook(WindowProc);
+        _ = _hotkeyService.RegisterToggleSidebar(handle);
+    }
+
+    private nint WindowProc(
+        nint hwnd,
+        int message,
+        nint wParam,
+        nint lParam,
+        ref bool handled)
+    {
+        if (_hotkeyService.IsToggleSidebarMessage(message, wParam))
+        {
+            _viewModel.Toggle();
+            handled = true;
+        }
+
+        return 0;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
@@ -49,6 +78,7 @@ public partial class SidebarWindow : Window
                 ExpandedPanel.Visibility = Visibility.Visible;
                 CollapsedHandle.Visibility = Visibility.Collapsed;
             }
+
             AnimateWidth(_viewModel.IsExpanded ? _viewModel.SidebarWidth : SidebarState.CollapsedWidth);
         }
         else if (e.PropertyName == nameof(SidebarViewModel.SidebarWidth) && _viewModel.IsExpanded)
@@ -105,7 +135,8 @@ public partial class SidebarWindow : Window
         Left = area.Left + area.Width - ActualWidth;
     }
 
-    private void OnDisplaySettingsChanged(object? sender, EventArgs e) => Dispatcher.Invoke(AnchorToWorkingArea);
+    private void OnDisplaySettingsChanged(object? sender, EventArgs e) =>
+        Dispatcher.Invoke(AnchorToWorkingArea);
 
     private void OnClosing(object? sender, CancelEventArgs e)
     {
@@ -116,6 +147,9 @@ public partial class SidebarWindow : Window
             return;
         }
 
+        _source?.RemoveHook(WindowProc);
+        _source = null;
+        _hotkeyService.Dispose();
         _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
         SystemEvents.DisplaySettingsChanged -= OnDisplaySettingsChanged;
     }

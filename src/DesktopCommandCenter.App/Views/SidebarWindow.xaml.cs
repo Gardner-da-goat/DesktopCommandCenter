@@ -16,6 +16,7 @@ public partial class SidebarWindow : Window
     private readonly MonitorService _monitorService;
     private readonly GlobalHotkeyService _hotkeyService = new();
     private HwndSource? _source;
+    private nint _windowHandle;
     private bool _closingForExit;
 
     public SidebarWindow(SidebarViewModel viewModel, MonitorService monitorService)
@@ -41,10 +42,27 @@ public partial class SidebarWindow : Window
 
     private void OnSourceInitialized(object? sender, EventArgs e)
     {
-        var handle = new WindowInteropHelper(this).Handle;
-        _source = HwndSource.FromHwnd(handle);
+        _windowHandle = new WindowInteropHelper(this).Handle;
+        _source = HwndSource.FromHwnd(_windowHandle);
         _source?.AddHook(WindowProc);
-        _ = _hotkeyService.RegisterToggleSidebar(handle);
+        ApplyHotkeyRegistration();
+    }
+
+    private void ApplyHotkeyRegistration()
+    {
+        if (_windowHandle == 0)
+        {
+            return;
+        }
+
+        if (_viewModel.ToggleHotkeyEnabled)
+        {
+            _ = _hotkeyService.RegisterToggleSidebar(_windowHandle);
+        }
+        else
+        {
+            _hotkeyService.Unregister();
+        }
     }
 
     private nint WindowProc(
@@ -86,6 +104,10 @@ public partial class SidebarWindow : Window
             BeginAnimation(WidthProperty, null);
             Width = _viewModel.SidebarWidth;
             AnchorToWorkingArea();
+        }
+        else if (e.PropertyName == nameof(SidebarViewModel.ToggleHotkeyEnabled))
+        {
+            ApplyHotkeyRegistration();
         }
     }
 
@@ -149,6 +171,7 @@ public partial class SidebarWindow : Window
 
         _source?.RemoveHook(WindowProc);
         _source = null;
+        _windowHandle = 0;
         _hotkeyService.Dispose();
         _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
         SystemEvents.DisplaySettingsChanged -= OnDisplaySettingsChanged;

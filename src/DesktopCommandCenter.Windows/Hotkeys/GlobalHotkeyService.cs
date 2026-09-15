@@ -15,7 +15,7 @@ public sealed class GlobalHotkeyService : IDisposable
             return false;
         }
 
-        DisposeRegistration();
+        Unregister();
 
         _windowHandle = windowHandle;
         _registered = NativeMethods.RegisterHotKey(
@@ -27,13 +27,7 @@ public sealed class GlobalHotkeyService : IDisposable
         return _registered;
     }
 
-    public bool IsToggleSidebarMessage(int message, nint wParam) =>
-        message == NativeMethods.WmHotkey &&
-        wParam == ToggleSidebarId;
-
-    public void Dispose() => DisposeRegistration();
-
-    private void DisposeRegistration()
+    public void Unregister()
     {
         if (_registered && _windowHandle != 0)
         {
@@ -43,4 +37,10 @@ public sealed class GlobalHotkeyService : IDisposable
         _registered = false;
         _windowHandle = 0;
     }
+
+    public bool IsToggleSidebarMessage(int message, nint wParam) =>
+        message == NativeMethods.WmHotkey &&
+        wParam == ToggleSidebarId;
+
+    public void Dispose() => Unregister();
 }

@@ -100,6 +100,12 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.AutoCheckForUpdates, v => _settings.AutoCheckForUpdates = v);
     }
 
+    public bool ToggleHotkeyEnabled
+    {
+        get => _settings.ToggleHotkeyEnabled;
+        set => SetBoolean(value, () => _settings.ToggleHotkeyEnabled, v => _settings.ToggleHotkeyEnabled = v);
+    }
+
     public bool ShowSearchModule
     {
         get => _settings.ShowSearchModule;

@@ -184,11 +184,49 @@
 
         <DataTemplate x:Key="HotkeysTemplate">
             <StackPanel>
-                <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Toggle Sidebar"/><TextBlock Text="Ctrl + Space" Style="{StaticResource MutedText}"/></StackPanel><Button Grid.Column="1" Content="Edit" IsEnabled="False"/></Grid>
-                <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Focus Search"/><TextBlock Text="Ctrl + Shift + Space" Style="{StaticResource MutedText}"/></StackPanel><Button Grid.Column="1" Content="Edit" IsEnabled="False"/></Grid>
-                <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Opacity Up"/><TextBlock Text="Unassigned" Style="{StaticResource MutedText}"/></StackPanel><Button Grid.Column="1" Content="Edit" IsEnabled="False"/></Grid>
-                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Always On Top"/><TextBlock Text="Unassigned" Style="{StaticResource MutedText}"/></StackPanel><Button Grid.Column="1" Content="Edit" IsEnabled="False"/></Grid>
-                <TextBlock Text="Global hotkeys are not connected yet." Style="{StaticResource MutedText}" Margin="0,13,0,0" />
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Toggle Sidebar" />
+                        <TextBlock Text="Ctrl + Space" Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <CheckBox Grid.Column="1"
+                              Style="{StaticResource ToggleSwitchStyle}"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding DataContext.ToggleHotkeyEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Focus Search" />
+                        <TextBlock Text="Ctrl + Shift + Space · planned" Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="Soon" IsEnabled="False" />
+                </Grid>
+
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Window Shortcuts" />
+                        <TextBlock Text="Opacity, snap, and pin shortcuts · planned" Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="Soon" IsEnabled="False" />
+                </Grid>
+
+                <TextBlock Text="Ctrl + Space is registered globally when enabled. If another app owns that shortcut, Windows may reject the registration; the edge handle and tray menu still work."
+                           Style="{StaticResource MutedText}"
+                           TextWrapping="Wrap"
+                           Margin="0,4,0,0" />
             </StackPanel>
         </DataTemplate>
 

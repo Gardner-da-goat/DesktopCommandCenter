@@ -52,6 +52,9 @@ public sealed class SettingsViewModel : ObservableObject
         ChangeToggleHotkeyCommand = new RelayCommand(CycleToggleHotkey);
         ChangeSearchHotkeyCommand = new RelayCommand(CycleSearchHotkey);
         ResetHotkeysCommand = new RelayCommand(ResetHotkeys);
+        AmbienceAquariumCommand = new RelayCommand(() => AmbienceMode = "Aquarium");
+        AmbienceFirefliesCommand = new RelayCommand(() => AmbienceMode = "Fireflies");
+        AmbiencePetCommand = new RelayCommand(() => AmbienceMode = "Desktop Pet");
         Categories = new ObservableCollection<SettingsCategory>
         {
             new("General", "Startup, sidebar, and application behavior."),
@@ -63,6 +66,7 @@ public sealed class SettingsViewModel : ObservableObject
             new("Commands", "Manage searchable commands."),
             new("Search", "Choose search sources and behavior."),
             new("Windows", "Configure window controls and defaults."),
+            new("Ambience", "Add passive desktop life like fish, fireflies, or a roaming pet."),
             new("Appearance", "Theme, accent, transparency, and motion."),
             new("Updates", "Control app updates and release channel."),
             new("Advanced", "Diagnostics and advanced maintenance tools.")
@@ -95,6 +99,9 @@ public sealed class SettingsViewModel : ObservableObject
     public RelayCommand ChangeToggleHotkeyCommand { get; }
     public RelayCommand ChangeSearchHotkeyCommand { get; }
     public RelayCommand ResetHotkeysCommand { get; }
+    public RelayCommand AmbienceAquariumCommand { get; }
+    public RelayCommand AmbienceFirefliesCommand { get; }
+    public RelayCommand AmbiencePetCommand { get; }
 
     public SettingsCategory SelectedCategory
     {
@@ -327,6 +334,138 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetBoolean(value, () => _settings.ReflowWindowsOnSidebar, v => _settings.ReflowWindowsOnSidebar = v);
     }
 
+    public bool AmbienceEnabled
+    {
+        get => _settings.AmbienceEnabled;
+        set => SetBoolean(value, () => _settings.AmbienceEnabled, v => _settings.AmbienceEnabled = v);
+    }
+
+    public string AmbienceMode
+    {
+        get => NormalizeAmbienceMode(_settings.AmbienceMode);
+        set
+        {
+            var normalized = NormalizeAmbienceMode(value);
+            if (string.Equals(_settings.AmbienceMode, normalized, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _settings.AmbienceMode = normalized;
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
+    }
+
+    public int AmbiencePopulation
+    {
+        get => Math.Clamp(_settings.AmbiencePopulation, 2, 30);
+        set
+        {
+            var normalized = Math.Clamp(value, 2, 30);
+            if (_settings.AmbiencePopulation == normalized)
+            {
+                return;
+            }
+
+            _settings.AmbiencePopulation = normalized;
+            if (_settings.AmbienceMaxPopulation < normalized)
+            {
+                _settings.AmbienceMaxPopulation = normalized;
+                OnPropertyChanged(nameof(AmbienceMaxPopulation));
+            }
+
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
+    }
+
+    public bool AmbienceBreedingEnabled
+    {
+        get => _settings.AmbienceBreedingEnabled;
+        set => SetBoolean(value, () => _settings.AmbienceBreedingEnabled, v => _settings.AmbienceBreedingEnabled = v);
+    }
+
+    public int AmbienceMaxPopulation
+    {
+        get => Math.Clamp(
+            Math.Max(_settings.AmbienceMaxPopulation, AmbiencePopulation),
+            2,
+            60);
+        set
+        {
+            var normalized = Math.Clamp(
+                Math.Max(value, AmbiencePopulation),
+                2,
+                60);
+
+            if (_settings.AmbienceMaxPopulation == normalized)
+            {
+                return;
+            }
+
+            _settings.AmbienceMaxPopulation = normalized;
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
+    }
+
+    public double AmbienceSpeed
+    {
+        get => double.IsFinite(_settings.AmbienceSpeed)
+            ? Math.Clamp(_settings.AmbienceSpeed, 0.35, 2.5)
+            : 1;
+        set
+        {
+            var normalized = double.IsFinite(value)
+                ? Math.Clamp(value, 0.35, 2.5)
+                : 1;
+
+            if (Math.Abs(_settings.AmbienceSpeed - normalized) < 0.01)
+            {
+                return;
+            }
+
+            _settings.AmbienceSpeed = normalized;
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
+    }
+
+    public double AmbienceOpacity
+    {
+        get => double.IsFinite(_settings.AmbienceOpacity)
+            ? Math.Clamp(_settings.AmbienceOpacity, 0.15, 1)
+            : 0.72;
+        set
+        {
+            var normalized = double.IsFinite(value)
+                ? Math.Clamp(value, 0.15, 1)
+                : 0.72;
+
+            if (Math.Abs(_settings.AmbienceOpacity - normalized) < 0.01)
+            {
+                return;
+            }
+
+            _settings.AmbienceOpacity = normalized;
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
+    }
+
+    public bool AmbienceAllMonitors
+    {
+        get => _settings.AmbienceAllMonitors;
+        set => SetBoolean(value, () => _settings.AmbienceAllMonitors, v => _settings.AmbienceAllMonitors = v);
+    }
+
+    public bool AmbienceOverApps
+    {
+        get => _settings.AmbienceOverApps;
+        set => SetBoolean(value, () => _settings.AmbienceOverApps, v => _settings.AmbienceOverApps = v);
+    }
+
     public bool SearchAppsEnabled
     {
         get => _settings.SearchAppsEnabled;
@@ -523,6 +662,14 @@ public sealed class SettingsViewModel : ObservableObject
         get => _settings.ShowMacrosModule;
         set => SetBoolean(value, () => _settings.ShowMacrosModule, v => _settings.ShowMacrosModule = v);
     }
+
+    private static string NormalizeAmbienceMode(string? value) =>
+        value switch
+        {
+            "Fireflies" => "Fireflies",
+            "Desktop Pet" => "Desktop Pet",
+            _ => "Aquarium"
+        };
 
     private static string NormalizeThemeMode(string? value) =>
         value switch

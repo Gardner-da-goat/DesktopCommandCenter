@@ -596,6 +596,134 @@
             </StackPanel>
         </DataTemplate>
 
+        <DataTemplate x:Key="AmbienceTemplate">
+            <StackPanel>
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Desktop ambience" />
+                        <TextBlock Text="Passive and click-through. It never takes mouse input."
+                                   Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <CheckBox Grid.Column="1"
+                              Style="{StaticResource ToggleSwitchStyle}"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding DataContext.AmbienceEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+
+                <TextBlock Text="Scene" Style="{StaticResource SecondaryText}" Margin="0,0,0,5" />
+                <UniformGrid Columns="3" Margin="0,0,0,7">
+                    <Button Content="Aquarium"
+                            Command="{Binding DataContext.AmbienceAquariumCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,5"
+                            Margin="0,0,3,0" />
+                    <Button Content="Fireflies"
+                            Command="{Binding DataContext.AmbienceFirefliesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,5"
+                            Margin="3,0" />
+                    <Button Content="Pet"
+                            Command="{Binding DataContext.AmbiencePetCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="5,5"
+                            Margin="3,0,0,0" />
+                </UniformGrid>
+                <TextBlock Text="{Binding DataContext.AmbienceMode, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat=Active scene: {0}}"
+                           Style="{StaticResource MutedText}"
+                           Margin="0,0,0,8" />
+
+                <DockPanel Margin="0,0,0,2">
+                    <TextBlock Text="Population" Style="{StaticResource SecondaryText}" />
+                    <TextBlock DockPanel.Dock="Right"
+                               Text="{Binding DataContext.AmbiencePopulation, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                               Style="{StaticResource MutedText}" />
+                </DockPanel>
+                <Slider Minimum="2"
+                        Maximum="30"
+                        TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        Style="{StaticResource ModernSlider}"
+                        Value="{Binding DataContext.AmbiencePopulation, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Margin="0,0,0,7" />
+
+                <Grid Margin="0,0,0,7">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Fish breeding" />
+                        <TextBlock Text="Same-species adults can produce growing offspring."
+                                   Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <CheckBox Grid.Column="1"
+                              Style="{StaticResource ToggleSwitchStyle}"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding DataContext.AmbienceBreedingEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+
+                <DockPanel Margin="0,0,0,2">
+                    <TextBlock Text="Maximum fish" Style="{StaticResource SecondaryText}" />
+                    <TextBlock DockPanel.Dock="Right"
+                               Text="{Binding DataContext.AmbienceMaxPopulation, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                               Style="{StaticResource MutedText}" />
+                </DockPanel>
+                <Slider Minimum="2"
+                        Maximum="60"
+                        TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        Style="{StaticResource ModernSlider}"
+                        Value="{Binding DataContext.AmbienceMaxPopulation, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Margin="0,0,0,7" />
+
+                <DockPanel Margin="0,0,0,2">
+                    <TextBlock Text="Movement speed" Style="{StaticResource SecondaryText}" />
+                    <TextBlock DockPanel.Dock="Right"
+                               Text="{Binding DataContext.AmbienceSpeed, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat={}{0:0.0}×}"
+                               Style="{StaticResource MutedText}" />
+                </DockPanel>
+                <Slider Minimum="0.35"
+                        Maximum="2.5"
+                        TickFrequency="0.05"
+                        Style="{StaticResource ModernSlider}"
+                        Value="{Binding DataContext.AmbienceSpeed, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Margin="0,0,0,7" />
+
+                <DockPanel Margin="0,0,0,2">
+                    <TextBlock Text="Opacity" Style="{StaticResource SecondaryText}" />
+                    <TextBlock DockPanel.Dock="Right"
+                               Text="{Binding DataContext.AmbienceOpacity, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat={}{0:P0}}"
+                               Style="{StaticResource MutedText}" />
+                </DockPanel>
+                <Slider Minimum="0.15"
+                        Maximum="1"
+                        TickFrequency="0.05"
+                        Style="{StaticResource ModernSlider}"
+                        Value="{Binding DataContext.AmbienceOpacity, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Margin="0,0,0,7" />
+
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Use all monitors" VerticalAlignment="Center" />
+                    <CheckBox Grid.Column="1"
+                              Style="{StaticResource ToggleSwitchStyle}"
+                              IsChecked="{Binding DataContext.AmbienceAllMonitors, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+
+                <Grid Margin="0,0,0,7">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Show over apps" />
+                        <TextBlock Text="Off keeps ambience behind normal app windows."
+                                   Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                    <CheckBox Grid.Column="1"
+                              Style="{StaticResource ToggleSwitchStyle}"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding DataContext.AmbienceOverApps, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+                </Grid>
+
+                <TextBlock Text="Aquarium species: guppies, neon fish, goldfish, and angelfish. Fish have slightly different size/speed traits, grow from babies, breed with their own species, and are capped by Maximum fish. Fireflies drift and pulse. Desktop Pet is a passive roaming cat."
+                           Style="{StaticResource MutedText}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate x:Key="AppearanceTemplate">
             <StackPanel>
                 <TextBlock Text="Theme"
@@ -742,6 +870,9 @@
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding SelectedCategory.Name}" Value="Macros">
                                         <Setter Property="ContentTemplate" Value="{StaticResource MacrosTemplate}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedCategory.Name}" Value="Ambience">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource AmbienceTemplate}" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding SelectedCategory.Name}" Value="Appearance">
                                         <Setter Property="ContentTemplate" Value="{StaticResource AppearanceTemplate}" />

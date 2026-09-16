@@ -409,11 +409,11 @@
 
         <DataTemplate x:Key="HotkeysTemplate">
             <StackPanel>
-                <Grid Margin="0,0,0,9">
+                <Grid Margin="0,0,0,8">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <StackPanel>
                         <TextBlock Text="Global shortcuts" />
-                        <TextBlock Text="Register shortcuts across Windows."
+                        <TextBlock Text="Make your own shortcuts and apply them across Windows."
                                    Style="{StaticResource MutedText}" />
                     </StackPanel>
                     <CheckBox Grid.Column="1"
@@ -422,39 +422,28 @@
                               IsChecked="{Binding DataContext.GlobalHotkeysEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
 
-                <Grid Margin="0,0,0,7">
-                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="Toggle sidebar" />
-                        <TextBlock Text="{Binding DataContext.ToggleHotkeyPreset, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                   Style="{StaticResource MutedText}" />
-                    </StackPanel>
-                    <Button Grid.Column="1"
-                            Content="Change"
-                            Command="{Binding DataContext.ChangeToggleHotkeyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Padding="8,5"
-                            VerticalAlignment="Center" />
-                </Grid>
+                <TextBlock Text="Type combinations like Ctrl+Space, Ctrl+Shift+F, Alt+F8, Win+Shift+D, or Ctrl+Alt+Left. Click outside a box to apply."
+                           Style="{StaticResource MutedText}"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,8" />
+
+                <TextBlock Text="Toggle sidebar" Style="{StaticResource SecondaryText}" Margin="0,0,0,3"/>
+                <TextBox Style="{StaticResource ModernTextBox}"
+                         Height="32"
+                         Text="{Binding DataContext.ToggleHotkeyPreset, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                         Margin="0,0,0,6"/>
+
+                <TextBlock Text="Focus Home search" Style="{StaticResource SecondaryText}" Margin="0,0,0,3"/>
+                <TextBox Style="{StaticResource ModernTextBox}"
+                         Height="32"
+                         Text="{Binding DataContext.SearchHotkeyPreset, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                         Margin="0,0,0,9"/>
 
                 <Grid Margin="0,0,0,7">
-                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="Focus search" />
-                        <TextBlock Text="{Binding DataContext.SearchHotkeyPreset, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                   Style="{StaticResource MutedText}" />
-                    </StackPanel>
-                    <Button Grid.Column="1"
-                            Content="Change"
-                            Command="{Binding DataContext.ChangeSearchHotkeyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Padding="8,5"
-                            VerticalAlignment="Center" />
-                </Grid>
-
-                <Grid Margin="0,2,0,7">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <StackPanel>
                         <TextBlock Text="Window control shortcuts" />
-                        <TextBlock Text="Ctrl+Alt+←/→ snap · T pin · ↑/↓ opacity"
+                        <TextBlock Text="Enable the editable shortcuts below."
                                    Style="{StaticResource MutedText}" />
                     </StackPanel>
                     <CheckBox Grid.Column="1"
@@ -463,7 +452,44 @@
                               IsChecked="{Binding DataContext.WindowControlHotkeysEnabled, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
                 </Grid>
 
-                <TextBlock Text="Press Change to cycle through safe preset combinations. If Windows rejects a shortcut because another app owns it, the sidebar handle and tray menu still work."
+                <UniformGrid Columns="2" Margin="0,0,0,5">
+                    <StackPanel Margin="0,0,4,0">
+                        <TextBlock Text="Snap left" Style="{StaticResource MutedText}" Margin="0,0,0,2"/>
+                        <TextBox Style="{StaticResource ModernTextBox}" Height="30"
+                                 Text="{Binding DataContext.SnapLeftHotkey, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <StackPanel Margin="4,0,0,0">
+                        <TextBlock Text="Snap right" Style="{StaticResource MutedText}" Margin="0,0,0,2"/>
+                        <TextBox Style="{StaticResource ModernTextBox}" Height="30"
+                                 Text="{Binding DataContext.SnapRightHotkey, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                    </StackPanel>
+                </UniformGrid>
+
+                <TextBlock Text="Always on top toggle" Style="{StaticResource MutedText}" Margin="0,0,0,2"/>
+                <TextBox Style="{StaticResource ModernTextBox}" Height="30"
+                         Text="{Binding DataContext.ToggleTopmostHotkey, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                         Margin="0,0,0,5"/>
+
+                <UniformGrid Columns="2" Margin="0,0,0,8">
+                    <StackPanel Margin="0,0,4,0">
+                        <TextBlock Text="Opacity up" Style="{StaticResource MutedText}" Margin="0,0,0,2"/>
+                        <TextBox Style="{StaticResource ModernTextBox}" Height="30"
+                                 Text="{Binding DataContext.OpacityUpHotkey, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <StackPanel Margin="4,0,0,0">
+                        <TextBlock Text="Opacity down" Style="{StaticResource MutedText}" Margin="0,0,0,2"/>
+                        <TextBox Style="{StaticResource ModernTextBox}" Height="30"
+                                 Text="{Binding DataContext.OpacityDownHotkey, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"/>
+                    </StackPanel>
+                </UniformGrid>
+
+                <Button Content="Reset hotkeys to defaults"
+                        Command="{Binding DataContext.ResetHotkeysCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Padding="8,5"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,6"/>
+
+                <TextBlock Text="A global shortcut must include Ctrl, Alt, Shift, or Win plus one key. Letters, numbers, arrows, Space, Enter, Tab, Esc, Home, End, PageUp/PageDown, Insert/Delete, and F1-F12 are supported. If another app already owns a shortcut, Windows will leave that shortcut unavailable."
                            Style="{StaticResource MutedText}"
                            TextWrapping="Wrap" />
             </StackPanel>

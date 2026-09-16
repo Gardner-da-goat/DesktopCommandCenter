@@ -51,6 +51,7 @@ public sealed class SettingsViewModel : ObservableObject
         UpdateBetaCommand = new RelayCommand(() => UpdateChannel = "Beta");
         ChangeToggleHotkeyCommand = new RelayCommand(CycleToggleHotkey);
         ChangeSearchHotkeyCommand = new RelayCommand(CycleSearchHotkey);
+        ResetHotkeysCommand = new RelayCommand(ResetHotkeys);
         Categories = new ObservableCollection<SettingsCategory>
         {
             new("General", "Startup, sidebar, and application behavior."),
@@ -93,6 +94,7 @@ public sealed class SettingsViewModel : ObservableObject
     public RelayCommand UpdateBetaCommand { get; }
     public RelayCommand ChangeToggleHotkeyCommand { get; }
     public RelayCommand ChangeSearchHotkeyCommand { get; }
+    public RelayCommand ResetHotkeysCommand { get; }
 
     public SettingsCategory SelectedCategory
     {
@@ -271,36 +273,52 @@ public sealed class SettingsViewModel : ObservableObject
 
     public string ToggleHotkeyPreset
     {
-        get => NormalizeToggleHotkey(_settings.ToggleHotkeyPreset);
-        set
-        {
-            var normalized = NormalizeToggleHotkey(value);
-            if (string.Equals(_settings.ToggleHotkeyPreset, normalized, StringComparison.Ordinal))
-            {
-                return;
-            }
-
-            _settings.ToggleHotkeyPreset = normalized;
-            SaveAndNotify();
-            OnPropertyChanged();
-        }
+        get => NormalizeHotkeyText(_settings.ToggleHotkeyPreset, "Ctrl+Space");
+        set => SetHotkeyText(
+            value,
+            () => _settings.ToggleHotkeyPreset,
+            v => _settings.ToggleHotkeyPreset = v,
+            "Ctrl+Space");
     }
 
     public string SearchHotkeyPreset
     {
-        get => NormalizeSearchHotkey(_settings.SearchHotkeyPreset);
-        set
-        {
-            var normalized = NormalizeSearchHotkey(value);
-            if (string.Equals(_settings.SearchHotkeyPreset, normalized, StringComparison.Ordinal))
-            {
-                return;
-            }
+        get => NormalizeHotkeyText(_settings.SearchHotkeyPreset, "Ctrl+Shift+Space");
+        set => SetHotkeyText(
+            value,
+            () => _settings.SearchHotkeyPreset,
+            v => _settings.SearchHotkeyPreset = v,
+            "Ctrl+Shift+Space");
+    }
 
-            _settings.SearchHotkeyPreset = normalized;
-            SaveAndNotify();
-            OnPropertyChanged();
-        }
+    public string SnapLeftHotkey
+    {
+        get => NormalizeHotkeyText(_settings.SnapLeftHotkey, "Ctrl+Alt+Left");
+        set => SetHotkeyText(value, () => _settings.SnapLeftHotkey, v => _settings.SnapLeftHotkey = v, "Ctrl+Alt+Left");
+    }
+
+    public string SnapRightHotkey
+    {
+        get => NormalizeHotkeyText(_settings.SnapRightHotkey, "Ctrl+Alt+Right");
+        set => SetHotkeyText(value, () => _settings.SnapRightHotkey, v => _settings.SnapRightHotkey = v, "Ctrl+Alt+Right");
+    }
+
+    public string ToggleTopmostHotkey
+    {
+        get => NormalizeHotkeyText(_settings.ToggleTopmostHotkey, "Ctrl+Alt+T");
+        set => SetHotkeyText(value, () => _settings.ToggleTopmostHotkey, v => _settings.ToggleTopmostHotkey = v, "Ctrl+Alt+T");
+    }
+
+    public string OpacityUpHotkey
+    {
+        get => NormalizeHotkeyText(_settings.OpacityUpHotkey, "Ctrl+Alt+Up");
+        set => SetHotkeyText(value, () => _settings.OpacityUpHotkey, v => _settings.OpacityUpHotkey = v, "Ctrl+Alt+Up");
+    }
+
+    public string OpacityDownHotkey
+    {
+        get => NormalizeHotkeyText(_settings.OpacityDownHotkey, "Ctrl+Alt+Down");
+        set => SetHotkeyText(value, () => _settings.OpacityDownHotkey, v => _settings.OpacityDownHotkey = v, "Ctrl+Alt+Down");
     }
 
     public bool ReflowWindowsOnSidebar
@@ -534,21 +552,49 @@ public sealed class SettingsViewModel : ObservableObject
         };
     }
 
-    private static string NormalizeToggleHotkey(string? value) =>
-        value switch
-        {
-            "Ctrl+Alt+Space" => "Ctrl+Alt+Space",
-            "Ctrl+Alt+D" => "Ctrl+Alt+D",
-            _ => "Ctrl+Space"
-        };
+    private void ResetHotkeys()
+    {
+        ToggleHotkeyPreset = "Ctrl+Space";
+        SearchHotkeyPreset = "Ctrl+Shift+Space";
+        SnapLeftHotkey = "Ctrl+Alt+Left";
+        SnapRightHotkey = "Ctrl+Alt+Right";
+        ToggleTopmostHotkey = "Ctrl+Alt+T";
+        OpacityUpHotkey = "Ctrl+Alt+Up";
+        OpacityDownHotkey = "Ctrl+Alt+Down";
+    }
 
-    private static string NormalizeSearchHotkey(string? value) =>
-        value switch
+    private void SetHotkeyText(
+        string? value,
+        Func<string> getValue,
+        Action<string> setValue,
+        string fallback,
+        [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+    {
+        var normalized = NormalizeHotkeyText(value, fallback);
+        if (string.Equals(getValue(), normalized, StringComparison.Ordinal))
         {
-            "Ctrl+Shift+F" => "Ctrl+Shift+F",
-            "Ctrl+Alt+F" => "Ctrl+Alt+F",
-            _ => "Ctrl+Shift+Space"
-        };
+            return;
+        }
+
+        setValue(normalized);
+        SaveAndNotify(propertyName);
+        OnPropertyChanged(propertyName);
+    }
+
+    private static string NormalizeHotkeyText(string? value, string fallback)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return fallback;
+        }
+
+        var parts = value
+            .Split('+', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        return parts.Length == 0
+            ? fallback
+            : string.Join("+", parts);
+    }
 
     private void SetBoolean(
         bool value,

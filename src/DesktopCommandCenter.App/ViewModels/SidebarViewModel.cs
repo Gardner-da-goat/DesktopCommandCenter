@@ -65,6 +65,11 @@ public sealed class SidebarViewModel : ObservableObject
     public bool WindowControlHotkeysEnabled => Settings.WindowControlHotkeysEnabled;
     public string ToggleHotkeyPreset => Settings.ToggleHotkeyPreset;
     public string SearchHotkeyPreset => Settings.SearchHotkeyPreset;
+    public string SnapLeftHotkey => Settings.SnapLeftHotkey;
+    public string SnapRightHotkey => Settings.SnapRightHotkey;
+    public string ToggleTopmostHotkey => Settings.ToggleTopmostHotkey;
+    public string OpacityUpHotkey => Settings.OpacityUpHotkey;
+    public string OpacityDownHotkey => Settings.OpacityDownHotkey;
     public bool ReflowWindowsOnSidebar => Settings.ReflowWindowsOnSidebar;
     public SidebarEdge SidebarEdge => Settings.SidebarEdge;
     public SidebarHandlePosition HandlePosition => Settings.HandlePosition;
@@ -147,6 +152,26 @@ public sealed class SidebarViewModel : ObservableObject
         else if (e.PropertyName == nameof(SettingsViewModel.SearchHotkeyPreset))
         {
             OnPropertyChanged(nameof(SearchHotkeyPreset));
+        }
+        else if (e.PropertyName == nameof(SettingsViewModel.SnapLeftHotkey))
+        {
+            OnPropertyChanged(nameof(SnapLeftHotkey));
+        }
+        else if (e.PropertyName == nameof(SettingsViewModel.SnapRightHotkey))
+        {
+            OnPropertyChanged(nameof(SnapRightHotkey));
+        }
+        else if (e.PropertyName == nameof(SettingsViewModel.ToggleTopmostHotkey))
+        {
+            OnPropertyChanged(nameof(ToggleTopmostHotkey));
+        }
+        else if (e.PropertyName == nameof(SettingsViewModel.OpacityUpHotkey))
+        {
+            OnPropertyChanged(nameof(OpacityUpHotkey));
+        }
+        else if (e.PropertyName == nameof(SettingsViewModel.OpacityDownHotkey))
+        {
+            OnPropertyChanged(nameof(OpacityDownHotkey));
         }
         else if (e.PropertyName == nameof(SettingsViewModel.ReflowWindowsOnSidebar))
         {

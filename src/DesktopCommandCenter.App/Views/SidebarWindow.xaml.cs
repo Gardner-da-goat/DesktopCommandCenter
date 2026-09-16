@@ -73,7 +73,12 @@ public partial class SidebarWindow : Window
                 _windowHandle,
                 _viewModel.ToggleHotkeyPreset,
                 _viewModel.SearchHotkeyPreset,
-                _viewModel.WindowControlHotkeysEnabled);
+                _viewModel.WindowControlHotkeysEnabled,
+                _viewModel.SnapLeftHotkey,
+                _viewModel.SnapRightHotkey,
+                _viewModel.ToggleTopmostHotkey,
+                _viewModel.OpacityUpHotkey,
+                _viewModel.OpacityDownHotkey);
         }
         else
         {
@@ -220,7 +225,12 @@ public partial class SidebarWindow : Window
         else if (e.PropertyName == nameof(SidebarViewModel.GlobalHotkeysEnabled) ||
                  e.PropertyName == nameof(SidebarViewModel.WindowControlHotkeysEnabled) ||
                  e.PropertyName == nameof(SidebarViewModel.ToggleHotkeyPreset) ||
-                 e.PropertyName == nameof(SidebarViewModel.SearchHotkeyPreset))
+                 e.PropertyName == nameof(SidebarViewModel.SearchHotkeyPreset) ||
+                 e.PropertyName == nameof(SidebarViewModel.SnapLeftHotkey) ||
+                 e.PropertyName == nameof(SidebarViewModel.SnapRightHotkey) ||
+                 e.PropertyName == nameof(SidebarViewModel.ToggleTopmostHotkey) ||
+                 e.PropertyName == nameof(SidebarViewModel.OpacityUpHotkey) ||
+                 e.PropertyName == nameof(SidebarViewModel.OpacityDownHotkey))
         {
             ApplyHotkeyRegistration();
         }

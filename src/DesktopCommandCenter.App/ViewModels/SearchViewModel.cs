@@ -38,10 +38,14 @@ public sealed class SearchViewModel : ObservableObject
         _fileSearch = fileSearch;
         _settings.SettingsChanged += OnSettingsChanged;
         Results = new ObservableCollection<SearchResultViewModel>();
+        SubmitCommand = new RelayCommand(Submit);
+        ClearCommand = new RelayCommand(() => Query = string.Empty);
     }
 
     public event EventHandler<string>? SettingsNavigationRequested;
     public ObservableCollection<SearchResultViewModel> Results { get; }
+    public RelayCommand SubmitCommand { get; }
+    public RelayCommand ClearCommand { get; }
 
     public string Query
     {
@@ -69,6 +73,23 @@ public sealed class SearchViewModel : ObservableObject
         var query = Query.Trim();
         if (query.Length == 0)
         {
+            return;
+        }
+
+        if (query.Equals("search", StringComparison.OrdinalIgnoreCase))
+        {
+            Results.Add(new SearchResultViewModel(
+                SearchResultKind.Action,
+                "Search Chrome",
+                "Type: search followed by what you want to look up, then press Enter.",
+                "⌕",
+                new RelayCommand(() => { }, () => false)));
+            return;
+        }
+
+        if (TryGetWebSearchQuery(query, out var webSearchQuery))
+        {
+            AddWebSearchResult(webSearchQuery);
             return;
         }
 
@@ -260,22 +281,6 @@ public sealed class SearchViewModel : ObservableObject
         string query)
     {
         var current = _windowsViewModel.CurrentWindow;
-
-        if (TryGetArgument(query, "web", out var webQuery) && webQuery.Length > 0)
-        {
-            candidates.Add((
-                300,
-                new SearchResultViewModel(
-                    SearchResultKind.Action,
-                    $"Search the web for “{webQuery}”",
-                    "Command · default browser",
-                    "⌕",
-                    new RelayCommand(() =>
-                    {
-                        _ = _shellActions.SearchWeb(webQuery);
-                        Query = string.Empty;
-                    }))));
-        }
 
         if (TryGetArgument(query, "open", out var appQuery) && appQuery.Length > 0)
         {
@@ -518,6 +523,95 @@ public sealed class SearchViewModel : ObservableObject
                 "⇥",
                 () => current.MoveToNextMonitorCommand.Execute(null));
         }
+    }
+
+    private void Submit()
+    {
+        var query = Query.Trim();
+        if (query.Length == 0)
+        {
+            return;
+        }
+
+        if (TryGetWebSearchQuery(query, out var webSearchQuery))
+        {
+            _ = _shellActions.SearchWebInChrome(webSearchQuery);
+            Query = string.Empty;
+            return;
+        }
+
+        if (IsExplicitCommand(query) && Results.Count > 0)
+        {
+            Results[0].ExecuteCommand.Execute(null);
+        }
+    }
+
+    private void AddWebSearchResult(string webSearchQuery)
+    {
+        Results.Add(new SearchResultViewModel(
+            SearchResultKind.Action,
+            $"Search Chrome for “{webSearchQuery}”",
+            "Press Enter or click here · Google search in Chrome",
+            "⌕",
+            new RelayCommand(() =>
+            {
+                _ = _shellActions.SearchWebInChrome(webSearchQuery);
+                Query = string.Empty;
+            })));
+    }
+
+    private static bool TryGetWebSearchQuery(string query, out string webSearchQuery) =>
+        TryGetArgument(query, "search", out webSearchQuery) &&
+        webSearchQuery.Length > 0;
+
+    private static bool IsExplicitCommand(string query)
+    {
+        var prefixes = new[]
+        {
+            "open ", "focus ", "activate ", "close ", "macro ", "opacity "
+        };
+
+        if (prefixes.Any(prefix =>
+                query.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
+        {
+            return true;
+        }
+
+        return query.Equals("top on", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("top off", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("always on top", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("snap left", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("snap right", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("move left", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("move right", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("third left", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("third center", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("third right", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("two thirds left", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("two thirds right", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("top left", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("top right", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("bottom left", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("bottom right", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("center", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("minimize", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("maximize", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("restore", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("next monitor", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("move monitor", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("downloads", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("task manager", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("windows settings", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("terminal", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("screenshot", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("mute", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("volume up", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("volume down", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("clipboard history", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("play pause", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("next track", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("previous track", StringComparison.OrdinalIgnoreCase) ||
+               query.Equals("show desktop", StringComparison.OrdinalIgnoreCase);
     }
 
     private IEnumerable<WindowItemViewModel> FindWindows(string query) =>

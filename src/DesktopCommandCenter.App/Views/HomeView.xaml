@@ -13,8 +13,13 @@
             <StackPanel Visibility="{Binding ShowSearchModule, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid Height="38">
                     <TextBox Style="{StaticResource ModernTextBox}"
-                             Tag="Search apps, windows, commands..."
-                             Text="{Binding Search.Query, UpdateSourceTrigger=PropertyChanged}" />
+                             Tag="Apps, files, commands · web: search ..."
+                             Text="{Binding Search.Query, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding Search.SubmitCommand}" />
+                            <KeyBinding Key="Escape" Command="{Binding Search.ClearCommand}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
                     <TextBlock Text="⌕"
                                FontFamily="Segoe UI Symbol"
                                FontSize="17"

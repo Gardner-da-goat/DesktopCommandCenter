@@ -40,7 +40,8 @@ Active early development. The sidebar shell is functional and the project now in
 - Search settings pages and jump directly to them
 - Bounded background index for Desktop, Documents, and Downloads
 - Search files and folders from that index
-- Web search with `web QUERY`
+- Web search only with the explicit `search QUERY` prefix
+- Press Enter on `search QUERY` to open a Google search in Chrome (falls back to the default browser if Chrome is unavailable)
 - Direct commands such as:
   - `open spotify`
   - `focus chrome`
@@ -51,6 +52,7 @@ Active early development. The sidebar shell is functional and the project now in
   - `center`
   - `next monitor`
   - `macro Work Mode`
+  - `search best keyboard shortcuts`
 
 ### Home modules
 
@@ -96,7 +98,9 @@ Quick Actions can be individually shown or hidden.
 - System-wide sidebar toggle
 - System-wide Focus Search
 - Enable or disable global shortcuts
-- Cycle through safe shortcut presets from Settings
+- Create your own global shortcut combinations from Settings
+- Editable shortcuts for sidebar toggle, Focus Search, snap left/right, always-on-top, and opacity up/down
+- Supports Ctrl/Alt/Shift/Win combinations with letters, numbers, arrows, navigation keys, Space, and F1-F12
 
 ### Appearance
 

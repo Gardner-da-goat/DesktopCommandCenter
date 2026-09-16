@@ -81,7 +81,9 @@ public sealed class ShellActionService
         }
     }
 
-    public bool SearchWeb(string query)
+    public bool SearchWeb(string query) => SearchWebInChrome(query);
+
+    public bool SearchWebInChrome(string query)
     {
         if (string.IsNullOrWhiteSpace(query))
         {
@@ -89,6 +91,53 @@ public sealed class ShellActionService
         }
 
         var url = "https://www.google.com/search?q=" + Uri.EscapeDataString(query.Trim());
+
+        var candidates = new[]
+        {
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Google",
+                "Chrome",
+                "Application",
+                "chrome.exe"),
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                "Google",
+                "Chrome",
+                "Application",
+                "chrome.exe"),
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                "Google",
+                "Chrome",
+                "Application",
+                "chrome.exe"),
+            "chrome.exe"
+        };
+
+        foreach (var candidate in candidates.Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            if (!candidate.Equals("chrome.exe", StringComparison.OrdinalIgnoreCase) &&
+                !File.Exists(candidate))
+            {
+                continue;
+            }
+
+            try
+            {
+                Process.Start(new ProcessStartInfo(candidate)
+                {
+                    UseShellExecute = true,
+                    Arguments = "\"" + url + "\""
+                });
+                return true;
+            }
+            catch
+            {
+                // Try the next Chrome location, then fall back to the default browser.
+            }
+        }
+
         return OpenPath(url);
     }
 

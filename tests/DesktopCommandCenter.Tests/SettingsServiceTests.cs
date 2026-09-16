@@ -45,6 +45,11 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.WindowControlHotkeysEnabled);
         Assert.AreEqual("Ctrl+Space", settings.ToggleHotkeyPreset);
         Assert.AreEqual("Ctrl+Shift+Space", settings.SearchHotkeyPreset);
+        Assert.AreEqual("Ctrl+Alt+Left", settings.SnapLeftHotkey);
+        Assert.AreEqual("Ctrl+Alt+Right", settings.SnapRightHotkey);
+        Assert.AreEqual("Ctrl+Alt+T", settings.ToggleTopmostHotkey);
+        Assert.AreEqual("Ctrl+Alt+Up", settings.OpacityUpHotkey);
+        Assert.AreEqual("Ctrl+Alt+Down", settings.OpacityDownHotkey);
         Assert.IsTrue(settings.ReflowWindowsOnSidebar);
         Assert.IsTrue(settings.SearchAppsEnabled);
         Assert.IsTrue(settings.SearchWindowsEnabled);
@@ -122,8 +127,13 @@ public sealed class SettingsServiceTests
             UpdateChannel = "Beta",
             GlobalHotkeysEnabled = false,
             WindowControlHotkeysEnabled = true,
-            ToggleHotkeyPreset = "Ctrl+Alt+D",
-            SearchHotkeyPreset = "Ctrl+Shift+F",
+            ToggleHotkeyPreset = "Win+Shift+D",
+            SearchHotkeyPreset = "Alt+F8",
+            SnapLeftHotkey = "Ctrl+Shift+Left",
+            SnapRightHotkey = "Ctrl+Shift+Right",
+            ToggleTopmostHotkey = "Ctrl+Shift+T",
+            OpacityUpHotkey = "Alt+PageUp",
+            OpacityDownHotkey = "Alt+PageDown",
             ReflowWindowsOnSidebar = false,
             SearchAppsEnabled = false,
             SearchSettingsEnabled = false,
@@ -165,8 +175,13 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.AutoCheckForUpdates);
         Assert.IsFalse(settings.GlobalHotkeysEnabled);
         Assert.IsTrue(settings.WindowControlHotkeysEnabled);
-        Assert.AreEqual("Ctrl+Alt+D", settings.ToggleHotkeyPreset);
-        Assert.AreEqual("Ctrl+Shift+F", settings.SearchHotkeyPreset);
+        Assert.AreEqual("Win+Shift+D", settings.ToggleHotkeyPreset);
+        Assert.AreEqual("Alt+F8", settings.SearchHotkeyPreset);
+        Assert.AreEqual("Ctrl+Shift+Left", settings.SnapLeftHotkey);
+        Assert.AreEqual("Ctrl+Shift+Right", settings.SnapRightHotkey);
+        Assert.AreEqual("Ctrl+Shift+T", settings.ToggleTopmostHotkey);
+        Assert.AreEqual("Alt+PageUp", settings.OpacityUpHotkey);
+        Assert.AreEqual("Alt+PageDown", settings.OpacityDownHotkey);
         Assert.IsFalse(settings.ReflowWindowsOnSidebar);
         Assert.IsFalse(settings.SearchAppsEnabled);
         Assert.IsFalse(settings.SearchSettingsEnabled);

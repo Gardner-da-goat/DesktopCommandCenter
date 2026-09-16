@@ -102,6 +102,21 @@ Quick Actions can be individually shown or hidden.
 - Editable shortcuts for sidebar toggle, Focus Search, snap left/right, always-on-top, and opacity up/down
 - Supports Ctrl/Alt/Shift/Win combinations with letters, numbers, arrows, navigation keys, Space, and F1-F12
 
+### Desktop ambience
+
+- Optional click-through ambience overlay
+- Aquarium scene with guppies, neon fish, goldfish, and angelfish
+- Fish have different size and speed traits
+- Same-species adults can breed
+- Babies grow into adults and inherit slightly varied traits
+- Configurable starting population and population cap
+- Optional firefly scene with drifting, pulsing lights
+- Optional passive desktop pet that roams along the bottom of the screen
+- Configurable speed and opacity
+- Primary-monitor or all-monitor coverage
+- Option to keep ambience behind normal apps or show it over apps
+- Ambience never captures mouse input
+
 ### Appearance
 
 - Dark theme

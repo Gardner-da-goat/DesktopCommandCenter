@@ -51,6 +51,15 @@ public sealed class SettingsServiceTests
         Assert.AreEqual("Ctrl+Alt+Up", settings.OpacityUpHotkey);
         Assert.AreEqual("Ctrl+Alt+Down", settings.OpacityDownHotkey);
         Assert.IsTrue(settings.ReflowWindowsOnSidebar);
+        Assert.IsFalse(settings.AmbienceEnabled);
+        Assert.AreEqual("Aquarium", settings.AmbienceMode);
+        Assert.AreEqual(10, settings.AmbiencePopulation);
+        Assert.IsTrue(settings.AmbienceBreedingEnabled);
+        Assert.AreEqual(24, settings.AmbienceMaxPopulation);
+        Assert.AreEqual(1d, settings.AmbienceSpeed);
+        Assert.AreEqual(0.72d, settings.AmbienceOpacity);
+        Assert.IsTrue(settings.AmbienceAllMonitors);
+        Assert.IsFalse(settings.AmbienceOverApps);
         Assert.IsTrue(settings.SearchAppsEnabled);
         Assert.IsTrue(settings.SearchWindowsEnabled);
         Assert.IsTrue(settings.SearchActionsEnabled);
@@ -135,6 +144,15 @@ public sealed class SettingsServiceTests
             OpacityUpHotkey = "Alt+PageUp",
             OpacityDownHotkey = "Alt+PageDown",
             ReflowWindowsOnSidebar = false,
+            AmbienceEnabled = true,
+            AmbienceMode = "Fireflies",
+            AmbiencePopulation = 18,
+            AmbienceBreedingEnabled = false,
+            AmbienceMaxPopulation = 36,
+            AmbienceSpeed = 1.6,
+            AmbienceOpacity = 0.55,
+            AmbienceAllMonitors = false,
+            AmbienceOverApps = true,
             SearchAppsEnabled = false,
             SearchSettingsEnabled = false,
             SearchFilesEnabled = false,
@@ -183,6 +201,15 @@ public sealed class SettingsServiceTests
         Assert.AreEqual("Alt+PageUp", settings.OpacityUpHotkey);
         Assert.AreEqual("Alt+PageDown", settings.OpacityDownHotkey);
         Assert.IsFalse(settings.ReflowWindowsOnSidebar);
+        Assert.IsTrue(settings.AmbienceEnabled);
+        Assert.AreEqual("Fireflies", settings.AmbienceMode);
+        Assert.AreEqual(18, settings.AmbiencePopulation);
+        Assert.IsFalse(settings.AmbienceBreedingEnabled);
+        Assert.AreEqual(36, settings.AmbienceMaxPopulation);
+        Assert.AreEqual(1.6d, settings.AmbienceSpeed);
+        Assert.AreEqual(0.55d, settings.AmbienceOpacity);
+        Assert.IsFalse(settings.AmbienceAllMonitors);
+        Assert.IsTrue(settings.AmbienceOverApps);
         Assert.IsFalse(settings.SearchAppsEnabled);
         Assert.IsFalse(settings.SearchSettingsEnabled);
         Assert.IsFalse(settings.SearchFilesEnabled);
@@ -225,6 +252,25 @@ public sealed class SettingsServiceTests
     {
         var settings = new AppSettings { SidebarWidth = requested };
         Assert.AreEqual(expected, settings.SidebarWidth);
+    }
+
+    [TestMethod]
+    public void AmbienceSettingsNormalizeSafely()
+    {
+        var settings = new AppSettings
+        {
+            AmbienceMode = "unknown",
+            AmbiencePopulation = 99,
+            AmbienceMaxPopulation = 3,
+            AmbienceSpeed = 99,
+            AmbienceOpacity = -2
+        }.Normalize();
+
+        Assert.AreEqual("Aquarium", settings.AmbienceMode);
+        Assert.AreEqual(30, settings.AmbiencePopulation);
+        Assert.AreEqual(30, settings.AmbienceMaxPopulation);
+        Assert.AreEqual(2.5d, settings.AmbienceSpeed);
+        Assert.AreEqual(0.15d, settings.AmbienceOpacity);
     }
 
     [TestMethod]

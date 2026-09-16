@@ -19,6 +19,8 @@ public partial class App : System.Windows.Application
     private WindowsViewModel? _windowsViewModel;
     private bool _isExiting;
     private AppearanceService? _appearanceService;
+    private AmbienceService? _ambienceService;
+    private AppSettings? _appSettings;
     private ShellActionService? _shellActions;
 
     protected override void OnStartup(StartupEventArgs e)
@@ -27,6 +29,8 @@ public partial class App : System.Windows.Application
 
         var settingsService = new SettingsService();
         var settings = settingsService.Load();
+        _appSettings = settings;
+        _ambienceService = new AmbienceService();
         var shellActions = new ShellActionService();
         _shellActions = shellActions;
         var appLauncher = new AppLauncherService();
@@ -124,6 +128,7 @@ public partial class App : System.Windows.Application
         _settingsViewModel.Updates.RestartRequested += OnUpdateRestartRequested;
 
         _window.Show();
+        _ambienceService.Apply(settings);
 
         if (settings.AutoCheckForUpdates)
         {
@@ -174,6 +179,11 @@ public partial class App : System.Windows.Application
                 _settingsViewModel.ThemeMode,
                 _settingsViewModel.AccentName);
         }
+        else if (e.PropertyName.StartsWith("Ambience", StringComparison.Ordinal) &&
+                 _appSettings is not null)
+        {
+            _ambienceService?.Apply(_appSettings);
+        }
     }
 
     private void OnUpdateRestartRequested(object? sender, EventArgs e) => ExitApplication();
@@ -209,6 +219,8 @@ public partial class App : System.Windows.Application
             _settingsViewModel.Updates.RestartRequested -= OnUpdateRestartRequested;
         }
 
+        _ambienceService?.Dispose();
+        _ambienceService = null;
         _windowsViewModel?.Dispose();
         _trayIcon?.Dispose();
         _trayIcon = null;
@@ -218,6 +230,7 @@ public partial class App : System.Windows.Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _ambienceService?.Dispose();
         _windowsViewModel?.Dispose();
         _trayIcon?.Dispose();
         base.OnExit(e);

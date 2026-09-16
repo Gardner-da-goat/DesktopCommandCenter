@@ -8,6 +8,46 @@
         MinHeight="600"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackground}">
+    <Window.Resources>
+        <Style x:Key="HubNavigationButton" TargetType="RadioButton">
+            <Setter Property="Height" Value="42" />
+            <Setter Property="Margin" Value="0,2" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Chrome"
+                                Background="Transparent"
+                                CornerRadius="9"
+                                Padding="12,0">
+                            <ContentPresenter HorizontalAlignment="Left"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome"
+                                        Property="Background"
+                                        Value="{DynamicResource CardHoverBackground}" />
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource TextPrimary}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Chrome"
+                                        Property="Background"
+                                        Value="{DynamicResource AccentSoft}" />
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource AccentHover}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="210" />
@@ -47,56 +87,32 @@
                 <StackPanel Grid.Row="1">
                     <RadioButton GroupName="HubNavigation"
                                  Content="⌂   Home"
-                                 Style="{StaticResource NavigationButton}"
-                                 Height="42"
-                                 HorizontalContentAlignment="Left"
-                                 Padding="12,0"
-                                 Margin="0,2"
+                                 Style="{StaticResource HubNavigationButton}"
                                  IsChecked="{Binding IsHomeSelected}"
                                  Command="{Binding ShowHomeCommand}" />
                     <RadioButton GroupName="HubNavigation"
                                  Content="♪   Music"
-                                 Style="{StaticResource NavigationButton}"
-                                 Height="42"
-                                 HorizontalContentAlignment="Left"
-                                 Padding="12,0"
-                                 Margin="0,2"
+                                 Style="{StaticResource HubNavigationButton}"
                                  IsChecked="{Binding IsMusicSelected}"
                                  Command="{Binding ShowMusicCommand}" />
                     <RadioButton GroupName="HubNavigation"
                                  Content="▰   Files"
-                                 Style="{StaticResource NavigationButton}"
-                                 Height="42"
-                                 HorizontalContentAlignment="Left"
-                                 Padding="12,0"
-                                 Margin="0,2"
+                                 Style="{StaticResource HubNavigationButton}"
                                  IsChecked="{Binding IsFilesSelected}"
                                  Command="{Binding ShowFilesCommand}" />
                     <RadioButton GroupName="HubNavigation"
                                  Content="▣   Windows"
-                                 Style="{StaticResource NavigationButton}"
-                                 Height="42"
-                                 HorizontalContentAlignment="Left"
-                                 Padding="12,0"
-                                 Margin="0,2"
+                                 Style="{StaticResource HubNavigationButton}"
                                  IsChecked="{Binding IsWindowsSelected}"
                                  Command="{Binding ShowWindowsCommand}" />
                     <RadioButton GroupName="HubNavigation"
                                  Content="✦   Ambience"
-                                 Style="{StaticResource NavigationButton}"
-                                 Height="42"
-                                 HorizontalContentAlignment="Left"
-                                 Padding="12,0"
-                                 Margin="0,2"
+                                 Style="{StaticResource HubNavigationButton}"
                                  IsChecked="{Binding IsAmbienceSelected}"
                                  Command="{Binding ShowAmbienceCommand}" />
                     <RadioButton GroupName="HubNavigation"
                                  Content="⚙   Settings"
-                                 Style="{StaticResource NavigationButton}"
-                                 Height="42"
-                                 HorizontalContentAlignment="Left"
-                                 Padding="12,0"
-                                 Margin="0,2"
+                                 Style="{StaticResource HubNavigationButton}"
                                  IsChecked="{Binding IsSettingsSelected}"
                                  Command="{Binding ShowSettingsCommand}" />
                 </StackPanel>

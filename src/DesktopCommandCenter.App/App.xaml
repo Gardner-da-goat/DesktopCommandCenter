@@ -18,6 +18,12 @@
             <DataTemplate DataType="{x:Type viewModels:HomeViewModel}">
                 <views:HomeView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:MusicViewModel}">
+                <views:MusicView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:FilesViewModel}">
+                <views:FilesView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type viewModels:WindowsViewModel}">
                 <views:WindowsView />
             </DataTemplate>

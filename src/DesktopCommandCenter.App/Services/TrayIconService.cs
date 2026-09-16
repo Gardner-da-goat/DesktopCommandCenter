@@ -7,11 +7,17 @@ public sealed class TrayIconService : IDisposable
 {
     private readonly NotifyIcon _notifyIcon;
 
-    public TrayIconService(Action open, Action collapse, Action settings, Action exit)
+    public TrayIconService(
+        Action openHub,
+        Action openSidebar,
+        Action collapseSidebar,
+        Action settings,
+        Action exit)
     {
         var menu = new ContextMenuStrip();
-        menu.Items.Add("Open", null, (_, _) => open());
-        menu.Items.Add("Collapse", null, (_, _) => collapse());
+        menu.Items.Add("Open Desktop Hub", null, (_, _) => openHub());
+        menu.Items.Add("Open Quick Sidebar", null, (_, _) => openSidebar());
+        menu.Items.Add("Collapse Sidebar", null, (_, _) => collapseSidebar());
         menu.Items.Add("Settings", null, (_, _) => settings());
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Exit", null, (_, _) => exit());
@@ -22,7 +28,8 @@ public sealed class TrayIconService : IDisposable
             Icon = SystemIcons.Application,
             ContextMenuStrip = menu
         };
-        _notifyIcon.DoubleClick += (_, _) => open();
+
+        _notifyIcon.DoubleClick += (_, _) => openHub();
     }
 
     public void SetVisible(bool visible) => _notifyIcon.Visible = visible;

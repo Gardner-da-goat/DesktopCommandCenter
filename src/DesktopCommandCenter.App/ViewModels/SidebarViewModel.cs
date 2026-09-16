@@ -7,15 +7,18 @@ namespace DesktopCommandCenter.App.ViewModels;
 public sealed class SidebarViewModel : ObservableObject
 {
     private readonly SidebarState _state;
+    private readonly Action<string, string?> _openHub;
     private object _currentPage;
 
     public SidebarViewModel(
         AppSettings settings,
         HomeViewModel home,
         WindowsViewModel windows,
-        SettingsViewModel settingsViewModel)
+        SettingsViewModel settingsViewModel,
+        Action<string, string?> openHub)
     {
         _state = new SidebarState(settings);
+        _openHub = openHub;
         Home = home;
         Windows = windows;
         Settings = settingsViewModel;
@@ -26,7 +29,7 @@ public sealed class SidebarViewModel : ObservableObject
         CollapseCommand = new RelayCommand(Collapse);
         ShowHomeCommand = new RelayCommand(ShowHome);
         ShowWindowsCommand = new RelayCommand(ShowWindows);
-        ShowSettingsCommand = new RelayCommand(ShowSettings);
+        OpenHubCommand = new RelayCommand(() => _openHub("Home", null));
 
         Settings.SettingsChanged += OnSettingsChanged;
         Home.Search.SettingsNavigationRequested += OnSettingsNavigationRequested;
@@ -35,29 +38,32 @@ public sealed class SidebarViewModel : ObservableObject
     public HomeViewModel Home { get; }
     public WindowsViewModel Windows { get; }
     public SettingsViewModel Settings { get; }
+
     public ICommand ToggleCommand { get; }
     public ICommand ExpandCommand { get; }
     public ICommand CollapseCommand { get; }
     public ICommand ShowHomeCommand { get; }
     public ICommand ShowWindowsCommand { get; }
-    public ICommand ShowSettingsCommand { get; }
+    public ICommand OpenHubCommand { get; }
 
     public object CurrentPage
     {
         get => _currentPage;
         private set
         {
-            if (!SetProperty(ref _currentPage, value)) return;
+            if (!SetProperty(ref _currentPage, value))
+            {
+                return;
+            }
+
             OnPropertyChanged(nameof(IsHomeSelected));
             OnPropertyChanged(nameof(IsWindowsSelected));
-            OnPropertyChanged(nameof(IsSettingsSelected));
         }
     }
 
     public bool IsExpanded => _state.IsExpanded;
     public bool IsHomeSelected => ReferenceEquals(CurrentPage, Home);
     public bool IsWindowsSelected => ReferenceEquals(CurrentPage, Windows);
-    public bool IsSettingsSelected => ReferenceEquals(CurrentPage, Settings);
     public double SidebarWidth => _state.ExpandedWidth;
     public bool AnimationsEnabled => _state.AnimationsEnabled;
     public bool AlwaysOnTop => Settings.AlwaysOnTop;
@@ -79,14 +85,22 @@ public sealed class SidebarViewModel : ObservableObject
 
     public void Expand()
     {
-        if (IsExpanded) return;
+        if (IsExpanded)
+        {
+            return;
+        }
+
         _state.Expand();
         OnPropertyChanged(nameof(IsExpanded));
     }
 
     public void Collapse()
     {
-        if (!IsExpanded) return;
+        if (!IsExpanded)
+        {
+            return;
+        }
+
         _state.Collapse();
         OnPropertyChanged(nameof(IsExpanded));
     }
@@ -105,21 +119,8 @@ public sealed class SidebarViewModel : ObservableObject
         CurrentPage = Windows;
     }
 
-    public void ShowSettings() => CurrentPage = Settings;
-
-    private void OnSettingsNavigationRequested(object? sender, string categoryName)
-    {
-        var category = Settings.Categories.FirstOrDefault(item =>
-            item.Name.Equals(categoryName, StringComparison.CurrentCultureIgnoreCase));
-
-        if (category is not null)
-        {
-            Settings.SelectedCategory = category;
-        }
-
-        CurrentPage = Settings;
-        Expand();
-    }
+    private void OnSettingsNavigationRequested(object? sender, string categoryName) =>
+        _openHub("Settings", categoryName);
 
     private void OnSettingsChanged(object? sender, SettingChangedEventArgs e)
     {

@@ -75,7 +75,7 @@ public sealed class MainViewModel : ObservableObject
     public bool IsAmbienceSelected => CurrentSection == "Ambience";
     public bool IsSettingsSelected => CurrentSection == "Settings";
 
-    public void NavigateTo(string? section)
+    public void NavigateTo(string? section, string? settingsCategory = null)
     {
         switch (section?.Trim().ToLowerInvariant())
         {
@@ -92,7 +92,7 @@ public sealed class MainViewModel : ObservableObject
                 ShowAmbience();
                 break;
             case "settings":
-                ShowSettings();
+                ShowSettings(settingsCategory);
                 break;
             default:
                 ShowHome();

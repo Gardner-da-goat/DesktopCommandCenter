@@ -4,8 +4,8 @@ using DesktopCommandCenter.App.ViewModels;
 using DesktopCommandCenter.App.Views;
 using DesktopCommandCenter.Core.Settings;
 using DesktopCommandCenter.Windows.Apps;
-using DesktopCommandCenter.Windows.Monitors;
 using DesktopCommandCenter.Windows.Files;
+using DesktopCommandCenter.Windows.Monitors;
 using DesktopCommandCenter.Windows.Shell;
 using DesktopCommandCenter.Windows.Windows;
 
@@ -13,7 +13,9 @@ namespace DesktopCommandCenter.App;
 
 public partial class App : System.Windows.Application
 {
-    private SidebarWindow? _window;
+    private SidebarWindow? _sidebarWindow;
+    private MainWindow? _mainWindow;
+    private MainViewModel? _mainViewModel;
     private TrayIconService? _trayIcon;
     private SettingsViewModel? _settingsViewModel;
     private WindowsViewModel? _windowsViewModel;
@@ -31,6 +33,7 @@ public partial class App : System.Windows.Application
         var settings = settingsService.Load();
         _appSettings = settings;
         _ambienceService = new AmbienceService();
+
         var shellActions = new ShellActionService();
         _shellActions = shellActions;
         var appLauncher = new AppLauncherService();
@@ -39,6 +42,7 @@ public partial class App : System.Windows.Application
         var windowService = new WindowService();
         var fileSearchService = new FileSearchService();
         fileSearchService.StartIndexing();
+
         _appearanceService = new AppearanceService();
         _appearanceService.Apply(settings.ThemeMode, settings.AccentName);
 
@@ -97,37 +101,47 @@ public partial class App : System.Windows.Application
             _settingsViewModel,
             recentViewModel);
 
+        var musicViewModel = new MusicViewModel(shellActions);
+        var filesViewModel = new FilesViewModel(shellActions);
+
+        _mainViewModel = new MainViewModel(
+            homeViewModel,
+            musicViewModel,
+            filesViewModel,
+            _windowsViewModel,
+            _settingsViewModel);
+
+        _mainWindow = new MainWindow(_mainViewModel);
+
         var sidebarViewModel = new SidebarViewModel(
             settings,
             homeViewModel,
             _windowsViewModel,
-            _settingsViewModel);
+            _settingsViewModel,
+            OpenHub);
 
-        _window = new SidebarWindow(
+        _sidebarWindow = new SidebarWindow(
             sidebarViewModel,
             new MonitorService(),
             windowService);
 
         _trayIcon = new TrayIconService(
-            open: () => RunOnUi(() =>
+            openHub: () => RunOnUi(() => OpenHub("Home", null)),
+            openSidebar: () => RunOnUi(() =>
             {
                 sidebarViewModel.Expand();
                 ActivateSidebar();
             }),
-            collapse: () => RunOnUi(sidebarViewModel.Collapse),
-            settings: () => RunOnUi(() =>
-            {
-                sidebarViewModel.ShowSettings();
-                sidebarViewModel.Expand();
-                ActivateSidebar();
-            }),
+            collapseSidebar: () => RunOnUi(sidebarViewModel.Collapse),
+            settings: () => RunOnUi(() => OpenHub("Settings", "General")),
             exit: () => RunOnUi(ExitApplication));
 
         _trayIcon.SetVisible(settings.ShowTrayIcon);
         _settingsViewModel.SettingsChanged += OnSettingsChanged;
         _settingsViewModel.Updates.RestartRequested += OnUpdateRestartRequested;
 
-        _window.Show();
+        _mainWindow.Show();
+        _sidebarWindow.Show();
         _ambienceService.Apply(settings);
 
         if (settings.AutoCheckForUpdates)
@@ -179,28 +193,53 @@ public partial class App : System.Windows.Application
                 _settingsViewModel.ThemeMode,
                 _settingsViewModel.AccentName);
         }
-        else if (e.PropertyName.StartsWith("Ambience", StringComparison.Ordinal) &&
+        else if (e.PropertyName.StartsWith(
+                     "Ambience",
+                     StringComparison.Ordinal) &&
                  _appSettings is not null)
         {
             _ambienceService?.Apply(_appSettings);
         }
     }
 
-    private void OnUpdateRestartRequested(object? sender, EventArgs e) => ExitApplication();
+    private void OnUpdateRestartRequested(object? sender, EventArgs e) =>
+        ExitApplication();
 
-    private void ActivateSidebar()
+    private void OpenHub(string section, string? settingsCategory)
     {
-        if (_window is null)
+        if (_mainWindow is null || _mainViewModel is null)
         {
             return;
         }
 
-        if (!_window.IsVisible)
+        _mainViewModel.NavigateTo(section, settingsCategory);
+
+        if (!_mainWindow.IsVisible)
         {
-            _window.Show();
+            _mainWindow.Show();
         }
 
-        _window.Activate();
+        if (_mainWindow.WindowState == WindowState.Minimized)
+        {
+            _mainWindow.WindowState = WindowState.Normal;
+        }
+
+        _mainWindow.Activate();
+    }
+
+    private void ActivateSidebar()
+    {
+        if (_sidebarWindow is null)
+        {
+            return;
+        }
+
+        if (!_sidebarWindow.IsVisible)
+        {
+            _sidebarWindow.Show();
+        }
+
+        _sidebarWindow.Activate();
     }
 
     private void RunOnUi(Action action) => Dispatcher.Invoke(action);
@@ -213,6 +252,7 @@ public partial class App : System.Windows.Application
         }
 
         _isExiting = true;
+
         if (_settingsViewModel is not null)
         {
             _settingsViewModel.SettingsChanged -= OnSettingsChanged;
@@ -224,7 +264,8 @@ public partial class App : System.Windows.Application
         _windowsViewModel?.Dispose();
         _trayIcon?.Dispose();
         _trayIcon = null;
-        _window?.CloseForExit();
+        _sidebarWindow?.CloseForExit();
+        _mainWindow?.CloseForExit();
         Shutdown();
     }
 

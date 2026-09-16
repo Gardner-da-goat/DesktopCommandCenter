@@ -16,6 +16,12 @@ public sealed class ShellActionService
         return OpenPath(path);
     }
 
+    public bool OpenMusicFolder()
+    {
+        var path = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+        return !string.IsNullOrWhiteSpace(path) && OpenPath(path);
+    }
+
     public bool OpenTaskManager() => Start("taskmgr.exe");
 
     public bool OpenWindowsSettings() => Start("ms-settings:");

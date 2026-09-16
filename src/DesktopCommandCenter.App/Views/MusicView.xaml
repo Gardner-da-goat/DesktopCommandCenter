@@ -1,0 +1,91 @@
+<UserControl x:Class="DesktopCommandCenter.App.Views.MusicView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel>
+                <TextBlock Text="Music"
+                           FontSize="30"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="A full-size home for the music side of the app. For now it controls whichever Windows player is active, and this is where the existing music project can plug in."
+                           Style="{StaticResource MutedText}"
+                           TextWrapping="Wrap"
+                           Margin="0,6,0,0" />
+            </StackPanel>
+
+            <Border Grid.Row="1"
+                    Style="{StaticResource CardStyle}"
+                    Padding="22"
+                    Margin="0,18,0,0">
+                <StackPanel>
+                    <TextBlock Text="Now playing controls"
+                               Style="{StaticResource SectionTitleText}"
+                               FontSize="18"
+                               Margin="0,0,0,14" />
+
+                    <UniformGrid Columns="3" Margin="0,0,0,12">
+                        <Button Content="Previous"
+                                Command="{Binding PreviousTrackCommand}"
+                                Height="48"
+                                Margin="0,0,6,0" />
+                        <Button Content="Play / Pause"
+                                Command="{Binding PlayPauseCommand}"
+                                Height="48"
+                                Margin="6,0" />
+                        <Button Content="Next"
+                                Command="{Binding NextTrackCommand}"
+                                Height="48"
+                                Margin="6,0,0,0" />
+                    </UniformGrid>
+
+                    <UniformGrid Columns="3">
+                        <Button Content="Volume −"
+                                Command="{Binding VolumeDownCommand}"
+                                Height="40"
+                                Margin="0,0,6,0" />
+                        <Button Content="Mute"
+                                Command="{Binding ToggleMuteCommand}"
+                                Height="40"
+                                Margin="6,0" />
+                        <Button Content="Volume +"
+                                Command="{Binding VolumeUpCommand}"
+                                Height="40"
+                                Margin="6,0,0,0" />
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="2"
+                    Style="{StaticResource CardStyle}"
+                    Padding="20"
+                    Margin="0,14,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Music library"
+                                   FontWeight="SemiBold"
+                                   FontSize="16" />
+                        <TextBlock Text="Open your Windows Music folder. The merged music library/player can grow here without changing the sidebar."
+                                   Style="{StaticResource MutedText}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,4,16,0" />
+                    </StackPanel>
+                    <Button Grid.Column="1"
+                            Content="Open Music Folder"
+                            Command="{Binding OpenMusicFolderCommand}"
+                            Padding="14,8"
+                            VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

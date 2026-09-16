@@ -101,7 +101,9 @@ public partial class App : System.Windows.Application
             _settingsViewModel,
             recentViewModel);
 
-        var musicViewModel = new MusicViewModel(shellActions);
+        var musicViewModel = new MusicViewModel(
+            shellActions,
+            new PulseDeckIntegrationService());
         var filesViewModel = new FilesViewModel(shellActions);
 
         _mainViewModel = new MainViewModel(

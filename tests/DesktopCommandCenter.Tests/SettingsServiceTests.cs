@@ -54,12 +54,26 @@ public sealed class SettingsServiceTests
         Assert.IsFalse(settings.AmbienceEnabled);
         Assert.AreEqual("Aquarium", settings.AmbienceMode);
         Assert.AreEqual(10, settings.AmbiencePopulation);
-        Assert.IsTrue(settings.AmbienceBreedingEnabled);
+        Assert.IsFalse(settings.AmbienceBreedingEnabled);
         Assert.AreEqual(24, settings.AmbienceMaxPopulation);
         Assert.AreEqual(1d, settings.AmbienceSpeed);
-        Assert.AreEqual(0.72d, settings.AmbienceOpacity);
+        Assert.AreEqual(0.78d, settings.AmbienceOpacity);
         Assert.IsTrue(settings.AmbienceAllMonitors);
         Assert.IsFalse(settings.AmbienceOverApps);
+        Assert.IsTrue(settings.AmbienceBackgroundEnabled);
+        Assert.IsTrue(settings.AmbienceCreaturesEnabled);
+        Assert.IsTrue(settings.AmbienceEffectsEnabled);
+        Assert.AreEqual("Coral Reef", settings.AmbienceBackgroundPreset);
+        Assert.AreEqual(0.58d, settings.AmbienceBackgroundOpacity);
+        Assert.AreEqual(1d, settings.AmbienceBackgroundBrightness);
+        Assert.AreEqual(0.35d, settings.AmbienceBackgroundMotion);
+        Assert.AreEqual(1d, settings.AmbienceCreatureSize);
+        Assert.IsTrue(settings.AmbienceRandomDirection);
+        Assert.IsTrue(settings.AmbienceSchooling);
+        Assert.AreEqual(0.55d, settings.AmbienceBubbleIntensity);
+        Assert.AreEqual(0.4d, settings.AmbienceParticleIntensity);
+        Assert.AreEqual(0.45d, settings.AmbienceGlowIntensity);
+        Assert.IsTrue(settings.AmbiencePerformanceMode);
         Assert.IsTrue(settings.SearchAppsEnabled);
         Assert.IsTrue(settings.SearchWindowsEnabled);
         Assert.IsTrue(settings.SearchActionsEnabled);
@@ -153,6 +167,20 @@ public sealed class SettingsServiceTests
             AmbienceOpacity = 0.55,
             AmbienceAllMonitors = false,
             AmbienceOverApps = true,
+            AmbienceBackgroundEnabled = true,
+            AmbienceCreaturesEnabled = false,
+            AmbienceEffectsEnabled = true,
+            AmbienceBackgroundPreset = "Kelp Forest",
+            AmbienceBackgroundOpacity = 0.44,
+            AmbienceBackgroundBrightness = 1.2,
+            AmbienceBackgroundMotion = 0.7,
+            AmbienceCreatureSize = 1.25,
+            AmbienceRandomDirection = false,
+            AmbienceSchooling = false,
+            AmbienceBubbleIntensity = 0.8,
+            AmbienceParticleIntensity = 0.2,
+            AmbienceGlowIntensity = 0.65,
+            AmbiencePerformanceMode = false,
             SearchAppsEnabled = false,
             SearchSettingsEnabled = false,
             SearchFilesEnabled = false,
@@ -210,6 +238,20 @@ public sealed class SettingsServiceTests
         Assert.AreEqual(0.55d, settings.AmbienceOpacity);
         Assert.IsFalse(settings.AmbienceAllMonitors);
         Assert.IsTrue(settings.AmbienceOverApps);
+        Assert.IsTrue(settings.AmbienceBackgroundEnabled);
+        Assert.IsFalse(settings.AmbienceCreaturesEnabled);
+        Assert.IsTrue(settings.AmbienceEffectsEnabled);
+        Assert.AreEqual("Kelp Forest", settings.AmbienceBackgroundPreset);
+        Assert.AreEqual(0.44d, settings.AmbienceBackgroundOpacity);
+        Assert.AreEqual(1.2d, settings.AmbienceBackgroundBrightness);
+        Assert.AreEqual(0.7d, settings.AmbienceBackgroundMotion);
+        Assert.AreEqual(1.25d, settings.AmbienceCreatureSize);
+        Assert.IsFalse(settings.AmbienceRandomDirection);
+        Assert.IsFalse(settings.AmbienceSchooling);
+        Assert.AreEqual(0.8d, settings.AmbienceBubbleIntensity);
+        Assert.AreEqual(0.2d, settings.AmbienceParticleIntensity);
+        Assert.AreEqual(0.65d, settings.AmbienceGlowIntensity);
+        Assert.IsFalse(settings.AmbiencePerformanceMode);
         Assert.IsFalse(settings.SearchAppsEnabled);
         Assert.IsFalse(settings.SearchSettingsEnabled);
         Assert.IsFalse(settings.SearchFilesEnabled);
@@ -260,6 +302,7 @@ public sealed class SettingsServiceTests
         var settings = new AppSettings
         {
             AmbienceMode = "unknown",
+            AmbienceBackgroundPreset = "unknown",
             AmbiencePopulation = 99,
             AmbienceMaxPopulation = 3,
             AmbienceSpeed = 99,
@@ -267,6 +310,7 @@ public sealed class SettingsServiceTests
         }.Normalize();
 
         Assert.AreEqual("Aquarium", settings.AmbienceMode);
+        Assert.AreEqual("Coral Reef", settings.AmbienceBackgroundPreset);
         Assert.AreEqual(30, settings.AmbiencePopulation);
         Assert.AreEqual(30, settings.AmbienceMaxPopulation);
         Assert.AreEqual(2.5d, settings.AmbienceSpeed);

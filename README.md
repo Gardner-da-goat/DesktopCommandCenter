@@ -104,18 +104,28 @@ Quick Actions can be individually shown or hidden.
 
 ### Desktop ambience
 
-- Optional click-through ambience overlay
-- Aquarium scene with guppies, neon fish, goldfish, and angelfish
-- Fish have different size and speed traits
-- Same-species adults can breed
-- Babies grow into adults and inherit slightly varied traits
-- Configurable starting population and population cap
-- Optional firefly scene with drifting, pulsing lights
-- Optional passive desktop pet that roams along the bottom of the screen
-- Configurable speed and opacity
+- Animation-driven ambience engine with no per-frame creature simulation loop
+- Three independent layers: background, animated creatures, and foreground effects
+- Optional background overlays that sit over the wallpaper
+- Background presets:
+  - Coral Reef
+  - Deep Ocean
+  - Kelp Forest
+  - Fireflies Night
+  - Minimal Gradient
+  - Space
+- Background opacity, brightness, and motion controls
+- Polished vector fish with gradients, fins, markings, animated tails, depth variation, and smooth swim paths
+- Fish species include guppies, neon fish, goldfish, and angelfish
+- Creature density, size, speed, opacity, random direction, and schooling controls
+- Firefly creature mode with drifting/pulsing lights
+- Passive animated desktop cat
+- Foreground bubbles, particles, and glow controls
+- Performance mode caps active actors/effects and disables expensive creature shadows
 - Primary-monitor or all-monitor coverage
 - Option to keep ambience behind normal apps or show it over apps
-- Ambience never captures mouse input
+- Entire ambience window is click-through and never captures mouse input
+- Legacy breeding simulation is disabled; visual population variety is animation-driven for smoother performance
 
 ### Appearance
 

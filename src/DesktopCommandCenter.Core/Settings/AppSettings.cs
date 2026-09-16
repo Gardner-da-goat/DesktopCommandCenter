@@ -2,7 +2,7 @@ namespace DesktopCommandCenter.Core.Settings;
 
 public sealed class AppSettings
 {
-    public const int CurrentVersion = 23;
+    public const int CurrentVersion = 24;
     public const double MinimumSidebarWidth = 300;
     public const double MaximumSidebarWidth = 520;
     public const double DefaultSidebarWidth = 360;
@@ -37,6 +37,16 @@ public sealed class AppSettings
     public string OpacityUpHotkey { get; set; } = "Ctrl+Alt+Up";
     public string OpacityDownHotkey { get; set; } = "Ctrl+Alt+Down";
     public bool ReflowWindowsOnSidebar { get; set; } = true;
+
+    public bool AmbienceEnabled { get; set; } = false;
+    public string AmbienceMode { get; set; } = "Aquarium";
+    public int AmbiencePopulation { get; set; } = 10;
+    public bool AmbienceBreedingEnabled { get; set; } = true;
+    public int AmbienceMaxPopulation { get; set; } = 24;
+    public double AmbienceSpeed { get; set; } = 1;
+    public double AmbienceOpacity { get; set; } = 0.72;
+    public bool AmbienceAllMonitors { get; set; } = true;
+    public bool AmbienceOverApps { get; set; } = false;
 
     public bool SearchAppsEnabled { get; set; } = true;
     public bool SearchWindowsEnabled { get; set; } = true;
@@ -88,6 +98,23 @@ public sealed class AppSettings
     {
         SettingsVersion = CurrentVersion;
         SidebarWidth = SidebarWidth;
+        AmbienceMode = AmbienceMode switch
+        {
+            "Fireflies" => "Fireflies",
+            "Desktop Pet" => "Desktop Pet",
+            _ => "Aquarium"
+        };
+        AmbiencePopulation = Math.Clamp(AmbiencePopulation, 2, 30);
+        AmbienceMaxPopulation = Math.Clamp(
+            Math.Max(AmbienceMaxPopulation, AmbiencePopulation),
+            2,
+            60);
+        AmbienceSpeed = double.IsFinite(AmbienceSpeed)
+            ? Math.Clamp(AmbienceSpeed, 0.35, 2.5)
+            : 1;
+        AmbienceOpacity = double.IsFinite(AmbienceOpacity)
+            ? Math.Clamp(AmbienceOpacity, 0.15, 1)
+            : 0.72;
 
         FavoriteApps ??= [];
         FavoriteApps = FavoriteApps

@@ -23,7 +23,7 @@ public partial class FilesView : System.Windows.Controls.UserControl
     private void OnQuickLocationClick(object sender, RoutedEventArgs e)
     {
         if (DataContext is FilesViewModel viewModel &&
-            sender is Button { Tag: FileExplorerItem item })
+            sender is System.Windows.Controls.Button { Tag: FileExplorerItem item })
         {
             viewModel.NavigateQuick(item);
         }

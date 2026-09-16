@@ -55,6 +55,12 @@ public sealed class SettingsViewModel : ObservableObject
         AmbienceAquariumCommand = new RelayCommand(() => AmbienceMode = "Aquarium");
         AmbienceFirefliesCommand = new RelayCommand(() => AmbienceMode = "Fireflies");
         AmbiencePetCommand = new RelayCommand(() => AmbienceMode = "Desktop Pet");
+        AmbienceCoralReefCommand = new RelayCommand(() => AmbienceBackgroundPreset = "Coral Reef");
+        AmbienceDeepOceanCommand = new RelayCommand(() => AmbienceBackgroundPreset = "Deep Ocean");
+        AmbienceKelpForestCommand = new RelayCommand(() => AmbienceBackgroundPreset = "Kelp Forest");
+        AmbienceFirefliesNightCommand = new RelayCommand(() => AmbienceBackgroundPreset = "Fireflies Night");
+        AmbienceMinimalGradientCommand = new RelayCommand(() => AmbienceBackgroundPreset = "Minimal Gradient");
+        AmbienceSpaceCommand = new RelayCommand(() => AmbienceBackgroundPreset = "Space");
         Categories = new ObservableCollection<SettingsCategory>
         {
             new("General", "Startup, sidebar, and application behavior."),
@@ -102,6 +108,12 @@ public sealed class SettingsViewModel : ObservableObject
     public RelayCommand AmbienceAquariumCommand { get; }
     public RelayCommand AmbienceFirefliesCommand { get; }
     public RelayCommand AmbiencePetCommand { get; }
+    public RelayCommand AmbienceCoralReefCommand { get; }
+    public RelayCommand AmbienceDeepOceanCommand { get; }
+    public RelayCommand AmbienceKelpForestCommand { get; }
+    public RelayCommand AmbienceFirefliesNightCommand { get; }
+    public RelayCommand AmbienceMinimalGradientCommand { get; }
+    public RelayCommand AmbienceSpaceCommand { get; }
 
     public SettingsCategory SelectedCategory
     {
@@ -357,6 +369,41 @@ public sealed class SettingsViewModel : ObservableObject
         }
     }
 
+    public bool AmbienceBackgroundEnabled
+    {
+        get => _settings.AmbienceBackgroundEnabled;
+        set => SetBoolean(value, () => _settings.AmbienceBackgroundEnabled, v => _settings.AmbienceBackgroundEnabled = v);
+    }
+
+    public bool AmbienceCreaturesEnabled
+    {
+        get => _settings.AmbienceCreaturesEnabled;
+        set => SetBoolean(value, () => _settings.AmbienceCreaturesEnabled, v => _settings.AmbienceCreaturesEnabled = v);
+    }
+
+    public bool AmbienceEffectsEnabled
+    {
+        get => _settings.AmbienceEffectsEnabled;
+        set => SetBoolean(value, () => _settings.AmbienceEffectsEnabled, v => _settings.AmbienceEffectsEnabled = v);
+    }
+
+    public string AmbienceBackgroundPreset
+    {
+        get => NormalizeAmbienceBackgroundPreset(_settings.AmbienceBackgroundPreset);
+        set
+        {
+            var normalized = NormalizeAmbienceBackgroundPreset(value);
+            if (string.Equals(_settings.AmbienceBackgroundPreset, normalized, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _settings.AmbienceBackgroundPreset = normalized;
+            SaveAndNotify();
+            OnPropertyChanged();
+        }
+    }
+
     public int AmbiencePopulation
     {
         get => Math.Clamp(_settings.AmbiencePopulation, 2, 30);
@@ -369,42 +416,6 @@ public sealed class SettingsViewModel : ObservableObject
             }
 
             _settings.AmbiencePopulation = normalized;
-            if (_settings.AmbienceMaxPopulation < normalized)
-            {
-                _settings.AmbienceMaxPopulation = normalized;
-                OnPropertyChanged(nameof(AmbienceMaxPopulation));
-            }
-
-            SaveAndNotify();
-            OnPropertyChanged();
-        }
-    }
-
-    public bool AmbienceBreedingEnabled
-    {
-        get => _settings.AmbienceBreedingEnabled;
-        set => SetBoolean(value, () => _settings.AmbienceBreedingEnabled, v => _settings.AmbienceBreedingEnabled = v);
-    }
-
-    public int AmbienceMaxPopulation
-    {
-        get => Math.Clamp(
-            Math.Max(_settings.AmbienceMaxPopulation, AmbiencePopulation),
-            2,
-            60);
-        set
-        {
-            var normalized = Math.Clamp(
-                Math.Max(value, AmbiencePopulation),
-                2,
-                60);
-
-            if (_settings.AmbienceMaxPopulation == normalized)
-            {
-                return;
-            }
-
-            _settings.AmbienceMaxPopulation = normalized;
             SaveAndNotify();
             OnPropertyChanged();
         }
@@ -412,46 +423,128 @@ public sealed class SettingsViewModel : ObservableObject
 
     public double AmbienceSpeed
     {
-        get => double.IsFinite(_settings.AmbienceSpeed)
-            ? Math.Clamp(_settings.AmbienceSpeed, 0.35, 2.5)
-            : 1;
-        set
-        {
-            var normalized = double.IsFinite(value)
-                ? Math.Clamp(value, 0.35, 2.5)
-                : 1;
-
-            if (Math.Abs(_settings.AmbienceSpeed - normalized) < 0.01)
-            {
-                return;
-            }
-
-            _settings.AmbienceSpeed = normalized;
-            SaveAndNotify();
-            OnPropertyChanged();
-        }
+        get => NormalizeAmbienceDouble(_settings.AmbienceSpeed, 0.35, 2.5, 1);
+        set => SetAmbienceDouble(
+            value,
+            0.35,
+            2.5,
+            1,
+            () => _settings.AmbienceSpeed,
+            v => _settings.AmbienceSpeed = v);
     }
 
     public double AmbienceOpacity
     {
-        get => double.IsFinite(_settings.AmbienceOpacity)
-            ? Math.Clamp(_settings.AmbienceOpacity, 0.15, 1)
-            : 0.72;
-        set
-        {
-            var normalized = double.IsFinite(value)
-                ? Math.Clamp(value, 0.15, 1)
-                : 0.72;
+        get => NormalizeAmbienceDouble(_settings.AmbienceOpacity, 0.15, 1, 0.78);
+        set => SetAmbienceDouble(
+            value,
+            0.15,
+            1,
+            0.78,
+            () => _settings.AmbienceOpacity,
+            v => _settings.AmbienceOpacity = v);
+    }
 
-            if (Math.Abs(_settings.AmbienceOpacity - normalized) < 0.01)
-            {
-                return;
-            }
+    public double AmbienceBackgroundOpacity
+    {
+        get => NormalizeAmbienceDouble(_settings.AmbienceBackgroundOpacity, 0, 1, 0.58);
+        set => SetAmbienceDouble(
+            value,
+            0,
+            1,
+            0.58,
+            () => _settings.AmbienceBackgroundOpacity,
+            v => _settings.AmbienceBackgroundOpacity = v);
+    }
 
-            _settings.AmbienceOpacity = normalized;
-            SaveAndNotify();
-            OnPropertyChanged();
-        }
+    public double AmbienceBackgroundBrightness
+    {
+        get => NormalizeAmbienceDouble(_settings.AmbienceBackgroundBrightness, 0.4, 1.6, 1);
+        set => SetAmbienceDouble(
+            value,
+            0.4,
+            1.6,
+            1,
+            () => _settings.AmbienceBackgroundBrightness,
+            v => _settings.AmbienceBackgroundBrightness = v);
+    }
+
+    public double AmbienceBackgroundMotion
+    {
+        get => NormalizeAmbienceDouble(_settings.AmbienceBackgroundMotion, 0, 1, 0.35);
+        set => SetAmbienceDouble(
+            value,
+            0,
+            1,
+            0.35,
+            () => _settings.AmbienceBackgroundMotion,
+            v => _settings.AmbienceBackgroundMotion = v);
+    }
+
+    public double AmbienceCreatureSize
+    {
+        get => NormalizeAmbienceDouble(_settings.AmbienceCreatureSize, 0.6, 1.6, 1);
+        set => SetAmbienceDouble(
+            value,
+            0.6,
+            1.6,
+            1,
+            () => _settings.AmbienceCreatureSize,
+            v => _settings.AmbienceCreatureSize = v);
+    }
+
+    public bool AmbienceRandomDirection
+    {
+        get => _settings.AmbienceRandomDirection;
+        set => SetBoolean(value, () => _settings.AmbienceRandomDirection, v => _settings.AmbienceRandomDirection = v);
+    }
+
+    public bool AmbienceSchooling
+    {
+        get => _settings.AmbienceSchooling;
+        set => SetBoolean(value, () => _settings.AmbienceSchooling, v => _settings.AmbienceSchooling = v);
+    }
+
+    public double AmbienceBubbleIntensity
+    {
+        get => NormalizeAmbienceDouble(_settings.AmbienceBubbleIntensity, 0, 1, 0.55);
+        set => SetAmbienceDouble(
+            value,
+            0,
+            1,
+            0.55,
+            () => _settings.AmbienceBubbleIntensity,
+            v => _settings.AmbienceBubbleIntensity = v);
+    }
+
+    public double AmbienceParticleIntensity
+    {
+        get => NormalizeAmbienceDouble(_settings.AmbienceParticleIntensity, 0, 1, 0.4);
+        set => SetAmbienceDouble(
+            value,
+            0,
+            1,
+            0.4,
+            () => _settings.AmbienceParticleIntensity,
+            v => _settings.AmbienceParticleIntensity = v);
+    }
+
+    public double AmbienceGlowIntensity
+    {
+        get => NormalizeAmbienceDouble(_settings.AmbienceGlowIntensity, 0, 1, 0.45);
+        set => SetAmbienceDouble(
+            value,
+            0,
+            1,
+            0.45,
+            () => _settings.AmbienceGlowIntensity,
+            v => _settings.AmbienceGlowIntensity = v);
+    }
+
+    public bool AmbiencePerformanceMode
+    {
+        get => _settings.AmbiencePerformanceMode;
+        set => SetBoolean(value, () => _settings.AmbiencePerformanceMode, v => _settings.AmbiencePerformanceMode = v);
     }
 
     public bool AmbienceAllMonitors
@@ -661,6 +754,51 @@ public sealed class SettingsViewModel : ObservableObject
     {
         get => _settings.ShowMacrosModule;
         set => SetBoolean(value, () => _settings.ShowMacrosModule, v => _settings.ShowMacrosModule = v);
+    }
+
+    private static string NormalizeAmbienceBackgroundPreset(string? value) =>
+        value switch
+        {
+            "Deep Ocean" => "Deep Ocean",
+            "Kelp Forest" => "Kelp Forest",
+            "Fireflies Night" => "Fireflies Night",
+            "Minimal Gradient" => "Minimal Gradient",
+            "Space" => "Space",
+            _ => "Coral Reef"
+        };
+
+    private static double NormalizeAmbienceDouble(
+        double value,
+        double minimum,
+        double maximum,
+        double fallback) =>
+        double.IsFinite(value)
+            ? Math.Clamp(value, minimum, maximum)
+            : fallback;
+
+    private void SetAmbienceDouble(
+        double value,
+        double minimum,
+        double maximum,
+        double fallback,
+        Func<double> getValue,
+        Action<double> setValue,
+        [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+    {
+        var normalized = NormalizeAmbienceDouble(
+            value,
+            minimum,
+            maximum,
+            fallback);
+
+        if (Math.Abs(getValue() - normalized) < 0.01)
+        {
+            return;
+        }
+
+        setValue(normalized);
+        SaveAndNotify(propertyName);
+        OnPropertyChanged(propertyName);
     }
 
     private static string NormalizeAmbienceMode(string? value) =>

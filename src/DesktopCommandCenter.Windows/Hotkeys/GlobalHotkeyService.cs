@@ -17,9 +17,14 @@ public sealed class GlobalHotkeyService : IDisposable
 
     public void RegisterDefaults(
         nint windowHandle,
-        string? togglePreset,
-        string? searchPreset,
-        bool windowControlHotkeysEnabled)
+        string? toggleHotkey,
+        string? searchHotkey,
+        bool windowControlHotkeysEnabled,
+        string? snapLeftHotkey,
+        string? snapRightHotkey,
+        string? toggleTopmostHotkey,
+        string? opacityUpHotkey,
+        string? opacityDownHotkey)
     {
         if (windowHandle == 0)
         {
@@ -29,33 +34,19 @@ public sealed class GlobalHotkeyService : IDisposable
         Unregister();
         _windowHandle = windowHandle;
 
-        var toggle = ResolveToggle(togglePreset);
-        var search = ResolveSearch(searchPreset);
-
-        Register(
-            ToggleSidebarId,
-            toggle.Modifiers,
-            toggle.VirtualKey);
-
-        Register(
-            FocusSearchId,
-            search.Modifiers,
-            search.VirtualKey);
+        RegisterIfValid(ToggleSidebarId, toggleHotkey);
+        RegisterIfValid(FocusSearchId, searchHotkey);
 
         if (!windowControlHotkeysEnabled)
         {
             return;
         }
 
-        var windowModifiers =
-            NativeMethods.ModControl |
-            NativeMethods.ModAlt;
-
-        Register(SnapLeftId, windowModifiers, NativeMethods.VkLeft);
-        Register(SnapRightId, windowModifiers, NativeMethods.VkRight);
-        Register(ToggleTopmostId, windowModifiers, NativeMethods.VkT);
-        Register(OpacityUpId, windowModifiers, NativeMethods.VkUp);
-        Register(OpacityDownId, windowModifiers, NativeMethods.VkDown);
+        RegisterIfValid(SnapLeftId, snapLeftHotkey);
+        RegisterIfValid(SnapRightId, snapRightHotkey);
+        RegisterIfValid(ToggleTopmostId, toggleTopmostHotkey);
+        RegisterIfValid(OpacityUpId, opacityUpHotkey);
+        RegisterIfValid(OpacityDownId, opacityDownHotkey);
     }
 
     public void Unregister()
@@ -95,13 +86,21 @@ public sealed class GlobalHotkeyService : IDisposable
 
     public void Dispose() => Unregister();
 
-    private void Register(int id, uint modifiers, uint virtualKey)
+    public static bool IsSupportedHotkey(string? text) =>
+        TryParseHotkey(text, out _);
+
+    private void RegisterIfValid(int id, string? text)
     {
+        if (!TryParseHotkey(text, out var hotkey))
+        {
+            return;
+        }
+
         if (NativeMethods.RegisterHotKey(
                 _windowHandle,
                 id,
-                modifiers | NativeMethods.ModNoRepeat,
-                virtualKey))
+                hotkey.Modifiers | NativeMethods.ModNoRepeat,
+                hotkey.VirtualKey))
         {
             _registeredIds.Add(id);
         }
@@ -110,33 +109,123 @@ public sealed class GlobalHotkeyService : IDisposable
     private static bool IsMessage(int message, nint wParam, int id) =>
         message == NativeMethods.WmHotkey && wParam == id;
 
-    private static HotkeyDefinition ResolveToggle(string? preset) =>
-        preset switch
+    private static bool TryParseHotkey(
+        string? text,
+        out HotkeyDefinition hotkey)
+    {
+        hotkey = default;
+
+        if (string.IsNullOrWhiteSpace(text))
         {
-            "Ctrl+Alt+Space" => new HotkeyDefinition(
-                NativeMethods.ModControl | NativeMethods.ModAlt,
-                NativeMethods.VkSpace),
-            "Ctrl+Alt+D" => new HotkeyDefinition(
-                NativeMethods.ModControl | NativeMethods.ModAlt,
-                NativeMethods.VkD),
-            _ => new HotkeyDefinition(
-                NativeMethods.ModControl,
-                NativeMethods.VkSpace)
+            return false;
+        }
+
+        var parts = text
+            .Split('+', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToArray();
+
+        if (parts.Length < 2)
+        {
+            return false;
+        }
+
+        uint modifiers = 0;
+        uint virtualKey = 0;
+        var hasKey = false;
+
+        foreach (var rawPart in parts)
+        {
+            var part = rawPart.Trim();
+
+            if (part.Equals("Ctrl", StringComparison.OrdinalIgnoreCase) ||
+                part.Equals("Control", StringComparison.OrdinalIgnoreCase))
+            {
+                modifiers |= NativeMethods.ModControl;
+                continue;
+            }
+
+            if (part.Equals("Alt", StringComparison.OrdinalIgnoreCase))
+            {
+                modifiers |= NativeMethods.ModAlt;
+                continue;
+            }
+
+            if (part.Equals("Shift", StringComparison.OrdinalIgnoreCase))
+            {
+                modifiers |= NativeMethods.ModShift;
+                continue;
+            }
+
+            if (part.Equals("Win", StringComparison.OrdinalIgnoreCase) ||
+                part.Equals("Windows", StringComparison.OrdinalIgnoreCase))
+            {
+                modifiers |= NativeMethods.ModWin;
+                continue;
+            }
+
+            if (hasKey || !TryParseVirtualKey(part, out virtualKey))
+            {
+                return false;
+            }
+
+            hasKey = true;
+        }
+
+        if (!hasKey || modifiers == 0)
+        {
+            return false;
+        }
+
+        hotkey = new HotkeyDefinition(modifiers, virtualKey);
+        return true;
+    }
+
+    private static bool TryParseVirtualKey(string keyText, out uint virtualKey)
+    {
+        virtualKey = 0;
+        var key = keyText.Trim();
+
+        if (key.Length == 1)
+        {
+            var character = char.ToUpperInvariant(key[0]);
+            if (character is >= 'A' and <= 'Z' ||
+                character is >= '0' and <= '9')
+            {
+                virtualKey = character;
+                return true;
+            }
+        }
+
+        if (key.Length is 2 or 3 &&
+            key[0] is 'F' or 'f' &&
+            int.TryParse(key[1..], out var functionKey) &&
+            functionKey is >= 1 and <= 12)
+        {
+            virtualKey = (uint)(0x70 + functionKey - 1);
+            return true;
+        }
+
+        virtualKey = key.ToLowerInvariant() switch
+        {
+            "space" => 0x20,
+            "left" => 0x25,
+            "up" => 0x26,
+            "right" => 0x27,
+            "down" => 0x28,
+            "enter" or "return" => 0x0D,
+            "tab" => 0x09,
+            "escape" or "esc" => 0x1B,
+            "home" => 0x24,
+            "end" => 0x23,
+            "pageup" or "pgup" => 0x21,
+            "pagedown" or "pgdn" => 0x22,
+            "insert" or "ins" => 0x2D,
+            "delete" or "del" => 0x2E,
+            _ => 0
         };
 
-    private static HotkeyDefinition ResolveSearch(string? preset) =>
-        preset switch
-        {
-            "Ctrl+Shift+F" => new HotkeyDefinition(
-                NativeMethods.ModControl | NativeMethods.ModShift,
-                NativeMethods.VkF),
-            "Ctrl+Alt+F" => new HotkeyDefinition(
-                NativeMethods.ModControl | NativeMethods.ModAlt,
-                NativeMethods.VkF),
-            _ => new HotkeyDefinition(
-                NativeMethods.ModControl | NativeMethods.ModShift,
-                NativeMethods.VkSpace)
-        };
+        return virtualKey != 0;
+    }
 
     private readonly record struct HotkeyDefinition(
         uint Modifiers,

@@ -2,7 +2,7 @@ namespace DesktopCommandCenter.Core.Settings;
 
 public sealed class AppSettings
 {
-    public const int CurrentVersion = 24;
+    public const int CurrentVersion = 25;
     public const double MinimumSidebarWidth = 300;
     public const double MaximumSidebarWidth = 520;
     public const double DefaultSidebarWidth = 360;
@@ -38,15 +38,31 @@ public sealed class AppSettings
     public string OpacityDownHotkey { get; set; } = "Ctrl+Alt+Down";
     public bool ReflowWindowsOnSidebar { get; set; } = true;
 
+    // Ambience
     public bool AmbienceEnabled { get; set; } = false;
     public string AmbienceMode { get; set; } = "Aquarium";
     public int AmbiencePopulation { get; set; } = 10;
-    public bool AmbienceBreedingEnabled { get; set; } = true;
+    public bool AmbienceBreedingEnabled { get; set; } = false;
     public int AmbienceMaxPopulation { get; set; } = 24;
     public double AmbienceSpeed { get; set; } = 1;
-    public double AmbienceOpacity { get; set; } = 0.72;
+    public double AmbienceOpacity { get; set; } = 0.78;
     public bool AmbienceAllMonitors { get; set; } = true;
     public bool AmbienceOverApps { get; set; } = false;
+
+    public bool AmbienceBackgroundEnabled { get; set; } = true;
+    public bool AmbienceCreaturesEnabled { get; set; } = true;
+    public bool AmbienceEffectsEnabled { get; set; } = true;
+    public string AmbienceBackgroundPreset { get; set; } = "Coral Reef";
+    public double AmbienceBackgroundOpacity { get; set; } = 0.58;
+    public double AmbienceBackgroundBrightness { get; set; } = 1;
+    public double AmbienceBackgroundMotion { get; set; } = 0.35;
+    public double AmbienceCreatureSize { get; set; } = 1;
+    public bool AmbienceRandomDirection { get; set; } = true;
+    public bool AmbienceSchooling { get; set; } = true;
+    public double AmbienceBubbleIntensity { get; set; } = 0.55;
+    public double AmbienceParticleIntensity { get; set; } = 0.4;
+    public double AmbienceGlowIntensity { get; set; } = 0.45;
+    public bool AmbiencePerformanceMode { get; set; } = true;
 
     public bool SearchAppsEnabled { get; set; } = true;
     public bool SearchWindowsEnabled { get; set; } = true;
@@ -98,23 +114,66 @@ public sealed class AppSettings
     {
         SettingsVersion = CurrentVersion;
         SidebarWidth = SidebarWidth;
+
         AmbienceMode = AmbienceMode switch
         {
             "Fireflies" => "Fireflies",
             "Desktop Pet" => "Desktop Pet",
             _ => "Aquarium"
         };
+
+        AmbienceBackgroundPreset = AmbienceBackgroundPreset switch
+        {
+            "Deep Ocean" => "Deep Ocean",
+            "Kelp Forest" => "Kelp Forest",
+            "Fireflies Night" => "Fireflies Night",
+            "Minimal Gradient" => "Minimal Gradient",
+            "Space" => "Space",
+            _ => "Coral Reef"
+        };
+
         AmbiencePopulation = Math.Clamp(AmbiencePopulation, 2, 30);
         AmbienceMaxPopulation = Math.Clamp(
             Math.Max(AmbienceMaxPopulation, AmbiencePopulation),
             2,
             60);
-        AmbienceSpeed = double.IsFinite(AmbienceSpeed)
-            ? Math.Clamp(AmbienceSpeed, 0.35, 2.5)
-            : 1;
-        AmbienceOpacity = double.IsFinite(AmbienceOpacity)
-            ? Math.Clamp(AmbienceOpacity, 0.15, 1)
-            : 0.72;
+        AmbienceSpeed = NormalizeDouble(AmbienceSpeed, 0.35, 2.5, 1);
+        AmbienceOpacity = NormalizeDouble(AmbienceOpacity, 0.15, 1, 0.78);
+        AmbienceBackgroundOpacity = NormalizeDouble(
+            AmbienceBackgroundOpacity,
+            0,
+            1,
+            0.58);
+        AmbienceBackgroundBrightness = NormalizeDouble(
+            AmbienceBackgroundBrightness,
+            0.4,
+            1.6,
+            1);
+        AmbienceBackgroundMotion = NormalizeDouble(
+            AmbienceBackgroundMotion,
+            0,
+            1,
+            0.35);
+        AmbienceCreatureSize = NormalizeDouble(
+            AmbienceCreatureSize,
+            0.6,
+            1.6,
+            1);
+        AmbienceBubbleIntensity = NormalizeDouble(
+            AmbienceBubbleIntensity,
+            0,
+            1,
+            0.55);
+        AmbienceParticleIntensity = NormalizeDouble(
+            AmbienceParticleIntensity,
+            0,
+            1,
+            0.4);
+        AmbienceGlowIntensity = NormalizeDouble(
+            AmbienceGlowIntensity,
+            0,
+            1,
+            0.45);
 
         FavoriteApps ??= [];
         FavoriteApps = FavoriteApps
@@ -161,4 +220,13 @@ public sealed class AppSettings
 
         return this;
     }
+
+    private static double NormalizeDouble(
+        double value,
+        double minimum,
+        double maximum,
+        double fallback) =>
+        double.IsFinite(value)
+            ? Math.Clamp(value, minimum, maximum)
+            : fallback;
 }

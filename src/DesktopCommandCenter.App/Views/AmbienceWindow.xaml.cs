@@ -9,6 +9,8 @@ using DesktopCommandCenter.App.Services;
 using DesktopCommandCenter.Core.Settings;
 using Microsoft.Win32;
 using Brushes = System.Windows.Media.Brushes;
+using Brush = System.Windows.Media.Brush;
+using Point = System.Windows.Point;
 using Color = System.Windows.Media.Color;
 using Ellipse = System.Windows.Shapes.Ellipse;
 using Path = System.Windows.Shapes.Path;

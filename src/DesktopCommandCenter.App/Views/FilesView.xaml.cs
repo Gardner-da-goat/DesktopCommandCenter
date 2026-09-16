@@ -5,7 +5,7 @@ using DesktopCommandCenter.App.ViewModels;
 
 namespace DesktopCommandCenter.App.Views;
 
-public partial class FilesView : UserControl
+public partial class FilesView : System.Windows.Controls.UserControl
 {
     public FilesView()
     {

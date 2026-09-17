@@ -10,6 +10,7 @@ public sealed class SettingsViewModel : ObservableObject
     private readonly AppSettings _settings;
     private readonly ISettingsService _settingsService;
     private SettingsCategory _selectedCategory;
+    private string _settingsSearchText = string.Empty;
 
     public SettingsViewModel(
         AppSettings settings,
@@ -26,6 +27,7 @@ public sealed class SettingsViewModel : ObservableObject
         Macros = macros;
         Commands = commands;
         Updates = updates;
+        OpenWindowsSettingsCommand = new RelayCommand(() => shellActions.OpenWindowsSettings());
         OpenSettingsFolderCommand = new RelayCommand(() =>
         {
             var folder = Path.Combine(
@@ -63,30 +65,45 @@ public sealed class SettingsViewModel : ObservableObject
         AmbienceSpaceCommand = new RelayCommand(() => AmbienceBackgroundPreset = "Space");
         Categories = new ObservableCollection<SettingsCategory>
         {
-            new("General", "Startup, sidebar, and application behavior."),
-            new("Customize Home", "Choose and arrange the modules on Home."),
-            new("Favorites", "Manage pinned apps, folders, and commands."),
-            new("Quick Actions", "Choose the actions shown on Home."),
-            new("Hotkeys", "Configure shortcuts for common actions."),
-            new("Macros", "Build multi-step desktop routines."),
-            new("Commands", "Manage searchable commands."),
-            new("Search", "Choose search sources and behavior."),
-            new("Windows", "Configure window controls and defaults."),
-            new("Ambience", "Add passive desktop life like fish, fireflies, or a roaming pet."),
-            new("Appearance", "Theme, accent, transparency, and motion."),
-            new("Updates", "Control app updates and release channel."),
-            new("Advanced", "Diagnostics and advanced maintenance tools.")
+            new("System", "Display, sound, notifications, power, storage, clipboard, and recovery.", "▣", "brightness hdr focus battery multitasking about"),
+            new("Bluetooth & devices", "Bluetooth, printers, cameras, mouse, touchpad, AutoPlay, and USB.", "⌁", "phone pen scanner connected devices"),
+            new("Network & internet", "Wi-Fi, Ethernet, VPN, hotspot, proxy, and adapter status.", "◎", "wifi ip airplane dial-up"),
+            new("Personalization", "Windows background, colors, themes, lock screen, Start, and taskbar.", "✦", "fonts text input device usage"),
+            new("Apps", "Installed apps, defaults, optional features, startup, and video playback.", "▦", "uninstall offline maps websites"),
+            new("Accounts", "Your info, sign-in options, family, backup, users, work, and school.", "●", "email windows backup"),
+            new("Time & language", "Date, time, language, region, typing, and speech.", "◷", "timezone keyboard"),
+            new("Gaming", "Game Bar, captures, Game Mode, and future gaming workspace controls.", "♜", "performance launcher"),
+            new("Accessibility", "Vision, hearing, captions, keyboard, mouse, speech, and interaction.", "♿", "narrator magnifier contrast filters"),
+            new("Privacy & security", "Windows Security, device privacy, permissions, diagnostics, and search.", "◆", "camera microphone location developers encryption"),
+            new("Windows Update", "Windows update status, history, advanced options, and Insider settings.", "↻", "optional updates"),
+            new("Desktop Command Center", "Application settings, integrations, data, and power-user controls.", "⌘", "app hub"),
+            new("General", "Startup, sidebar, and application behavior.", "⌂", "start minimized background exit language"),
+            new("Customize Home", "Choose and arrange the modules on Home.", "▤", "dashboard widgets reorder"),
+            new("Favorites", "Manage pinned apps, folders, and commands.", "★"),
+            new("Quick Actions", "Choose the actions shown on Home.", "⚡"),
+            new("Hotkeys", "Configure shortcuts for common actions.", "⌨", "keyboard shortcut conflicts"),
+            new("Macros", "Build multi-step desktop routines.", "▶"),
+            new("Commands", "Manage searchable commands.", ">_"),
+            new("Search", "Choose search sources and behavior.", "⌕", "index history excluded locations"),
+            new("Window management", "Configure window controls and defaults.", "▧", "snap opacity topmost"),
+            new("Ambience", "Add passive desktop life like fish, fireflies, or a roaming pet.", "✧"),
+            new("Appearance", "Theme, accent, transparency, and motion.", "◐", "dark light density scale sidebar"),
+            new("Updates", "Control Desktop Command Center updates and release channel.", "⇩", "github version release automatic"),
+            new("Advanced", "Diagnostics and advanced maintenance tools.", "⚙", "logs reset cache developer")
         };
+        FilteredCategories = new ObservableCollection<SettingsCategory>(Categories);
         _selectedCategory = Categories[0];
     }
 
     public event EventHandler<SettingChangedEventArgs>? SettingsChanged;
     public ObservableCollection<SettingsCategory> Categories { get; }
+    public ObservableCollection<SettingsCategory> FilteredCategories { get; }
     public FavoritesViewModel Favorites { get; }
     public MacrosViewModel Macros { get; }
     public CommandsViewModel Commands { get; }
     public UpdatesViewModel Updates { get; }
     public RelayCommand OpenSettingsFolderCommand { get; }
+    public RelayCommand OpenWindowsSettingsCommand { get; }
     public RelayCommand DecreaseSidebarWidthCommand { get; }
     public RelayCommand IncreaseSidebarWidthCommand { get; }
     public RelayCommand Width320Command { get; }
@@ -119,6 +136,42 @@ public sealed class SettingsViewModel : ObservableObject
     {
         get => _selectedCategory;
         set => SetProperty(ref _selectedCategory, value);
+    }
+
+    public string SettingsSearchText
+    {
+        get => _settingsSearchText;
+        set
+        {
+            if (!SetProperty(ref _settingsSearchText, value ?? string.Empty))
+            {
+                return;
+            }
+
+            RefreshCategoryFilter();
+        }
+    }
+
+    private void RefreshCategoryFilter()
+    {
+        var query = SettingsSearchText.Trim();
+        var matches = string.IsNullOrWhiteSpace(query)
+            ? Categories
+            : new ObservableCollection<SettingsCategory>(Categories.Where(category =>
+                category.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase) ||
+                category.Description.Contains(query, StringComparison.CurrentCultureIgnoreCase) ||
+                category.Keywords.Contains(query, StringComparison.CurrentCultureIgnoreCase)));
+
+        FilteredCategories.Clear();
+        foreach (var category in matches)
+        {
+            FilteredCategories.Add(category);
+        }
+
+        if (FilteredCategories.Count > 0 && !FilteredCategories.Contains(SelectedCategory))
+        {
+            SelectedCategory = FilteredCategories[0];
+        }
     }
 
     public bool StartCollapsed
